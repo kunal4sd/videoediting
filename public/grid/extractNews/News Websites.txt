@@ -1,0 +1,47 @@
+--clean title  (ok)
+http://www.annaharkw.com/Annahar/Default.aspx
+
+
+-- check body 
+http://www.alittihad.ae/details.php?id=2099&y=2017
+
+
+-- OK
+http://www.akhbar-alkhaleej.com/
+http://www.alwatan.com.sa/
+http://www.alshahedkw.com/
+http://www.aljarida.com/
+http://www.alraimedia.com
+http://www.alhayat.com
+http://www.alanba.com.kw/newspaper/
+http://www.alayam.com/
+http://www.alwatannews.net/
+http://www.albiladpress.com
+http://www.alanbatnews.net/
+http://www.alarab.qa
+http://makkahnewspaper.com/
+https://www.aleqt.com/
+http://alrai.com/
+http://www.alghad.com/
+http://addustour.com/ 
+http://assabeel.net/
+http://www.al-madina.com/
+http://www.alriyadh.com/
+http://www.al-jazirah.com/
+http://www.albiladdaily.com/
+http://www.albayan.ae/
+http://www.okaz.com.sa/
+http://aawsat.com/
+http://www.alyaum.com/
+http://www.alsharq.net.sa/
+http://al-seyassah.com 
+http://alqabas.com/
+http://www.emaratalyoum.com/
+http://alwatannewspaper.ae/
+http://www.al-watan.com/
+http://www.alkhaleej.ae/portal	
+http://www.raya.com/portal
+http://www.al-sharq.com/
+https://lusailnews.qa/
+http://www.alwasatnews.com/
+

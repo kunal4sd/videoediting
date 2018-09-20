@@ -1,0 +1,31 @@
+{
+  "name": "rangeslider-videojs",
+  "version": "2.0.0",
+  "description": "RangeSlider plugin for VideoJS(5.x)",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acpmasquerade/rangeslider-videojs.git"
+  },
+  "keywords": [
+    "videojs",
+    "rangeslider"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/acpmasquerade/rangeslider-videojs/issues"
+  },
+  "homepage": "https://github.com/acpmasquerade/rangeslider-videojs#readme",
+  "dependencies": {
+    "grunt": "latest",
+    "grunt-contrib-qunit": "latest",
+    "grunt-contrib-uglify": "latest", 
+    "grunt-contrib-jshint": "latest", 
+    "grunt-contrib-watch": "latest", 
+    "grunt-contrib-concat": "latest" 
+  }
+}
