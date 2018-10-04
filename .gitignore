@@ -1,6 +1,9 @@
-public/tmp/
-videos/
-public/videos/
+app/cache/**/*.php
+app/logs/*.csv
+app/config/*stag*
+app/config/*prod*
 public/userfiles/
-node_modules/
+public/videos/
 vendor/
+node_modules/
+videos/
