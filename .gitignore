@@ -2,8 +2,5 @@ app/cache/**/*.php
 app/logs/*.csv
 app/config/*stag*
 app/config/*prod*
-public/userfiles/
-public/videos/
 vendor/
 node_modules/
-videos/
