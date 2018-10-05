@@ -1,13 +1,13 @@
 {
   "name": "videoediting",
   "version": "1.0.0",
-  "main": "index.js",
   "repository": "git@bitbucket.org:yazwas/videoediting.git",
   "author": "ecrafti <craftieduard@gmail.com>",
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "bootstrap": "^4.1.3",
     "gulp": "^3.9.1",
+    "gulp-toolbox": "^1.0.3",
     "jplayer": "^2.9.2",
     "jquery": "^3.3.1"
   }
