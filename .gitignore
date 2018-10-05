@@ -2,3 +2,5 @@ public/tmp/
 videos/
 public/videos/
 public/userfiles/
+node_modules/
+vendor/
