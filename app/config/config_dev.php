@@ -1,4 +1,4 @@
 <?php
 
-$config['db'] = [];
-$config['slim'] = [];
+// $config['db'] = [];
+// $config['slim'] = [];
