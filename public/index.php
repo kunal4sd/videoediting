@@ -1,10 +1,14 @@
 <?php
 
-define("BASE_PATH", __DIR__ . '/..');
-
 session_start();
+require '../vendor/autoload.php';
+require '../app/bootstrap/constants.php';
+require '../app/bootstrap/functions.php';
 
-require BASE_PATH . '/vendor/autoload.php';
-$config = require BASE_PATH . '/app/config/config.php';
-
-echo "Hello, World!";
+try {
+    $app = new App\App();
+    $app->run();
+}
+catch(\Exception $e) {
+    die($e->getMessage()); // much safe
+}
