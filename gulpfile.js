@@ -10,6 +10,7 @@ var config = {
         glob: [
             'fonts/**',
             'images/**',
+            'css/**',
             'js/**/*.swf'
         ]
     },
@@ -19,7 +20,8 @@ var config = {
             origin: 'app/resources/js/libs',
             target: 'public/js',
             glob: [
-                'jquery.js',
+                'jquery.min.js',
+                'bootstrap*',
                 '*.js'
             ]
         },
