@@ -2,7 +2,8 @@
 
 namespace App\Modules\Edit;
 
-use App\Modules\Edit\Actions\Index;
+use App\Modules\Edit\Views\Index;
+use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -10,19 +11,20 @@ class EditServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $container)
     {
-        $this->register_actions($container);
+        $this->register_views($container);
         $this->register_routes($container);
     }
 
-    public function register_actions(Container $container)
+    private function register_views(Container $container)
     {
-        $container['edit.action.index'] = function ($container) {
+        $container['edit.view.index'] = function ($container) {
             return new Index($container);
         };
     }
 
-    public function register_routes(Container $container)
+    private function register_routes(Container $container)
     {
-        $container->slim->get('/', 'edit.action.index');
+        $container->slim->get('/', 'edit.view.index')->setName('edit.view.index')
+                        ->add(new KnownUserAuthorizationMiddleware($container));
     }
 }
