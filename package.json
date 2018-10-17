@@ -9,6 +9,9 @@
     "gulp": "^3.9.1",
     "gulp-toolbox": "^1.0.3",
     "jplayer": "^2.9.2",
-    "jquery": "^3.3.1"
+    "jquery": "^3.3.1",
+    "video.js": "^7.2.3"
+  },
+  "dependencies": {
   }
 }
