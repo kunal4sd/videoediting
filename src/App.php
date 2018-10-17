@@ -2,18 +2,15 @@
 
 namespace App;
 
-use App\Lib\Config;
-use App\Lib\Log;
-use App\Controller\Edit;
+use App\Libs\Config;
+use App\Modules\Core\CoreServiceProvider;
 use App\Modules\Edit\EditServiceProvider;
 use App\Modules\User\UserServiceProvider;
-use App\Lib\Enum\MandatoryConfigFields;
 use Slim\App as Slim;
-use Slim\Views\Twig;
-use Slim\Views\TwigExtension;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Pimple\Container;
+use \Exception;
 
 class App
 {
@@ -50,49 +47,20 @@ class App
             return $this->slim;
         };
 
-        $this->build_logger($container);
         $this->build_handlers($container);
-        $this->build_database($container);
-        $this->build_view($container);
         $this->build_modules($container);
-    }
-
-    private function build_logger(Container &$container)
-    {
-        $container['logger'] = function($container) {
-
-            // FIXME: not implemented yet
-            return new Log($container->config->{MandatoryConfigFields::LOGS});
-        };
-    }
-
-    private function build_view(Container &$container)
-    {
-        $container['view'] = function ($container) {
-
-            $view = new Twig(
-                $container->config->{MandatoryConfigFields::TEMPLATES_PATH},
-                $container->config->{MandatoryConfigFields::TWIG}
-            );
-            $view->addExtension(new TwigExtension($container->router, $container->request->getUri()));
-
-            return $view;
-        };
     }
 
     private function build_modules(Container &$container)
     {
-        $container->register(new EditServiceProvider());
-        $container->register(new UserServiceProvider());
-    }
-
-    private function build_database(Container &$container)
-    {
-        $container['db'] = function(&$container) {
-
-            // FIXME: not implemented yet
-            return new MySql($container->config->{MandatoryConfigFields::DBS});
-        };
+        try {
+            $container->register(new CoreServiceProvider());
+            $container->register(new EditServiceProvider());
+            $container->register(new UserServiceProvider());
+        }
+        catch(Exception $e) {
+            $container->logger->write($e);
+        }
     }
 
     private function build_handlers(Container &$container)
@@ -107,6 +75,15 @@ class App
     {
         $container['notFoundHandler'] = function(&$container) {
             return function ($request, $response, $exception = null) use (&$container) {
+
+                if ($exception === null) {
+                    $exception = new Exception(
+                        'URL not found: ' . $request->getUri()->__tostring(),
+                        404
+                    );
+                }
+                $container->logger->write($exception);
+
                 return $container->view->render(
                         $response,
                         'errors/404.twig',
@@ -120,6 +97,15 @@ class App
     {
         $container['notAllowedHandler'] = function(&$container) {
             return function ($request, $response, $exception = null) use (&$container) {
+
+                if ($exception === null) {
+                    $exception = new Exception(
+                        'URL access forbidden: ' . $request->getUri()->__tostring(),
+                        403
+                    );
+                }
+                $container->logger->write($exception);
+
                 return $container->view->render(
                         $response,
                         'errors/403.twig',
@@ -133,6 +119,15 @@ class App
     {
         $container['errorHandler'] = function(&$container) {
             return function ($request, $response, $exception = null) use (&$container) {
+
+                if ($exception === null) {
+                    $exception = new Exception(
+                        'Unknown error encountered at ' . $request->getUri()->__tostring(),
+                        500
+                    );
+                }
+                $container->logger->write($exception);
+
                 return $container->view->render(
                         $response,
                         'errors/500.twig'
@@ -145,11 +140,20 @@ class App
     {
         $container['phpErrorHandler'] = function(&$container) {
             return function ($request, $response, $exception = null) use (&$container) {
+
+                if ($exception === null) {
+                    $exception = new Exception(
+                        'Unknown PHP error encountered in at ' . $request->getUri()->__tostring(),
+                        404
+                    );
+                }
+                $container->logger->write($exception);
+
                 return $container->view->render(
                         $response,
                         'errors/500.twig',
                         []
-                    )->withStatus(500);;
+                    )->withStatus(500);
             };
         };
     }
