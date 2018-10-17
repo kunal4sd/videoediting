@@ -7,10 +7,23 @@ $config = [
     ],
     'db' => [
         'localhost' => [
-            'root' => [
+            'main' => [
+                'host' => 'localhost',
                 'port' => 3306,
-                'pass' => 'test1234',
-                'databases' => ['dev']
+                'database' => 'recordings',
+                'username' => 'root',
+                'password' => 'test1234',
+                'driver' => 'mysql',
+                'charset' => 'utf8mb4'
+            ],
+            'all' => [
+                'host' => 'localhost',
+                'port' => 3306,
+                'database' => '',
+                'username' => 'root',
+                'password' => 'test1234',
+                'driver' => 'mysql',
+                'charset' => 'utf8mb4'
             ]
         ]
     ],
@@ -20,7 +33,8 @@ $config = [
     'monolog' => [
         'enabled' => true,
         'min_level' => 100,
-        'path' => BASE_PATH . '/app/logs'
+        'path' => BASE_PATH . '/app/logs',
+        'filename' => sprintf('%s.csv', date("Y_m_d"))
     ],
     'view' => [
         'templates_path' => BASE_PATH . '/app/templates',
