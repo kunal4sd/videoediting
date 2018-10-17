@@ -27,7 +27,7 @@ abstract class ActiveRecordsAbstract
         foreach ($properties as $property) {
 
             $name = $property->getName();
-            if ($reflection->getProperty($name)->isPublic()) {
+            if ($property->isPublic()) {
                 $result[$name] = $this->$name;
             }
         }
