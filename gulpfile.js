@@ -21,6 +21,7 @@ var config = {
             target: 'public/js',
             glob: [
                 'jquery.min.js',
+                'moment.min.js',
                 'bootstrap*',
                 '*.js'
             ]
@@ -29,7 +30,7 @@ var config = {
             origin: 'app/resources/js',
             target: 'public/js',
             glob: [
-                'main.js'
+                '*.js'
             ]
         }
     },
