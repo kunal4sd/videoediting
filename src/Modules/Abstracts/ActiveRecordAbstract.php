@@ -4,7 +4,7 @@ namespace App\Modules\Abstracts;
 
 use \ReflectionClass;
 
-abstract class ActiveRecordsAbstract
+abstract class ActiveRecordAbstract
 {
 
     public function build_from_array(array $array)
