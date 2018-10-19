@@ -12,7 +12,7 @@ class SignOut extends ModuleAbstract
 {
     public function __invoke(Request $request, Response $response)
     {
-        $this->user_session->stop();
+        $this->session_user->stop();
 
         return $response->withRedirect($this->router->pathFor('user.view.signin'));
     }

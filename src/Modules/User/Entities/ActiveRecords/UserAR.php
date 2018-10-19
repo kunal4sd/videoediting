@@ -39,22 +39,22 @@ class UserAR extends ActiveRecordAbstract
     public $lname;
 
     /**
-     * @var Date
+     * @var string
      */
     public $start_date;
 
     /**
-     * @var Date|null
+     * @var string|null
      */
     public $expiry_date;
 
     /**
-     * @var Date
+     * @var string
      */
     public $created;
 
     /**
-     * @var Date
+     * @var string
      */
     public $modified;
 

@@ -11,7 +11,7 @@ class KnownUser extends ModuleAbstract
     public function __invoke(Request $request, Response $response, $next)
     {
 
-        if ($this->user_session->is_known()) {
+        if ($this->session_user->is_known()) {
             return $next($request, $response);
         }
         $this->logger->write(new \Exception('Access forbidden for unknown user', 403));

@@ -6,6 +6,7 @@ namespace App\Modules\Core;
 use App\Libs\Db\Db;
 use App\Libs\Log\Log;
 use App\Libs\Validator;
+use App\Libs\Session;
 use App\Libs\Enums\Config\MandatoryFields;
 use App\Modules\Core\Entities\UserSession;
 use App\Modules\Core\Middleware\Csrf as CsrfMiddleware;
@@ -23,13 +24,28 @@ class CoreServiceProvider implements ServiceProviderInterface
     public function register(Container $container)
     {
         $this->register_logger($container);
-        $this->register_csrf($container);
         $this->register_flash($container);
-        $this->register_entities($container);
+        $this->register_sessions($container);
         $this->register_database($container);
         $this->register_validator($container);
         $this->register_view($container);
+        $this->register_csrf($container);
         $this->register_global_middleware($container);
+    }
+
+    private function register_sessions(Container &$container)
+    {
+        $container['session'] = function($container) {
+            return new Session();
+        };
+
+        $container['session_user'] = function($container) {
+            $session_user = new UserSession($container->session, $container->logger);
+
+            return $session_user->init_from_session();
+        };
+
+        $container->session;
     }
 
     private function register_logger(Container &$container)
@@ -37,16 +53,6 @@ class CoreServiceProvider implements ServiceProviderInterface
         $container['logger'] = function($container) {
             return new Log($container->config->{MandatoryFields::LOG});
         };
-    }
-
-    private function register_entities(Container &$container)
-    {
-        $container['user_session'] = function($container) {
-            $session = new UserSession($container);
-
-            return $session;
-        };
-        $container->user_session->init();
     }
 
     private function register_csrf(Container &$container)
@@ -105,8 +111,8 @@ class CoreServiceProvider implements ServiceProviderInterface
 
                 $view->getEnvironment()->addGlobal('flash', $container->flash->getMessages());
                 $view->getEnvironment()->addGlobal('user', [
-                    'is_known' => $container->user_session->is_known(),
-                    'details' => $container->user_session->get_user()
+                    'is_known' => $container->session_user->is_known(),
+                    'details' => $container->session_user->get_user()
                 ]);
             }
             catch(Exception $e) {

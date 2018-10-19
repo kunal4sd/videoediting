@@ -21,12 +21,12 @@ class Authenticate extends ModuleAbstract
                 $request->getParam('username'),
                 $request->getParam('password')
             );
-            $this->user_session->init($user_ar);
+            $this->session_user->init_from_entity($user_ar);
         }
         catch(Exception $e) {
             $this->flash->addMessage('alerts_errors', $e->getMessage());
             $this->logger->write(
-                new \Exception(
+                new Exception(
                     sprintf(
                         'Failed sign in attempt: %s',
                         print_r($e->getMessage(), true)
