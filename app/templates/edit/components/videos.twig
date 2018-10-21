@@ -17,8 +17,10 @@
                 <div class="row form-group">
                     <div class="col-sm-8">
                         <select name="source" class="form-control">
-                            <option value="" disabled selected>Choose station...</option>
-                            <option value="test">Test</option>
+                            <option value="" disabled selected>Choose publication...</option>
+                            {% for publication in publications %}
+                                <option value="{{ publication.id }}">{{ publication.name_en }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="col-sm-4">
