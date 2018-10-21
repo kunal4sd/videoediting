@@ -13,44 +13,27 @@ class Index extends ModuleAbstract
 {
     public function __invoke(Request $request, Response $response)
     {
-        // var_dump($this->db[Hosts::LOCAL][Dbs::MAIN]->fetch("
-        //     SELECT CONNECTION_ID()
-        // "));
-        // echo "<br><br>";
-        // var_dump($this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all("
-        //     SELECT CONNECTION_ID()
-        // "));
-        // echo "<br><br>";
-        // var_dump($this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_column("
-        //     SELECT CONNECTION_ID() AS id
-        // "));
-        // echo "<br><br>";
-        // var_dump($this->db[Hosts::LOCAL][Dbs::MAIN]->row_count("
-        // SELECT CONNECTION_ID()
-        // "));
-        // echo "<br><br>";
-        // echo "<br><br>";
-        // var_dump($this->db[Hosts::LOCAL][Dbs::ALL]->fetch("
-        //     SELECT CONNECTION_ID()
-        // "));
-        // echo "<br><br>";
-        // var_dump($this->db[Hosts::LOCAL][Dbs::ALL]->fetch_all("
-        //     SELECT CONNECTION_ID()
-        // "));
-        // echo "<br><br>";
-        // var_dump($this->db[Hosts::LOCAL][Dbs::ALL]->fetch_column("
-        //     SELECT CONNECTION_ID() AS id
-        // "));
-        // echo "<br><br>";
-        // var_dump($this->db[Hosts::LOCAL][Dbs::ALL]->row_count("
-        //     SELECT CONNECTION_ID()
-        // "));
 
-        $this->logger->write(new Exception('Testing logger', 200));
+        $publications = [];
+        try {
+            $publications = $this->entity_publication->get_all_active_tv_and_radio();
+        }
+        catch(Exception $e) {
+            $this->logger->write(
+                new Exception(
+                    sprintf(
+                        'Failed retrieving publications: %s',
+                        print_r($e->getMessage(), true)
+                    ),
+                    403
+                )
+            );
+        }
 
         return $this->view->render($response, 'edit/index.twig', [
             'name' => 'World',
-            'page_title' => 'Video Editing Tool'
+            'page_title' => 'Video Editing Tool',
+            'publications' => $publications
         ]);
     }
 }
