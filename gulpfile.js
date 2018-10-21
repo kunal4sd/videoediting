@@ -11,7 +11,7 @@ var config = {
             'fonts/**',
             'images/**',
             'css/**',
-            'js/**/*.swf'
+            'js/libs/lang/*'
         ]
     },
     js: {
@@ -21,8 +21,8 @@ var config = {
             target: 'public/js',
             glob: [
                 'jquery.min.js',
-                'moment.min.js',
                 'bootstrap*',
+                'moment.min.js',
                 '*.js'
             ]
         },
