@@ -792,27 +792,27 @@
 
   .video-js .vjs-volume-panel {
     transition: width 1s; }
-    .video-js .vjs-volume-panel:hover .vjs-volume-control,
+    .video-js .vjs-volume-panel .vjs-volume-control,
     .video-js .vjs-volume-panel:active .vjs-volume-control,
     .video-js .vjs-volume-panel:focus .vjs-volume-control,
-    .video-js .vjs-volume-panel .vjs-volume-control:hover,
+    .video-js .vjs-volume-panel .vjs-volume-control,
     .video-js .vjs-volume-panel .vjs-volume-control:active,
-    .video-js .vjs-volume-panel .vjs-mute-control:hover ~ .vjs-volume-control,
+    .video-js .vjs-volume-panel .vjs-mute-control ~ .vjs-volume-control,
     .video-js .vjs-volume-panel .vjs-volume-control.vjs-slider-active {
       visibility: visible;
       opacity: 1;
       position: relative;
       transition: visibility 0.1s, opacity 0.1s, height 0.1s, width 0.1s, left 0s, top 0s; }
-      .video-js .vjs-volume-panel:hover .vjs-volume-control.vjs-volume-horizontal,
+      .video-js .vjs-volume-panel .vjs-volume-control.vjs-volume-horizontal,
       .video-js .vjs-volume-panel:active .vjs-volume-control.vjs-volume-horizontal,
       .video-js .vjs-volume-panel:focus .vjs-volume-control.vjs-volume-horizontal,
-      .video-js .vjs-volume-panel .vjs-volume-control:hover.vjs-volume-horizontal,
+      .video-js .vjs-volume-panel .vjs-volume-control.vjs-volume-horizontal,
       .video-js .vjs-volume-panel .vjs-volume-control:active.vjs-volume-horizontal,
-      .video-js .vjs-volume-panel .vjs-mute-control:hover ~ .vjs-volume-control.vjs-volume-horizontal,
+      .video-js .vjs-volume-panel .vjs-mute-control ~ .vjs-volume-control.vjs-volume-horizontal,
       .video-js .vjs-volume-panel .vjs-volume-control.vjs-slider-active.vjs-volume-horizontal {
         width: 5em;
         height: 3em; }
-    .video-js .vjs-volume-panel.vjs-volume-panel-horizontal:hover, .video-js .vjs-volume-panel.vjs-volume-panel-horizontal:active, .video-js .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-slider-active {
+    .video-js .vjs-volume-panel.vjs-volume-panel-horizontal, .video-js .vjs-volume-panel.vjs-volume-panel-horizontal:active, .video-js .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-slider-active {
       width: 9em;
       transition: width 0.1s; }
     .video-js .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-mute-toggle-only {
