@@ -51,7 +51,7 @@ class Log
     private function build_message(Exception $e)
     {
         return str_replace(
-            "\n",
+            PHP_EOL,
             '',
             sprintf(
                 '%d ::: %s ::: %s line %d ::: %s',
@@ -59,7 +59,7 @@ class Log
                 $e->getMessage(),
                 $e->getFile(),
                 $e->getLine(),
-                $e->getCode() >= 500 ? $e->getTraceAsString() : 'no stack'
+                $e->getCode() >= 500 ? implode(PHP_EOL, explode('#', $e->getTraceAsString())) : 'no stack'
             )
         );
     }
