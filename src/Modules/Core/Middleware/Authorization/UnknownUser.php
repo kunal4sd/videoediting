@@ -16,6 +16,6 @@ class UnknownUser extends ModuleAbstract
         }
         $this->logger->write(new \Exception('Access forbidden for known user', 403));
 
-        return $response->withRedirect($this->router->pathFor('edit.view.index'));
+        return $response->withRedirect($this->router->pathFor('video.view.index'));
     }
 }
