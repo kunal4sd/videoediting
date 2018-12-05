@@ -6,7 +6,7 @@
         <div class="col-md-12 mx-auto">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ path_for('user.action.authenticate') }}" method="post" novalidate>
+                    <form id="authenticate" action="{{ base_url() }}{{ path_for('user.action.authenticate') }}" method="post" novalidate>
                         {{ csrf.fields | raw }}
                         <div class="form-group row">
                             <label for="username" class="col-sm-2 col-form-label">Username:</label>
@@ -26,7 +26,8 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <input type="submit" value="Sign in" class="btn btn-primary btn-block">
+                        <input type="submit" value="Sign in" class="btn btn-primary btn-block d-none">
+                        <button type="button" class="btn btn-primary btn-block">Sign in</button>
                     </form>
                 </div>
             </div>
