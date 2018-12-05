@@ -10,7 +10,7 @@
         <ul class="navbar-nav mr-auto px-4">
         {% if user.is_known %}
             <li class="nav-item px-2">
-                <a class="nav-link{{ current_path == path_for('edit.view.index') ? ' active' : '' }}" href="{{ path_for('edit.view.index') }}">Video Editing</a>
+                <a class="nav-link{{ current_path == path_for('video.view.index') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('video.view.index') }}">Video Editing</a>
             </li>
             <li class="nav-item px-2">
                 <a class="nav-link{{ current_path == '/video/list' ? ' active' : '' }}" href="/video/list">Video List</a>
@@ -31,11 +31,11 @@
 
         {% if not user.is_known %}
             <li class="nav-item">
-                <a class="nav-link{{ current_path == path_for('user.view.signin') ? ' active' : '' }}" href="{{ path_for('user.view.signin') }}">Sign in</a>
+                <a class="nav-link{{ current_path == path_for('user.view.signin') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('user.view.signin') }}">Sign in</a>
             </li>
         {% else %}
             <li class="nav-item">
-                <a class="nav-link" href="{{ path_for('user.action.signout') }}">Sign out</a>
+                <a class="nav-link" href="{{ base_url() }}{{ path_for('user.action.signout') }}">Sign out</a>
             </li>
         {% endif %}
         </ul>
