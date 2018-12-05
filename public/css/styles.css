@@ -7,8 +7,20 @@
     background-color: #f5f5f5;
 }
 
+.display-none {
+    display: none;
+}
+
+.position-top-0 {
+    top: 0px !important;
+}
+
 .cursor-default {
     cursor: default;
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }
 
 .noselect {
@@ -18,4 +30,8 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.z-index-above {
+    z-index: 9999;
 }
