@@ -2,7 +2,7 @@ var gulp = require('gulp');
 var toolbox = require('gulp-toolbox');
 
 var config = {
-    production: true,
+    production: false,
     assets: {
         enabled: true,
         origin: 'app/resources',
@@ -23,6 +23,7 @@ var config = {
                 'jquery.min.js',
                 'bootstrap*',
                 'moment.min.js',
+                'video7.js',
                 '*.js'
             ]
         },
@@ -30,6 +31,8 @@ var config = {
             origin: 'app/resources/js',
             target: 'public/js',
             glob: [
+                'main.js',
+                'triggers.js',
                 '*.js'
             ]
         }
