@@ -1,0 +1,23 @@
+<li name="global_template_list_movie" class="list-group-item list-group-item-action mx-0 px-0">
+    <div class="row mx-0 px-0">
+        {{ csrf.fields | raw }}
+        <span class="d-none" name="text">{% if movie.text %}{{ movie.text }}{% endif %}</span>
+        <div class="col-md-1 text-center">
+            <span class="badge badge-success" name="status">{% if movie.status %}{{ movie.status }}{% endif %}</span>
+        </div>
+        <div class="col-md-4 text-left" name="headline">{% if movie.headline %}{{ movie.headline }}{% endif %}</div>
+        <div class="col-md-1 text-center" name="id">{% if movie.id %}{{ movie.id }}{% endif %}</div>
+        <div class="col-md-2 text-center" name="issue_datetime">{% if movie.issue_datetime %}{{ movie.issue_datetime }}{% endif %}</div>
+        <div class="col-md-1 text-center" name="duration">{% if movie.duration %}{{ movie.duration }}{% endif %}</div>
+        <div class="col-md-1 text-center" name="file_size">{% if movie.file_size %}{{ movie.file_size }}{% endif %}</div>
+        <div class="col-md-2">
+            <div class="btn-toolbar" role="toolbar">
+                <div class="btn-group mr-2 mx-auto" role="group">
+                    <button name="play-btn" type="button" class="btn btn-primary oi oi-media-play" data-toggle="modal" data-target="#modal_movie" data-src="{% if movie.src %}{{ movie.src }}{% endif %}"></button>
+                    <button name="download-btn" type="button" class="btn btn-success oi oi-data-transfer-download" data-download="{% if movie.download %}{{ movie.download }}{% endif %}"></button>
+                    <button name="delete-btn" type="button" class="btn btn-danger oi oi-trash" data-action-url="{{ base_url() }}{{ path_for('article.action.delete_article') }}"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
