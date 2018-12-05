@@ -2,8 +2,7 @@
 
 $config = [
     'core' => [
-        'env' => 'dev',
-        'host' => isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'localhost'
+        'env' => 'dev'
     ],
     'db' => [
         'localhost' => [
@@ -49,7 +48,7 @@ $config = [
 
 /**
  * DODGY CODE
- * MAIN REASON: $_SERVER['SERVER_NAME'] (aka $config['core']['host']) can be manipulated on ...
+ * MAIN REASON: $_SERVER['SERVER_NAME'] (aka HOST) can be manipulated on ...
  * ... the client side if the Apache2 server is not configured correctly.
  * SOLUTION: see http://php.net/manual/ro/reserved.variables.server.php ### SERVER_NAME
  * If a safer alternative exists to automatically detect the environment, implement it!
@@ -62,7 +61,7 @@ if (strpos(dirname(__FILE__), '/staging/') !== false) {
 }
 
 // check for prod env
-elseif (!in_array($config['core']['host'], array('localhost', '192.168.33.4'), true)) {
+elseif (!in_array(HOST, array('localhost', '192.168.33.4'), true)) {
     $config['core']['env'] = 'prod';
 }
 
