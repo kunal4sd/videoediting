@@ -3,10 +3,11 @@
 namespace App\Modules\Core;
 
 
+use App\Libs\Json;
+use App\Libs\Session;
+use App\Libs\Validator;
 use App\Libs\Db\Db;
 use App\Libs\Log\Log;
-use App\Libs\Validator;
-use App\Libs\Session;
 use App\Libs\Enums\Config\MandatoryFields;
 use App\Modules\Core\Entities\UserSession;
 use App\Modules\Core\Middleware\Csrf as CsrfMiddleware;
@@ -61,6 +62,9 @@ class CoreServiceProvider implements ServiceProviderInterface
 
             $guard = new Guard();
             $guard->setPersistentTokenMode(true);
+            $guard->setFailureCallable(function ($request, $response, $next) use ($container) {
+                return Json::build($response, ['message' => 'CSRF check failed'], 400);
+            });
 
             return $guard;
         };
