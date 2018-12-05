@@ -1,0 +1,29 @@
+{% extends 'app.twig' %}
+
+{% block stylesheets %}
+    {% include 'video/components/stylesheets.twig' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12 mx-auto">
+        <h1>Video Editing</h1>
+    </div>
+</div>
+
+<div class="row">
+    {% include 'video/components/preview.twig' %}
+    {% include 'video/components/videos.twig' %}
+</div>
+
+<div class="row">
+    {% include 'video/components/episodes.twig' %}
+</div>
+
+<div class="row">
+    {% include 'video/components/edit.twig' %}
+</div>
+
+
+{% endblock %}

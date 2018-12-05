@@ -1,0 +1,78 @@
+<div class="col-md-12 my-4 d-flex">
+    <div class="card flex-fill">
+        <div class="card-header">
+            Episodes
+        </div>
+        <div class="card-body">
+            <div id="episodes-holder" class="row"></div>
+            <div id="episodes-to-movie" class="card-body mx-auto px-0 pb-0 display-none">
+                <button type="button" class="btn btn-primary btn-md"  data-toggle="modal" data-target="#new_movie">Generate Movie</button>
+                <div class="modal fade" id="new_movie" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content">
+                            <form id="get_movie" class="float-left" action="{{ base_url() }}{{ path_for('video.action.get_movie') }}" method="post" novalidate>
+                                {{ csrf.fields | raw }}
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Generate New Movie</h5>
+                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <input class="form-control" type="hidden" name="text" value="">
+
+                                    <div class="form-group">
+                                        <label for="title" class="col-form-label">Title:</label>
+                                        <input type="text" name="title" id="title" class="form-control{{ flash.errors_title ? ' is-invalid' : ''}}" value="{{ flash.persistant_title ? flash.persistant_title | first : '' }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="text" class="col-form-label">Text on Video:</label>
+                                        <input type="text" name="text" id="text" class="form-control{{ flash.errors_title ? ' is-invalid' : ''}}" value="MediaObserver ME" readonly="readonly">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="opt-quality" class="col-form-label">Quality:</label>
+                                        <select name="quality" id="opt-quality" class="form-control{{ flash.errors_quality ? ' is-invalid' : ''}}">
+                                            <option value="low" disabled>Low</option>
+                                            <option value="medium" selected="selected">Medium</option>
+                                            <option value="high" disabled>High</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="opt-size" class="col-form-label">Size:</label>
+                                        <select name="size" id="opt-size" class="form-control{{ flash.errors_size ? ' is-invalid' : ''}}">
+                                            <option value="360p" disabled>360p</option>
+                                            <option value="480p" selected="selected">480p</option>
+                                            <option value="576p" disabled>576p</option>
+                                            <option value="720p" disabled>720p</option>
+                                            <option value="1080p" disabled>1080p</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="opt-format" class="col-form-label">Format:</label>
+                                        <select name="format" id="opt-format" class="form-control{{ flash.errors_format ? ' is-invalid' : ''}}">
+                                            <option value="mp4" selected>mp4</option>
+                                            <option value="webm" disabled>webm</option>
+                                            <option value="flv" disabled>flv</option>
+                                            <option value="ogv" disabled>ogv</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="opt-aspect" class="col-form-label">Aspect Ratio:</label>
+                                        <select name="aspect" id="opt-aspect" class="form-control{{ flash.errors_aspect ? ' is-invalid' : ''}}">
+                                            <option value="16:9" selected>16:9</option>
+                                            <option value="4:3" disabled>4:3</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <input type="submit" class="display-none">
+                                    <button type="button" id="get_movie_submit_button" class="btn btn-primary">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
