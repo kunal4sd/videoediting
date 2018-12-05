@@ -2,6 +2,7 @@
 
 namespace App\Modules\User\Middleware\Validation;
 
+use App\Libs\Json;
 use App\Modules\Abstracts\ModuleAbstract;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -18,22 +19,7 @@ class SignIn extends ModuleAbstract
         ]);
 
         if ($validation->failed()) {
-
-            foreach($validation->get_errors() as $field => $errors) {
-                $this->flash->addMessage("errors_{$field}", array_shift($errors));
-            }
-
-            $this->logger->write(
-                new \Exception(
-                    sprintf(
-                        'Failed sign in attempt: %s',
-                        print_r($validation->get_errors(), true)
-                    ),
-                    403
-                )
-            );
-
-            return $response->withRedirect($this->router->pathFor('user.view.signin'));
+            return $this->validation_failed($validation->get_errors(), $response);
         }
 
         return $next($request, $response);
