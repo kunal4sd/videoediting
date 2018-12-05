@@ -52,3 +52,48 @@ function get_all_constants($class)
 
     return $reflection->getConstants();
 }
+
+/**
+ * @param string $field : database or form field name
+ * @return string : prettier, human readable format of field
+ */
+function get_pretty_name($field, $ucwords = false)
+{
+
+    $field = strtolower($field);
+    $field = str_replace(['_', '-'], [' ', ' '], $field);
+    $field = $ucwords ? ucwords($field) : ucfirst($field);
+
+    return $field;
+}
+
+function build_hash(...$args)
+{
+    return md5(json_encode($args));
+}
+
+function human_filesize($bytes, $decimals = 2)
+{
+    $sz = 'BKMGTP';
+    $factor = floor((strlen($bytes) - 1) / 3);
+
+    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
+}
+
+function seconds_to_time($sec)
+{
+
+    if( !is_float( $sec ) ) $sec = floatval( $sec );
+
+    $hours   = floor($sec / 3600);
+    $minutes = floor(($sec - ($hours * 3600)) / 60);
+    $seconds = $sec - ($hours * 3600) - ($minutes * 60);
+
+    if ( $hours < 10 ) $hours   = "0" . $hours;
+    if ( $minutes < 10 ) $minutes = "0" . $minutes;
+    if ( $seconds < 10 ) $seconds = "0" . $seconds;
+
+    $seconds = number_format( $seconds, 2, '.', '' );
+
+    return $hours . ':' . $minutes . ':' . $seconds;
+}
