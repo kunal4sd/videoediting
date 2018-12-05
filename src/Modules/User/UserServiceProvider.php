@@ -6,6 +6,7 @@ use App\Modules\User\Views\SignIn;
 use App\Modules\User\Actions\SignOut;
 use App\Modules\User\Actions\Authenticate;
 use App\Modules\User\Entities\User;
+use App\Modules\User\Entities\UserActivity;
 use App\Modules\User\Middleware\Validation\SignIn as SignInValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Authorization\UnknownUser as UnknownUserAuthorizationMiddleware;
@@ -59,6 +60,9 @@ class UserServiceProvider implements ServiceProviderInterface
     {
         $container['entity_user'] = function ($container) {
             return new User($container);
+        };
+        $container['entity_user_activity'] = function ($container) {
+            return new UserActivity($container);
         };
     }
 }
