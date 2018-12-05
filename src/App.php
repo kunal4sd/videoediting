@@ -4,13 +4,14 @@ namespace App;
 
 use App\Libs\Config;
 use App\Modules\Core\CoreServiceProvider;
-use App\Modules\Edit\EditServiceProvider;
 use App\Modules\User\UserServiceProvider;
+use App\Modules\Video\VideoServiceProvider;
+use App\Modules\Article\ArticleServiceProvider;
+use \Exception;
+use Pimple\Container;
 use Slim\App as Slim;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Pimple\Container;
-use \Exception;
 
 class App
 {
@@ -55,7 +56,8 @@ class App
     {
         try {
             $container->register(new CoreServiceProvider());
-            $container->register(new EditServiceProvider());
+            $container->register(new VideoServiceProvider());
+            $container->register(new ArticleServiceProvider());
             $container->register(new UserServiceProvider());
         }
         catch(Exception $e) {
@@ -98,12 +100,10 @@ class App
         $container['notAllowedHandler'] = function(&$container) {
             return function ($request, $response, $exception = null) use (&$container) {
 
-                if ($exception === null) {
-                    $exception = new Exception(
-                        'URL access forbidden: ' . $request->getUri()->__tostring(),
-                        403
-                    );
-                }
+                $exception = new Exception(
+                    'URL access forbidden: ' . $request->getUri()->__tostring(),
+                    403
+                );
                 $container->logger->write($exception);
 
                 return $container->view->render(
@@ -120,12 +120,10 @@ class App
         $container['errorHandler'] = function(&$container) {
             return function ($request, $response, $exception = null) use (&$container) {
 
-                if ($exception === null) {
-                    $exception = new Exception(
-                        'Unknown error encountered at ' . $request->getUri()->__tostring(),
-                        500
-                    );
-                }
+                $exception = new Exception(
+                    'Unknown error encountered at ' . $request->getUri()->__tostring(),
+                    500
+                );
                 $container->logger->write($exception);
 
                 return $container->view->render(
@@ -141,12 +139,10 @@ class App
         $container['phpErrorHandler'] = function(&$container) {
             return function ($request, $response, $exception = null) use (&$container) {
 
-                if ($exception === null) {
-                    $exception = new Exception(
-                        'Unknown PHP error encountered in at ' . $request->getUri()->__tostring(),
-                        404
-                    );
-                }
+                $exception = new Exception(
+                    'Unknown PHP error encountered in at ' . $request->getUri()->__tostring(),
+                    404
+                );
                 $container->logger->write($exception);
 
                 return $container->view->render(
