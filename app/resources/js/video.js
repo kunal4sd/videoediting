@@ -1,27 +1,27 @@
 $( function() {
 
-    var player = videojs('video-preview', {
-        // fluid: true,
-        width: 400,
-        height: 300,
-        playbackRates: [ .5, 1, 1.25, 1.5, 2 ],
-        plugins: {
-            hotkeys: {
-                volumeStep: 0.1,
-                seekStep: 5,
-                enableNumbers: false
-            },
-            seekButtons: {
-                forward: 5,
-                back: 5
-            }
-        }
-    });
+    var player = videojs.getPlayer('video-preview');
+    var button_clear_player = $('#clear_player');
 
     player.ready(function() {
-        // setTimeout(function() {
-        //     player.play();
-        // }, 3000);
+        var options = {
+            hidden: false,
+            responsive: true,
+            width: 800,
+            height: 400,
+            controlTime: true,
+            controlBar: {
+                volumePanel: {
+                    vertical: true
+                }
+            },
+        };
+        player.rangeslider(options);
+
+    });
+    button_clear_player.on('click', function(e) {
+        e.preventDefault();
+        global_functions.reset_player();
     });
 
 });
