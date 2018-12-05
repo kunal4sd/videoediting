@@ -2,6 +2,7 @@
 
 namespace App\Modules\Abstracts;
 
+use App\Libs\Json;
 use Pimple\Container;
 
 abstract class ModuleAbstract
@@ -20,5 +21,29 @@ abstract class ModuleAbstract
     public function __get($field)
     {
         return $this->container->$field;
+    }
+
+    protected function validation_failed(array $all_errors, $response)
+    {
+
+        $result = [];
+
+        foreach($all_errors as $field => $errors) {
+            $error = get_pretty_name(array_shift($errors));
+            $result[$field] = $error;
+            $this->flash->addMessage("errors_{$field}", $error);
+        }
+
+        $this->logger->write(
+            new \Exception(
+                sprintf(
+                    'Form validation failed with errors: %s',
+                    print_r($all_errors, true)
+                ),
+                400
+            )
+        );
+
+        return Json::build($response, $result, 400);
     }
 }

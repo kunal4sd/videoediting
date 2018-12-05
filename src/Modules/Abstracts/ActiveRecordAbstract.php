@@ -2,18 +2,22 @@
 
 namespace App\Modules\Abstracts;
 
+use App\Modules\Abstracts\ModuleAbstract;
 use \ReflectionClass;
 
-abstract class ActiveRecordAbstract
+abstract class ActiveRecordAbstract extends ModuleAbstract
 {
 
     public function build_from_array(array $array)
     {
-        foreach ($array as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = $value;
+        foreach ($array as $property => $value) {
+            $property = strtolower($property);
+            if (property_exists($this, $property)) {
+                $this->$property = $value;
             }
         }
+
+        return $this;
     }
 
     public function build_to_array()
