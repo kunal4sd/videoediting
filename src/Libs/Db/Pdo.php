@@ -23,7 +23,14 @@ class Pdo extends Connection implements Runnable
 
         try {
             $stmt = $this->pdo->prepare($query);
-            $stmt->execute($params);
+
+            foreach($params as $name => $details) {
+
+                if (!is_array($details)) $details = [$details];
+                $stmt->bindValue(":{$name}", array_shift($details), array_shift($details));
+            }
+
+            $stmt->execute();
         } catch(Exception $e) {
 
             if ($e->getCode() === 'HY000') {
@@ -37,6 +44,11 @@ class Pdo extends Connection implements Runnable
         }
 
         return $stmt;
+    }
+
+    public function last_insert_id()
+    {
+        return $this->pdo->lastInsertId();
     }
 
 }

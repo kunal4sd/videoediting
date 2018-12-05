@@ -10,6 +10,8 @@ use App\Libs\Db\Operations\Fetch;
 use App\Libs\Db\Operations\FetchAll;
 use App\Libs\Db\Operations\FetchColumn;
 use App\Libs\Db\Operations\RowCount;
+use App\Libs\Db\Operations\InsertId;
+use App\Libs\Db\Operations\Now;
 use App\Libs\Enums\Config\MandatoryFields;
 use Pimple\Container;
 
@@ -54,6 +56,12 @@ class Db
             },
             'row_count' => function ($c) use ($pdo) {
                 return new RowCount($pdo);
+            },
+            'insert_id' => function ($c) use ($pdo) {
+                return new InsertId($pdo);
+            },
+            'now' => function ($c) use ($pdo) {
+                return new Now($pdo);
             }
         ]);
     }
