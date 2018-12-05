@@ -2,14 +2,12 @@
 
 namespace App\Modules\User\Actions;
 
-use \Exception;
 use App\Libs\Json;
-use App\Modules\User\Entity\User;
 use App\Modules\Abstracts\ModuleAbstract;
-use Slim\Http\Request;
 use Slim\Http\Response;
+use Slim\Http\Request;
 use Pimple\Container;
-use Respect\Validation\Validator as v;
+use \Exception;
 
 class Authenticate extends ModuleAbstract
 {
@@ -35,9 +33,21 @@ class Authenticate extends ModuleAbstract
                 )
             );
 
+            if ($request->getParam('ajax')) {
+                return Json::build($response, [$e->getMessage()], 400);
+            }
+
             return $response->withRedirect($this->router->pathFor('user.view.signin'));
         }
 
-        return $response->withRedirect($this->router->pathFor('edit.view.index'));
+        if ($request->getParam('ajax')) {
+            return Json::build(
+                $response,
+                ['redirect_to' => $this->router->pathFor('video.view.index')],
+                302
+            );
+        }
+
+        return $response->withRedirect($this->router->pathFor('video.view.index'));
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Modules\User\Actions;
 
-use App\Libs\Json;
 use App\Modules\Abstracts\ModuleAbstract;
 use Slim\Http\Request;
 use Slim\Http\Response;
