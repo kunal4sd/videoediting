@@ -70,8 +70,7 @@ class Index extends ModuleAbstract
         }
 
         return $this->view->render($response, 'video/index.twig', [
-            'name' => 'World',
-            'page_title' => 'Video Editing Tool',
+            'page_title' => 'Video Editing',
             'publications' => $publications,
             'form' => $form,
             'playlists' => $playlists,
