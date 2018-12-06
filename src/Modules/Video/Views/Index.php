@@ -78,13 +78,4 @@ class Index extends ModuleAbstract
         ]);
     }
 
-    private function get_movies()
-    {
-
-        $result = [];
-
-
-
-        return $result;
-    }
 }
