@@ -122,24 +122,6 @@ class ArticleDB extends ModuleAbstract
             $params[$key] = [$id, PDO::PARAM_INT];
         }
 
-        $this->logger->write(new Exception(print_r( $params, true), 200));
-        $this->logger->write(new Exception(sprintf(
-            "
-                SELECT
-                    *
-                FROM article
-                WHERE 1
-                    AND issue_date >= DATE_FORMAT(:from, '%%Y-%%m-%%d')
-                    AND issue_date <= DATE_FORMAT(:to, '%%Y-%%m-%%d')
-                    AND publication_id IN (%1\$s)
-                    AND created_by = :user_id
-                ORDER BY
-                    id
-                    %2\$s
-            ",
-            implode(',', $in),
-            $order
-        ), 200));
         $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all(
             sprintf(
                 "
