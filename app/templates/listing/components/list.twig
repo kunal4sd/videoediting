@@ -1,35 +1,36 @@
 <div class="col-md-12 my-4">
     <div class="card">
-        <div class="card-header row mx-0 px-0">
-            <div class="col-md-1 text-center">
-                Status
-            </div>
-            <div class="col-md-4 text-left">
-                Headline
-            </div>
-            <div class="col-md-1 text-center">
-                Article ID
-            </div>
-            <div class="col-md-2 text-center">
-                Issue Date
-            </div>
-            <div class="col-md-1 text-center">
-                Duration
-            </div>
-            <div class="col-md-1 text-center">
-                File Size
-            </div>
-            <div class="col-md-2 text-center">
-                Actions
+        <div class="card-header mx-0 px-0">
+            <div class="col-md-12">
+                Results
             </div>
         </div>
-        <ul id="movies-holder" class="list-group list-group-flush mx-0" data-movie-list-url="{{ base_url() }}{{ path_for('video.action.get_movie_list') }}">
-            {% for movie in movies %}
-                {% if movie.src %}
-                    {% include 'components/lists/movie.twig' %}
+        <div class="card-body">
+            <table id="video_table" class="table">
+                <thead>
+                    <tr>
+                    <th class="text-center">Status</th>
+                    <th class="text-left">Headline</th>
+                    <th class="text-center">Article ID</th>
+                    <th class="text-center">Issue Date</th>
+                    <th class="text-center">Create Date</th>
+                    <th class="text-center">Channel</th>
+                    <th class="text-center">Duration</th>
+                    <th class="text-center">Size</th>
+                    <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="list_holder" data-video-list-url="{{ base_url() }}{{ path_for('video.action.get_movie_list') }}">
+                </tbody>
+            </table>
+            {% for status in statuses %}
+
+                {% if status != 'new'  %}
+                    <button type="button" id="action_{{ status }}" class="btn btn-primary" data-value="{{ status }}" data-action="{{ base_url() }}">{{ status | capitalize }}</button>
                 {% endif %}
+
             {% endfor %}
-        </ul>
+        </div>
         <div class="modal fade bd-example-modal-lg" id="modal_movie" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">

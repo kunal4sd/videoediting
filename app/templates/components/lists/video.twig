@@ -1,0 +1,22 @@
+<li name="global_template_list_video">
+    {{ csrf.fields | raw }}
+    <ul class="text-center">
+        <span class="badge badge-success" name="status">{% if video.status %}{{ video.status }}{% endif %}</span>
+    </ul>
+    <ul class="text-left" name="headline" data-toggle="tooltip" data-placement="top" title="{% if video.keywords %}{{ video.keywords }}{% endif %}">{% if video.headline %}{{ video.headline }}{% endif %}</ul>
+    <ul class="text-center" name="id">{% if video.id %}{{ video.id }}{% endif %}</ul>
+    <ul class="text-center" name="issue_datetime">{% if video.issue_datetime %}{{ video.issue_datetime }}{% endif %}</ul>
+    <ul class="text-center" name="created">{% if video.created %}{{ video.created }}{% endif %}</ul>
+    <ul class="text-center" name="publication">{% if video.publication %}{{ video.publication }}{% endif %}</ul>
+    <ul class="text-center" name="duration">{% if video.duration %}{{ video.duration }}{% endif %}</ul>
+    <ul class="text-center" name="file_size">{% if video.file_size %}{{ video.file_size }}{% endif %}</ul>
+    <ul>
+        <div class="btn-toolbar" role="toolbar">
+            <div class="btn-group mr-2 mx-auto" role="group">
+                <button name="play-btn" type="button" class="btn btn-primary oi oi-media-play" data-toggle="modal" data-target="#modal_video" data-src="{% if video.src %}{{ video.src }}{% endif %}"></button>
+                <button name="download-btn" type="button" class="btn btn-success oi oi-data-transfer-download" data-download="{% if video.download %}{{ video.download }}{% endif %}"></button>
+                <button name="delete-btn" type="button" class="btn btn-danger oi oi-trash" data-action-url="{{ base_url() }}{{ path_for('article.action.delete_article') }}"></button>
+            </div>
+        </div>
+    </ul>
+</li>

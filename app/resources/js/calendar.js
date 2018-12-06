@@ -40,8 +40,8 @@ $( function() {
             "firstDay": 0
         },
         "linkedCalendars": true,
-        "startDate": range.val().length ? range.val().split(' - ')[0] : moment().format('YYYY-MM-DD 00:00:00'),
-        "endDate": range.val().length ? range.val().split(' - ')[1] : moment().format('YYYY-MM-DD 23:59:59'),
+        "startDate": range.length && range.val().length ? range.val().split(' - ')[0] : moment().format('YYYY-MM-DD 00:00:00'),
+        "endDate": range.length && range.val().length ? range.val().split(' - ')[1] : moment().format('YYYY-MM-DD 23:59:59'),
         "opens": "center",
         "buttonClasses": "btn btn-md",
         "applyButtonClasses": "btn-success",

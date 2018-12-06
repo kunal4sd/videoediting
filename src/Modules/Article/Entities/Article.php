@@ -13,6 +13,14 @@ class Article extends ModuleAbstract
 {
 
     /**
+     * @return string[]
+     */
+    public function get_status_values()
+    {
+        return (new ArticleDB($this->container))->get_status_values();
+    }
+
+    /**
      * @param int $article_id
      * @throws Exception : number of affected rows is different than 1
      * @return bool
@@ -55,7 +63,25 @@ class Article extends ModuleAbstract
      * @param string $from : start date
      * @param string $to : end date
      * @param int $user_id
-     * @param int $publication_id
+     * @return ArticleAR[]
+     */
+    public function get_for_interval_by_user(
+        $from,
+        $to,
+        $user_id,
+        $order_desc = false
+    )
+    {
+        return (new ArticleDB($this->container))->get_for_interval_by_user(
+            $from, $to, $user_id, $order_desc
+        );
+    }
+
+    /**
+     * @param string $from : start date
+     * @param string $to : end date
+     * @param int $user_id
+     * @param int|array $publication_id
      * @return ArticleAR[]
      */
     public function get_for_interval_by_user_and_publication(
@@ -66,6 +92,11 @@ class Article extends ModuleAbstract
         $order_desc = false
     )
     {
+
+        if (!is_array($publication_id)) {
+            $publication_id = [$publication_id];
+        }
+
         return (new ArticleDB($this->container))->get_for_interval_by_user_and_publication(
             $from, $to, $user_id, $publication_id, $order_desc
         );

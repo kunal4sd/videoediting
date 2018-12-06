@@ -1,0 +1,57 @@
+<div class="col-md-12 mb-4 d-flex">
+    <div class="card flex-fill">
+        <div class="card-header">
+            Search
+        </div>
+        <div class="card-body flex-fill">
+            <form id="get_list" action="{{ base_url() }}{{ path_for('video.listing.action.get_list') }}" method="post" novalidate>
+                {{ csrf.fields | raw }}
+                <div class="row form-group">
+                    <div class="col-xl-4 mb-4">
+                        <label for="publication">Publications</label>
+                        <input type="hidden" name="publication" id="publication_input">
+                        <select name="publication_select[]" id="publication_select" multiple="multiple" class="form-control">
+                            {% for publication in publications %}
+                                <option
+                                    value="{{ publication.id }}"
+                                    {% if form.publication == publication.id %} selected {% endif %}
+                                >{{ publication.name_en }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-xl-4 mb-4">
+                        <label for="status">Status</label>
+                        <input type="hidden" name="status" id="status_input">
+                        <select name="status_select[]" id="status_select" multiple="multiple" class="form-control">
+                            {% for status in statuses %}
+                                <option
+                                    value="{{ status }}"
+                                    {% if form.status == status %} selected {% endif %}
+                                >{{ status }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-xl-4 mb-4">
+                    <label for="date_range">Date Range</label>
+                        <input
+                            type="text"
+                            name="date_range"
+                            id="date_range"
+                            class="form-control"
+                            value="{{ form.date_range ? form.date_range : '' }}"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input type="submit" class="d-none">
+                        <button type="button" class="btn btn-primary btn-block mb-3" data-loading="0">Get Videos List</button>
+                    </div>
+                </div>
+            </form>
+            <div id="lsit_holder" class="flex-fill">
+            </div>
+        </div>
+    </div>
+</div>

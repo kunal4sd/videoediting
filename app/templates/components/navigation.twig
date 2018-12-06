@@ -13,10 +13,10 @@
                 <a class="nav-link{{ current_path == path_for('video.view.index') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('video.view.index') }}">Video Editing</a>
             </li>
             <li class="nav-item px-2">
-                <a class="nav-link{{ current_path == '/video/list' ? ' active' : '' }}" href="/video/list">Video List</a>
+                <a class="nav-link{{ current_path == path_for('video.view.listing') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('video.view.listing') }}">Video List</a>
             </li>
             <li class="nav-item px-2">
-                <a class="nav-link{{ current_path == '/publications/list' ? ' active' : '' }}" href="/publications/list">Publications</a>
+                <a class="nav-link{{ current_path == '/publications/listing' ? ' active' : '' }}" href="/publications/list">Publications</a>
             </li>
             <li class="nav-item px-2">
                 <a class="nav-link{{ current_path == '/publications/report' ? ' active' : '' }}" href="/publications/report">Publications Report</a>

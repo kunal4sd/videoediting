@@ -17,7 +17,7 @@ class Publication extends ModuleAbstract
     public function get_by_id($id)
     {
         $publication = new PublicationDB($this->container);
-        $publication_ar = $publication->get_by_id($id, $with_password);
+        $publication_ar = $publication->get_by_id($id);
 
         if (is_null($publication_ar->id)) {
             throw new Exception("Publication with id #{$id} does not exist", 400);

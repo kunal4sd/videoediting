@@ -40,12 +40,7 @@ class Movie extends ModuleAbstract
 
         $movie_path = PlaylistAR::build_movie_path($article_ar->id);
         $keywords_en = $this->entity_keyword->get_keywords_name_en_by_article_id($article_ar->id);
-
-        if (empty($keywords_en)) {
-            $this->logger->write(
-                new Exception(sprintf("No keywords found for article id #%s", $article_ar->id), 400)
-            );
-        }
+        $publication_ar = $this->entity_publication->get_by_id($article_ar->publication_id);
 
         $result = [
             'download' => $this->container
@@ -62,7 +57,8 @@ class Movie extends ModuleAbstract
             'headline' => $article_ar->headline,
             'text' => $article_ar->text,
             'status' => $article_ar->status,
-            'keywords' => implode(',', $keywords_en)
+            'keywords' => implode(', ', $keywords_en),
+            'publication' => $publication_ar->name_en
         ];
 
         return $result;

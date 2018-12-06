@@ -28,32 +28,50 @@ var global_functions = {
             var content_holder = new_element.find('[name="' + field + '"]');
             if (content_holder.length) {
                 content_holder.html(value);
+
+                return true;
+            }
+
+            if (field === 'keywords') {
+
+                var target = new_element.find('[data-toggle]');
+                if (target !== undefined && target.attr('data-toggle') === 'tooltip') {
+                    target.attr( 'title', value.length ? value : 'No Keywords' );
+
+                    return true;
+                }
+
+                if (new_element.attr('data-toggle') === 'tooltip') {
+                    new_element.attr( 'title', value.length ? value : 'No Keywords' );
+
+                    return true;
+                }
             }
 
             // if field holder not found, check for data type attribute and set it to value
-            else {
-                var attr_field = 'data-' + field;
-                if (new_element.attr( attr_field ) !== undefined) {
-                    new_element.attr( attr_field, value );
-                }
-                else {
-                    var target = new_element.find('[' + attr_field + ']');
-                    if (target !== undefined) {
-                        target.attr( attr_field, value );
-                    }
-                }
-            }
-        });
+            var attr_field = 'data-' + field;
+            if (new_element.attr( attr_field ) !== undefined) {
+                new_element.attr( attr_field, value );
 
+                return true;
+            }
+
+            var target = new_element.find('[' + attr_field + ']');
+            if (target !== undefined) {
+                target.attr( attr_field, value );
+
+                return true;
+            }
+
+        });
 
         return new_element;
     },
-    launch_template: function(alert, holder) {
+    launch_template: function(template, holder) {
 
-        // add the cloned alert to the alerts holder
-        alert.appendTo(holder);
-
-        return alert;
+        // add the cloned template to the templates holder
+        template.appendTo(holder);
+        return template;
     },
     set_alerts_expiration: function(holder) {
 

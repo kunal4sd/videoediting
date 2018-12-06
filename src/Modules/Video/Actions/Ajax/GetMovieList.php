@@ -39,13 +39,7 @@ class GetMovieList extends ModuleAbstract
         catch(Exception $e) {
             $this->flash->addMessage('alerts_errors', $e->getMessage());
             $this->logger->write(
-                new Exception(
-                    sprintf(
-                        'Failed getting the movies: %s',
-                        print_r($e->getMessage(), true)
-                    ),
-                    $e->getCode()
-                )
+                $e
             );
         }
 

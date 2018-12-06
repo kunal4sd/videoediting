@@ -3,6 +3,7 @@
 namespace App\Modules\Video;
 
 use App\Modules\Video\Views\Index;
+use App\Modules\Video\Views\Listing;
 use App\Modules\Video\Entities\Movie;
 use App\Modules\Video\Entities\Playlist;
 use App\Modules\Video\Entities\Publication;
@@ -11,11 +12,13 @@ use App\Modules\Video\Actions\Ajax\GetMovie;
 use App\Modules\Video\Actions\Ajax\GetEpisode;
 use App\Modules\Video\Actions\Ajax\GetPlaylist;
 use App\Modules\Video\Actions\Ajax\GetMovieList;
+use App\Modules\Video\Actions\Ajax\GetVideoList;
 use App\Modules\Core\Middleware\Persistant as PersistantMiddleware;
 use App\Modules\Video\Middleware\Validation\GetMovie as GetMovieValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetEpisode as GetEpisodeValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetPlaylist as GetPlaylistValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetMovieList as GetMovieListValidationMiddleware;
+use App\Modules\Video\Middleware\Validation\GetVideoList as GetVideoListValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
 use App\Modules\Video\Middleware\Standardization\DateRange as DateRangeStandardizationMiddleware;
 use Pimple\Container;
@@ -36,6 +39,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         $container['video.view.index'] = function ($container) {
             return new Index($container);
         };
+        $container['video.view.listing'] = function ($container) {
+            return new Listing($container);
+        };
     }
 
     private function register_actions(Container $container)
@@ -55,10 +61,15 @@ class VideoServiceProvider implements ServiceProviderInterface
         $container['video.action.ajax.get_movie_list'] = function ($container) {
             return new GetMovieList($container);
         };
+        $container['video.action.ajax.get_video_list'] = function ($container) {
+            return new GetVideoList($container);
+        };
     }
 
     private function register_routes(Container $container)
     {
+
+        // video editing
         $container->slim->get('/[/{activity_id}]', 'video.view.index')
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.index');
@@ -89,6 +100,17 @@ class VideoServiceProvider implements ServiceProviderInterface
         $container->slim->get('/videos/actions/download/{article_id}', 'video.action.ajax.download_movie')
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.download_movie');
+
+        // video listing
+        $container->slim->get('/video/listing', 'video.view.listing')
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.view.listing');
+
+        $container->slim->post('/videos/listing/actions/get/list', 'video.action.ajax.get_video_list')
+                        ->add(new DateRangeStandardizationMiddleware($container))
+                        ->add(new GetVideoListValidationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.listing.action.get_list');
     }
 
     private function register_entities(Container $container)
