@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Modules\Video\Entities\Repository\Database;
+namespace App\Modules\Article\Entities\Repository\Database;
 
-use App\Libs\Enums\Hosts;
-use App\Libs\Enums\Dbs;
-use App\Modules\Abstracts\ModuleAbstract;
-use App\Modules\Video\Entities\ActiveRecords\PublicationAR;
+use App\Modules\Abstracts\DatabaseAbstract;
+use App\Modules\Article\Entities\ActiveRecords\PublicationAR;
 
-class PublicationDB extends ModuleAbstract
+class PublicationDB extends DatabaseAbstract
 {
 
     /**
@@ -16,7 +14,7 @@ class PublicationDB extends ModuleAbstract
      */
     public function get_by_id($id)
     {
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch(
+        $data = $this->db->fetch(
             "
                 SELECT
                     *
@@ -39,7 +37,7 @@ class PublicationDB extends ModuleAbstract
     {
         $result = [];
 
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all(
+        $data = $this->db->fetch_all(
             "
                 SELECT
                     *
@@ -65,7 +63,7 @@ class PublicationDB extends ModuleAbstract
     {
         $result = [];
 
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all(
+        $data = $this->db->fetch_all(
             "
                 SELECT
                     *
@@ -94,7 +92,7 @@ class PublicationDB extends ModuleAbstract
         $result = [];
 
         // TODO in old platform, publication_details is taken from a different server. MUST check.
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all(
+        $data = $this->db->fetch_all(
             "
                 SELECT
                     p.*

@@ -2,14 +2,12 @@
 
 namespace App\Modules\Article\Entities\Repository\Database;
 
-use App\Libs\Enums\Dbs;
-use App\Libs\Enums\Hosts;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\DatabaseAbstract;
 use App\Modules\Article\Entities\ActiveRecords\KeywordAR;
 use \PDO;
 use \Exception;
 
-class KeywordDB extends ModuleAbstract
+class KeywordDB extends DatabaseAbstract
 {
 
     /**
@@ -20,7 +18,7 @@ class KeywordDB extends ModuleAbstract
     {
         $result = [];
 
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all(
+        $data = $this->db->fetch_all(
             "
                 SELECT
                     *
@@ -51,7 +49,7 @@ class KeywordDB extends ModuleAbstract
     {
         $result = [];
 
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all(
+        $data = $this->db->fetch_all(
             "
                 SELECT
                     keyword.*
@@ -78,7 +76,7 @@ class KeywordDB extends ModuleAbstract
      */
     public function get_by_id($id)
     {
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch(
+        $data = $this->db->fetch(
             "
                 SELECT
                     *

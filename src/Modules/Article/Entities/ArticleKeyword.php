@@ -2,6 +2,8 @@
 
 namespace App\Modules\Article\Entities;
 
+use App\Libs\Enums\Dbs;
+use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\ModuleAbstract;
 use App\Modules\Video\Entities\Repository\Disk\MovieDisk;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
@@ -17,7 +19,8 @@ class ArticleKeyword extends ModuleAbstract
      */
     public function delete_by_article_id($article_id)
     {
-        return (new ArticleKeywordDB($this->container))->delete_by_article_id($article_id);
+        return (new ArticleKeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+            ->delete_by_article_id($article_id);
     }
 
     /**
@@ -26,7 +29,8 @@ class ArticleKeyword extends ModuleAbstract
      */
     public function save_multiple(array $article_keywords_ar)
     {
-        return (new ArticleKeywordDB($this->container))->save_multiple($article_keywords_ar);
+        return (new ArticleKeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+            ->save_multiple($article_keywords_ar);
     }
 
 }

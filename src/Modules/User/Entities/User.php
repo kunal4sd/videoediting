@@ -2,9 +2,11 @@
 
 namespace App\Modules\User\Entities;
 
-use \Exception;
+use App\Libs\Enums\Dbs;
+use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\ModuleAbstract;
 use App\Modules\User\Entities\Repository\Database\UserDB;
+use \Exception;
 
 class User extends ModuleAbstract
 {
@@ -16,7 +18,7 @@ class User extends ModuleAbstract
      */
     public function get_by_id($id, $with_password = false)
     {
-        $user = new UserDB($this->container);
+        $user = new UserDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
         $user_ar = $user->get_by_id($id, $with_password);
 
         if (is_null($user_ar->id)) {
@@ -28,7 +30,7 @@ class User extends ModuleAbstract
 
     public function get_by_credentials($username, $password, $with_password = false)
     {
-        $user = new UserDB($this->container);
+        $user = new UserDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
         $user_ar = $user->get_by_credentials($username, $password, $with_password);
 
         if (is_null($user_ar->id)) {

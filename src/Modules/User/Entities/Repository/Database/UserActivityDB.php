@@ -2,14 +2,12 @@
 
 namespace App\Modules\User\Entities\Repository\Database;
 
-use App\Libs\Enums\Hosts;
-use App\Libs\Enums\Dbs;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\DatabaseAbstract;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use \Exception;
 use \PDO;
 
-class UserActivityDB extends ModuleAbstract
+class UserActivityDB extends DatabaseAbstract
 {
 
     /**
@@ -22,7 +20,7 @@ class UserActivityDB extends ModuleAbstract
 
         $result = [];
 
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all(
+        $data = $this->db->fetch_all(
             "
                 SELECT
                     *
@@ -56,7 +54,7 @@ class UserActivityDB extends ModuleAbstract
      */
     public function get_by_id_and_user($id, $user_id)
     {
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch(
+        $data = $this->db->fetch(
             "
                 SELECT
                     *
@@ -80,7 +78,7 @@ class UserActivityDB extends ModuleAbstract
      */
     public function get_by_id($id)
     {
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch(
+        $data = $this->db->fetch(
             "
                 SELECT
                     *
@@ -103,7 +101,7 @@ class UserActivityDB extends ModuleAbstract
     {
         $result = [];
 
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all(
+        $data = $this->db->fetch_all(
             "
                 SELECT
                     *
@@ -135,7 +133,7 @@ class UserActivityDB extends ModuleAbstract
         });
         $user_activity_fields = array_keys($user_activity_array);
 
-        return $this->db[Hosts::LOCAL][Dbs::MAIN]->insert_id(
+        return $this->db->insert_id(
             sprintf(
                 "
                     INSERT INTO user_activity

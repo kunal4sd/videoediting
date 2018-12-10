@@ -2,6 +2,8 @@
 
 namespace App\Modules\Article\Entities;
 
+use App\Libs\Enums\Dbs;
+use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\ModuleAbstract;
 use App\Modules\Article\Entities\ActiveRecords\KeywordAR;
 use App\Modules\Article\Entities\Repository\Database\KeywordDB;
@@ -18,7 +20,7 @@ class Keyword extends ModuleAbstract
     {
         $result = [];
 
-        $keywords_ar = (new KeywordDB($this->container))->search_by_name($name);
+        $keywords_ar = (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->search_by_name($name);
 
         foreach($keywords_ar as $keyword_ar) {
             $result[] = $keyword_ar;
@@ -36,7 +38,8 @@ class Keyword extends ModuleAbstract
 
         $result = [];
 
-        $keywords_ar = (new KeywordDB($this->container))->get_by_article_id($article_id);
+        $keywords_ar = (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+            ->get_by_article_id($article_id);
 
         foreach($keywords_ar as $keyword_ar) {
             $result[] = $keyword_ar;
@@ -54,7 +57,8 @@ class Keyword extends ModuleAbstract
 
         $result = [];
 
-        $keywords_ar = (new KeywordDB($this->container))->get_by_article_id($article_id);
+        $keywords_ar = (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+            ->get_by_article_id($article_id);
 
         foreach($keywords_ar as $keyword_ar) {
             $result[] = $keyword_ar->name_en;

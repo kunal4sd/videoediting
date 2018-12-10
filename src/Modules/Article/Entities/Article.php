@@ -2,6 +2,8 @@
 
 namespace App\Modules\Article\Entities;
 
+use App\Libs\Enums\Dbs;
+use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\ModuleAbstract;
 use App\Modules\Video\Entities\Repository\Disk\MovieDisk;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
@@ -13,11 +15,22 @@ class Article extends ModuleAbstract
 {
 
     /**
-     * @return string[]
+     * @return string[]|string[][]
      */
-    public function get_status_values()
+    public function get_status_values($with_class = false)
     {
-        return (new ArticleDB($this->container))->get_status_values();
+        $result = (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_status_values();
+
+        if ($with_class) {
+            foreach($result as &$status) {
+                $status = [
+                    'name' => $status,
+                    'class' => $this->get_article_status_class($status)
+                ];
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -28,10 +41,13 @@ class Article extends ModuleAbstract
     public function delete_by_id($article_id)
     {
 
-        $article_db = new ArticleDB($this->container);
-        $rows = $article_db->delete_by_id_and_user($article_id, $_SESSION['user']->id);
+        $article_db = new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
+        $rows = $article_db->delete_by_id_and_user(
+            $article_id, $this->session_user->get_user()->id
+        );
         if ($rows === 1) {
-            (new ArticleKeywordDB($this->container))->delete_by_article_id($article_id);
+            (new ArticleKeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+                ->delete_by_article_id($article_id);
             (new MovieDisk($this->container))->delete_by_id($article_id);
 
             return true;
@@ -56,7 +72,8 @@ class Article extends ModuleAbstract
      */
     public function get_by_id_and_user($id, $user_id)
     {
-        return (new ArticleDB($this->container))->get_by_id_and_user($id, $user_id);
+        return (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+            ->get_by_id_and_user($id, $user_id);
     }
 
     /**
@@ -72,9 +89,8 @@ class Article extends ModuleAbstract
         $order_desc = false
     )
     {
-        return (new ArticleDB($this->container))->get_for_interval_by_user(
-            $from, $to, $user_id, $order_desc
-        );
+        return (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+            ->get_for_interval_by_user($from, $to, $user_id, $order_desc);
     }
 
     /**
@@ -97,9 +113,10 @@ class Article extends ModuleAbstract
             $publication_id = [$publication_id];
         }
 
-        return (new ArticleDB($this->container))->get_for_interval_by_user_and_publication(
-            $from, $to, $user_id, $publication_id, $order_desc
-        );
+        return (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+            ->get_for_interval_by_user_and_publication(
+                $from, $to, $user_id, $publication_id, $order_desc
+            );
     }
 
     /**
@@ -109,7 +126,7 @@ class Article extends ModuleAbstract
     public function save(ArticleAR $article_ar)
     {
 
-        $insert_id = (new ArticleDB($this->container))->save($article_ar);
+        $insert_id = (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->save($article_ar);
 
         if (is_null($insert_id)) {
             throw new Exception("Failed saving article", 400);

@@ -2,14 +2,12 @@
 
 namespace App\Modules\Article\Entities\Repository\Database;
 
-use App\Libs\Enums\Hosts;
-use App\Libs\Enums\Dbs;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\DatabaseAbstract;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
 use \PDO;
 use \Exception;
 
-class ArticleDB extends ModuleAbstract
+class ArticleDB extends DatabaseAbstract
 {
 
     /**
@@ -18,7 +16,7 @@ class ArticleDB extends ModuleAbstract
     public function get_status_values()
     {
 
-        $type = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_column(
+        $type = $this->db->fetch_column(
             '
                 SHOW COLUMNS
                 FROM article
@@ -54,7 +52,7 @@ class ArticleDB extends ModuleAbstract
             $order = 'DESC';
         }
 
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all(
+        $data = $this->db->fetch_all(
             sprintf(
                 "
                     SELECT
@@ -122,7 +120,7 @@ class ArticleDB extends ModuleAbstract
             $params[$key] = [$id, PDO::PARAM_INT];
         }
 
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch_all(
+        $data = $this->db->fetch_all(
             sprintf(
                 "
                     SELECT
@@ -158,7 +156,7 @@ class ArticleDB extends ModuleAbstract
     public function get_by_id_and_user($article_id, $user_id)
     {
 
-        $data = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch(
+        $data = $this->db->fetch(
             "
                 SELECT
                     *
@@ -184,7 +182,7 @@ class ArticleDB extends ModuleAbstract
     public function delete_by_id_and_user($article_id, $user_id)
     {
 
-        return $this->db[Hosts::LOCAL][Dbs::MAIN]->row_count(
+        return $this->db->row_count(
             "
                 DELETE FROM article
                 WHERE 1
@@ -211,7 +209,7 @@ class ArticleDB extends ModuleAbstract
         });
         $article_fields = array_keys($article_array);
 
-        return $this->db[Hosts::LOCAL][Dbs::MAIN]->insert_id(
+        return $this->db->insert_id(
             sprintf(
                 "
                     INSERT INTO article

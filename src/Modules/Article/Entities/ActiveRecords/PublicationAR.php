@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Video\Entities\ActiveRecords;
+namespace App\Modules\Article\Entities\ActiveRecords;
 
 use \Date;
 use App\Modules\Abstracts\ActiveRecordAbstract;

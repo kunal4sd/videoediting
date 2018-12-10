@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Modules\Video\Entities;
+namespace App\Modules\Article\Entities;
 
-use \Exception;
+use App\Libs\Enums\Dbs;
+use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\ModuleAbstract;
-use App\Modules\Video\Entities\Repository\Database\PublicationDB;
+use App\Modules\Article\Entities\Repository\Database\PublicationDB;
+use \Exception;
 
 class Publication extends ModuleAbstract
 {
@@ -16,7 +18,7 @@ class Publication extends ModuleAbstract
      */
     public function get_by_id($id)
     {
-        $publication = new PublicationDB($this->container);
+        $publication = new PublicationDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
         $publication_ar = $publication->get_by_id($id);
 
         if (is_null($publication_ar->id)) {
@@ -32,7 +34,7 @@ class Publication extends ModuleAbstract
      */
     public function get_all_active_tv_and_radio()
     {
-        $publication_db = new PublicationDB($this->container);
+        $publication_db = new PublicationDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
         $publications = $publication_db->get_all_active_tv_and_radio();
 
         if (empty($publications)) {

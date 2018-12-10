@@ -2,19 +2,17 @@
 
 namespace App\Modules\User\Entities\Repository\Database;
 
-use App\Libs\Enums\Hosts;
-use App\Libs\Enums\Dbs;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\DatabaseAbstract;
 use App\Modules\User\Entities\ActiveRecords\UserAR;
 
-class UserDB extends ModuleAbstract
+class UserDB extends DatabaseAbstract
 {
 
     public function get_by_id($id, $with_password = false)
     {
 
         $with_password = $with_password ? 'password,' : '';
-        $result = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch(
+        $result = $this->db->fetch(
             "
                 SELECT
                     id,
@@ -44,7 +42,7 @@ class UserDB extends ModuleAbstract
     {
 
         $with_password = $with_password ? 'password,' : '';
-        $result = $this->db[Hosts::LOCAL][Dbs::MAIN]->fetch(
+        $result = $this->db->fetch(
             "
                 SELECT
                     id,

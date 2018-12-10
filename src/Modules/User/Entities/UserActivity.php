@@ -2,6 +2,8 @@
 
 namespace App\Modules\User\Entities;
 
+use App\Libs\Enums\Dbs;
+use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\ModuleAbstract;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use App\Modules\User\Entities\Repository\Database\UserActivityDB;
@@ -18,7 +20,7 @@ class UserActivity extends ModuleAbstract
     public function get_last_x_by_user_and_type($x, $user_id, $type_id)
     {
 
-        $user_activities_ar = (new UserActivityDB($this->container))
+        $user_activities_ar = (new UserActivityDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
             ->get_last_x_by_user_and_type($x, $user_id, $type_id);
 
         if (empty($user_activities_ar)) {
@@ -36,7 +38,8 @@ class UserActivity extends ModuleAbstract
     public function get_by_id_and_user($id, $user_id)
     {
 
-        $user_activity_ar = (new UserActivityDB($this->container))->get_by_id_and_user($id, $user);
+        $user_activity_ar = (new UserActivityDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+            ->get_by_id_and_user($id, $user);
 
         if (is_null($user_activity_ar->id)) {
             throw new Exception("User activity with id #{$id} does not exist", 400);
@@ -52,7 +55,8 @@ class UserActivity extends ModuleAbstract
     public function save(UserActivityAR $user_activity_ar)
     {
 
-        $insert_id = (new UserActivityDB($this->container))->save($user_activity_ar);
+        $insert_id = (new UserActivityDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+            ->save($user_activity_ar);
 
         if (is_null($insert_id)) {
             throw new Exception("Failed saving article", 400);
