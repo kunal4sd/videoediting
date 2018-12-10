@@ -6,7 +6,7 @@ use App\Modules\Video\Views\Index;
 use App\Modules\Video\Views\Listing;
 use App\Modules\Video\Entities\Movie;
 use App\Modules\Video\Entities\Playlist;
-use App\Modules\Video\Entities\Publication;
+use App\Modules\Video\Entities\RemoteFile;
 use App\Modules\Video\Actions\DownloadMovie;
 use App\Modules\Video\Actions\Ajax\GetMovie;
 use App\Modules\Video\Actions\Ajax\GetEpisode;
@@ -20,7 +20,7 @@ use App\Modules\Video\Middleware\Validation\GetPlaylist as GetPlaylistValidation
 use App\Modules\Video\Middleware\Validation\GetMovieList as GetMovieListValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetVideoList as GetVideoListValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
-use App\Modules\Video\Middleware\Standardization\DateRange as DateRangeStandardizationMiddleware;
+use App\Modules\Core\Middleware\Standardization\DateRange as DateRangeStandardizationMiddleware;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -102,15 +102,15 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->setName('video.action.download_movie');
 
         // video listing
-        $container->slim->get('/video/listing', 'video.view.listing')
+        $container->slim->get('/videos/listing', 'video.view.listing')
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.listing');
 
-        $container->slim->post('/videos/listing/actions/get/list', 'video.action.ajax.get_video_list')
+        $container->slim->post('/videos/actions/get/list', 'video.action.ajax.get_video_list')
                         ->add(new DateRangeStandardizationMiddleware($container))
                         ->add(new GetVideoListValidationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
-                        ->setName('video.listing.action.get_list');
+                        ->setName('video.action.get_list');
     }
 
     private function register_entities(Container $container)
@@ -123,6 +123,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['entity_movie'] = function ($container) {
             return new Movie($container);
+        };
+        $container['entity_remote_file'] = function ($container) {
+            return new RemoteFile($container);
         };
     }
 }

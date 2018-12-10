@@ -27,6 +27,16 @@ class ArticleKeyword extends ModuleAbstract
      * @param ArticleKeywordAR[]
      * @return int
      */
+    public function save_multiple_media(array $article_keywords_ar)
+    {
+        return (new ArticleKeywordDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))
+            ->save_multiple($article_keywords_ar);
+    }
+
+    /**
+     * @param ArticleKeywordAR[]
+     * @return int
+     */
     public function save_multiple(array $article_keywords_ar)
     {
         return (new ArticleKeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))

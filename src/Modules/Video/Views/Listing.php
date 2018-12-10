@@ -18,7 +18,7 @@ class Listing extends ModuleAbstract
         $publications = [];
         try {
             $publications = $this->entity_publication->get_all_active_tv_and_radio();
-            $statuses = $this->entity_article->get_status_values();
+            $statuses = $this->entity_article->get_status_values(true);
         }
         catch(Exception $e) {
             $this->logger->write($e);
@@ -26,6 +26,7 @@ class Listing extends ModuleAbstract
 
         return $this->view->render($response, 'listing/listing.twig', [
             'page_title' => 'Video Listing',
+            'page_name' => 'listing',
             'publications' => $publications,
             'statuses' => $statuses
         ]);

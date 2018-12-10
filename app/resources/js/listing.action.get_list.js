@@ -1,23 +1,61 @@
 $( function() {
 
+    var is_loading = false;
+    var form = $('#listing-get-list');
+
+    if (form.length === 0) return false;
+
+    var form_btn = form.find('button[type="button"]');
+    var approve_btn = $('#listing-status-approve');
+    var pending_btn = $('#listing-status-pending');
+    var live_btn = $('#listing-status-live');
+    var list_holder = $("#listing-list-holder");
+    var movie_modal = $('#listing-modal-edit-article');
+    var movie_player = $('#listing-modal-movie-play');
+    var form_edit_article = $('#article-edit-article');
+    var button_edit = form_edit_article.find('#listing-modal-edit-article-button-submit');
+    var global_templates_holder = $('#global-templates-holder');
+    var global_list_video = global_templates_holder.find('li[name="global_template_list_video"]');
+    var video_table = $('#listing-video-table');
+    var table_cols_index = {};
+    var table_cols = [
+        { name: 'status' },
+        { name: 'status_badge' },
+        { name: 'headline' },
+        { name: 'id' },
+        { name: 'issue_datetime' },
+        { name: 'created' },
+        { name: 'publication' },
+        { name: 'duration' },
+        { name: 'file_size' },
+        { name: 'actions' },
+        { name: 'text' }
+    ];
     var init_data_table = function(table) {
+
+        for(var col_index in table_cols) {
+            table_cols_index[table_cols[col_index].name] = parseInt(col_index);
+        }
+
         return table.DataTable({
-            order: [[ 2, "desc" ]],
+            columns: table_cols,
+            columnDefs: [
+                {
+                    "targets": [ table_cols_index.text ],
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [ table_cols_index.status ],
+                    "visible": false,
+                    "searchable": true
+                }
+            ],
+            order: [[ table_cols_index.id, "desc" ]],
             select: true
         });
     };
-    var article_id_column = 2;
-    var form = $("#get_list");
-    var form_btn = form.find('button[type="button"]');
-    var approve_btn = $('#action_approve');
-    var pending_btn = $('#action_pending');
-    var live_btn = $('#action_live');
-    var video_table = $('#video_table');
     var data_table = init_data_table(video_table);
-    var list_holder = $("#list_holder");
-    var global_templates_holder = $('#global-templates-holder');
-    var global_list_video = global_templates_holder.find('li[name="global_template_list_video"]');
-    var is_loading = false;
     var add_videos = function(videos) {
 
         data_table.destroy();
@@ -29,7 +67,8 @@ $( function() {
             );
         });
         data_table = init_data_table(video_table);
-    }
+        register_actions();
+    };
     var convert_list_to_row = function(global_list_video) {
 
         var clone = global_list_video.clone();
@@ -56,7 +95,178 @@ $( function() {
         });
 
         return new_element
-    }
+    };
+    var register_actions = function() {
+
+        list_holder.find('button[name="play-btn"]').unbind().on('click', function(e) {
+
+            var btn = $(this);
+            var this_holder = btn.closest('tr');
+
+            var id = this_holder.find('td[name="id"]').html().trim();
+            var rows = data_table.rows();
+
+            rows.every(function( rowIdx, table_loop, row_loop ) {
+
+                var row = this.data();
+                if (row[table_cols_index.id] === id) {
+                    populate_form_edit_article(row);
+                    return false;
+                }
+            });
+            movie_modal.modal({
+                show: true
+            });
+
+            movie_player.find('source').attr('src', $(this).attr('data-src'));
+            movie_player[0].load();
+            movie_player[0].pause();
+            event_emitter.trigger('movie.edit.open', this_holder.find('td[name="id"]').html().trim());
+
+        });
+        list_holder.find('button[name="download-btn"]').unbind().on('click', function(e) {
+            window.location.href = $(this).attr('data-download');
+        });
+        list_holder.find('button[name="delete-btn"]').unbind().on('click', function(e) {
+
+            var btn = $(this);
+            var url = btn.attr('data-action-url');
+            var this_holder = btn.closest('tr');
+            var id = this_holder.find('td[name="id"]').html().trim();
+            var data = {
+                id: id,
+                csrf_name: list_holder.find('input[name="csrf_name"]').val(),
+                csrf_value: list_holder.find('input[name="csrf_value"]').val()
+            };
+
+            if (id) {
+                event_emitter.trigger('article.delete.article', [btn, url, data]);
+            }
+        });
+    };
+    var clear_form_edit_article = function() {
+        movie_player[0].pause();
+
+        // clear fields of edit form when modal closes
+        $.each(form_edit_article.find('input'), function(i, input) {
+
+            input = $(input);
+            var type = input.attr('type');
+
+            if (type === 'submit') return true;
+
+            input.val('');
+            input.attr('value', '');
+            input.removeAttr('disabled');
+        });
+        button_edit.removeAttr('disabled');
+    };
+    var populate_form_edit_article = function(row) {
+
+        var status = row[table_cols_index.status];
+
+        if (status === 'live') {
+            button_edit.attr('disabled', 'disabled');
+        }
+        $.each(form_edit_article.find('input'), function(i, input) {
+
+            input = $(input);
+            var type = input.attr('type');
+
+            if (status === 'live') {
+                input.attr('disabled', 'disabled');
+            }
+
+            if (type === 'submit') return true;
+
+            var field_name = input.attr('name');
+
+            if (field_name === 'csrf_name') {
+                input.attr('value', list_holder.find('input[name="csrf_name"]').val());
+            }
+            else if (field_name === 'csrf_value') {
+                input.attr('value', list_holder.find('input[name="csrf_value"]').val());
+            }
+            else {
+                input.val(row[table_cols_index[field_name]]);
+                input.attr('value', row[table_cols_index[field_name]]);
+            }
+        });
+    };
+
+    button_edit.on('click', function(e) {
+        e.preventDefault();
+        global_functions.button_is_loading(button_edit);
+        form_edit_article.submit();
+    });
+
+    event_emitter.on('article.delete.article.done', function(e, btn) {
+        btn = $(btn);
+
+        var this_holder = btn.closest('tr');
+        var id = this_holder.find('td[name="id"]').html().trim();
+        var rows = data_table.rows();
+
+        rows.every(function( rowIdx, table_loop, row_loop ) {
+
+            var row = this.data();
+            if (row[table_cols_index.id] === id) {
+                data_table.row(this).remove().draw(true);
+                return false;
+            }
+        });
+    });
+
+    event_emitter.on('article.edit.article.done', function(event, result, data) {
+        global_functions.button_is_not_loading(button_edit);
+
+        if (
+            movie_modal.length
+            && result.responseJSON !== undefined
+            && result.responseJSON.success
+        ) {
+
+            // update datatable
+            var id = data.id;
+            var rows = data_table.rows();
+
+            rows.every(function( rowIdx, table_loop, row_loop ) {
+
+                var row = this.data();
+                if (row[table_cols_index.id] === id) {
+                    $.each(form_edit_article.find('input'), function(i, input) {
+
+                        input = $(input);
+                        var type = input.attr('type');
+
+                        if (type === 'submit') return true;
+
+                        var field_name = input.attr('name');
+                        var new_value = data[field_name];
+
+                        row[table_cols_index[field_name]] = new_value;
+                        if (field_name === 'status') {
+                            row[table_cols_index['status_badge']] = global_functions
+                                                                        .build_status_badge(new_value)
+                                                                        .prop('outerHTML');
+                        }
+                    });
+                    this.data(row);
+
+                    return false;
+                }
+            });
+
+            // close modal
+            movie_modal.modal('hide');
+            register_actions();
+        }
+
+    });
+
+    movie_modal.on('hidden.bs.modal', function (e) {
+       clear_form_edit_article();
+    });
 
     form_btn.on('click', function(e) {
         e.preventDefault();
@@ -94,55 +304,22 @@ $( function() {
         }
     });
 
-    approve_btn.on('click', function(e) {
+    approve_btn.add(pending_btn).add(live_btn).on('click', function(e) {
         e.preventDefault();
 
         var selected_rows = data_table.rows('.selected');
 
         if (selected_rows.count()) {
 
-            var row_data = $(selected_rows.data());
+            var button = $(this);
+            var data = button.data();
 
-            $.each(row_data,function(key, columns){
-
-                console.log(columns[article_id_column]);
-
+            selected_rows.every(function( rowIdx, table_loop, row_loop ) {
+                var row = this.data();
+                row[table_cols_index.status] = data.value;
+                populate_form_edit_article(row);
+                form_edit_article.submit();
             });
         }
-
-    });
-    pending_btn.on('click', function(e) {
-        e.preventDefault();
-
-        var selected_rows = data_table.rows('.selected');
-
-        if (selected_rows.count()) {
-
-            var row_data = $(selected_rows.data());
-
-            $.each(row_data,function(key, columns){
-
-                console.log(columns[article_id_column]);
-
-            });
-        }
-
-    });
-    live_btn.on('click', function(e) {
-        e.preventDefault();
-
-        var selected_rows = data_table.rows('.selected');
-
-        if (selected_rows.count()) {
-
-            var row_data = $(selected_rows.data());
-
-            $.each(row_data,function(key, columns){
-
-                console.log(columns[article_id_column]);
-
-            });
-        }
-
     });
 });

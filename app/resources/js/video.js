@@ -1,7 +1,7 @@
 $( function() {
 
     var player = videojs.getPlayer('video-preview');
-    var button_clear_player = $('#clear_player');
+    var button_clear_player = $('#video-clear-player');
     var max_tries = 25;
 
     var init_player = setInterval(function() {

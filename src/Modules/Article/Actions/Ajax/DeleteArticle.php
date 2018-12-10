@@ -4,6 +4,7 @@ namespace App\Modules\Article\Actions\Ajax;
 
 use App\Libs\Json;
 use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Video\Entities\ActiveRecords\PlaylistAR;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;

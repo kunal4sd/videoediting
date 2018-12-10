@@ -21,8 +21,34 @@ var global_functions = {
 
         // clone template and prepare clone to display
         new_element = template.clone();
+        new_element.removeAttr('name');
 
         $.each(data, function(field, value) {
+
+            switch(field) {
+                case 'keywords':
+                    var target = new_element.find('[data-toggle]');
+                    if (target !== undefined && target.attr('data-toggle') === 'tooltip') {
+                        target.attr( 'title', value.length ? value : 'No Keywords' );
+
+                        return true;
+                    }
+
+                    if (new_element.attr('data-toggle') === 'tooltip') {
+                        new_element.attr( 'title', value.length ? value : 'No Keywords' );
+
+                        return true;
+                    }
+                    break;
+                case 'status':
+                    var content_holder = new_element.find('[name="status_badge"]');
+                    if (content_holder.length) {
+                        content_holder.html(global_functions.build_status_badge(value));
+                        new_element.find('[name="status"]').html(value);
+                    }
+                    break;
+
+            }
 
             // find clone's field holder and add the value to it
             var content_holder = new_element.find('[name="' + field + '"]');
@@ -30,22 +56,6 @@ var global_functions = {
                 content_holder.html(value);
 
                 return true;
-            }
-
-            if (field === 'keywords') {
-
-                var target = new_element.find('[data-toggle]');
-                if (target !== undefined && target.attr('data-toggle') === 'tooltip') {
-                    target.attr( 'title', value.length ? value : 'No Keywords' );
-
-                    return true;
-                }
-
-                if (new_element.attr('data-toggle') === 'tooltip') {
-                    new_element.attr( 'title', value.length ? value : 'No Keywords' );
-
-                    return true;
-                }
             }
 
             // if field holder not found, check for data type attribute and set it to value
@@ -112,7 +122,7 @@ var global_functions = {
     },
     set_playlist_to_videojs: function(src) {
         event_emitter.trigger('videojs.update.src', [src, 'video/MP2T']);
-        $('#video_to_episode').show()
+        $('#video-video-to-episode').show()
     },
     set_poster_to_videojs: function(poster_path) {
         event_emitter.trigger('videojs.update.poster', poster_path);
@@ -137,10 +147,129 @@ var global_functions = {
         player.currentTime(0);
         player.reset();
         player.src_(false);
-        $('#video_to_episode').hide();
+        $('#video-video-to-episode').hide();
     },
     clear_episodes: function() {
-        $('#episodes-holder').html('');
-        $('#episodes-to-movie').hide();
-    }
+        $('#video-episodes-holder').html('');
+        $('#video-episodes-to-movie').hide();
+    },
+    register_actions: function(list_holder) {
+        list_holder.find('button[name="play-btn"]').unbind().on('click', function(e) {
+
+            var btn = $(this);
+            var this_holder = btn.closest('tr');
+            var id = this_holder.find('td[name="id"]').html().trim();
+            var rows = data_table.rows();
+
+            rows.every(function( rowIdx, table_loop, row_loop ) {
+
+                var row = this.data();
+                if (row[table_cols_index.id] === id) {
+                    $.each(form_edit_article.find('input'), function(i, input) {
+
+                        input = $(input);
+                        var type = input.attr('type');
+
+                        if (type === 'submit') return true;
+
+                        var field_name = input.attr('name');
+
+                        if (field_name === 'csrf_name') {
+                            input.attr('value', list_holder.find('input[name="csrf_name"]').val());
+                        }
+                        else if (field_name === 'csrf_value') {
+                            input.attr('value', list_holder.find('input[name="csrf_value"]').val());
+                        }
+                        else {
+                            input.val(row[table_cols_index[field_name]]);
+                            input.attr('value', row[table_cols_index[field_name]]);
+                        }
+                    });
+
+                    return false;
+                }
+            });
+            movie_modal.modal({
+                show: true
+            });
+
+            movie_player.find('source').attr('src', $(this).attr('data-src'));
+            movie_player[0].load();
+            movie_player[0].pause();
+
+            // set form fields to current article values of corresponding fields
+            $.each(form_edit_article.find('input'), function(i, input) {
+
+                input = $(input);
+                var type = input.attr('type');
+
+                if (type === 'submit') return true;
+
+
+            });
+
+            event_emitter.trigger('movie.edit.open', this_holder.find('td[name="id"]').html().trim());
+
+        });
+        list_holder.find('button[name="download-btn"]').unbind().on('click', function(e) {
+            window.location.href = $(this).attr('data-download');
+        });
+        list_holder.find('button[name="delete-btn"]').unbind().on('click', function(e) {
+
+            if (!is_loading) {
+
+                var btn = $(this);
+                var url = btn.attr('data-action-url');
+                var this_holder = btn.closest('tr');
+                var id = this_holder.find('td[name="id"]').html().trim();
+
+                if (id) {
+
+                    is_loading = true;
+                    global_functions.button_is_loading(btn);
+
+                    $.ajax({
+                        method: 'post',
+                        url: url,
+                        data: {
+                            id: id,
+                            csrf_name: list_holder.find('input[name="csrf_name"]').val(),
+                            csrf_value: list_holder.find('input[name="csrf_value"]').val()
+                        },
+                        complete: function (result) {
+                            global_functions.button_is_not_loading(btn);
+                            is_loading = false;
+                            if (result.responseJSON !== undefined && result.responseJSON.success) {
+                                this_holder.remove();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    },
+    build_status_badge: function(status) {
+
+        var badge = undefined;
+
+        switch(status) {
+            case 'pending':
+                badge = $('span[name="global_template_badge_warning"]').clone();
+                break;
+            case 'approve':
+                badge = $('span[name="global_template_badge_info"]').clone();
+
+                break;
+            case 'live':
+                badge = $('span[name="global_template_badge_secondary"]').clone();
+
+                break;
+            default:
+                badge = $('span[name="global_template_badge_success"]').clone();
+        }
+        badge.html(status);
+        badge.removeAttr('name');
+
+        return badge;
+    },
 }

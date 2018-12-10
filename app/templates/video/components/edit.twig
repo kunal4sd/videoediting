@@ -23,26 +23,27 @@
                 Actions
             </div>
         </div>
-        <ul id="movies-holder" class="list-group list-group-flush mx-0" data-movie-list-url="{{ base_url() }}{{ path_for('video.action.get_movie_list') }}">
+        <ul id="video-movies-holder" class="list-group list-group-flush mx-0" data-movie-list-url="{{ base_url() }}{{ path_for('video.action.get_movie_list') }}">
             {% for movie in movies %}
                 {% if movie.src %}
                     {% include 'components/lists/movie.twig' %}
                 {% endif %}
             {% endfor %}
         </ul>
-        <div class="modal fade bd-example-modal-lg" id="modal_movie" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal fade bd-example-modal-lg" id="video-modal-edit-article" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
-                    <form id="edit_article" action="{{ base_url() }}{{ path_for('article.action.edit_article') }}" method="post" novalidate>
+                    <form id="article-edit-article" action="{{ base_url() }}{{ path_for('article.action.edit_article') }}" method="post" novalidate>
                         <div class="modal-body row">
                             <div class="col-lg-6 m-auto">
-                                <video id="modal_movie_play" controls="true" autoplay="false" name="media" width="368">
+                                <video id="video-modal-movie-play" controls="true" autoplay="false" name="media" width="368">
                                     <source src="" type="video/mp4">
                                 </video>
                             </div>
                             <div class="col-lg-6">
                                     {{ csrf.fields | raw }}
                                     <input type="hidden" name="id" value>
+                                    <input type="hidden" name="status" value>
                                     <div class="form-group">
                                         <label for="title" class="col-form-label">Title:</label>
                                         <input type="text" name="headline" class="form-control" value="">
@@ -54,14 +55,14 @@
                                     <div class="form-group">
                                         <label for="text" class="col-form-label">Keywords:</label>
                                         <input type="hidden" name="keywords" value="">
-                                        <select id="keywords_selector" data-action="{{ base_url() }}{{ path_for('article.action.search_keyword') }}" data-initial-action="{{ base_url() }}{{ path_for('article.action.get_keyword') }}"></select>
+                                        <select id="article-keywords-selector" data-action="{{ base_url() }}{{ path_for('article.action.search_keyword') }}" data-initial-action="{{ base_url() }}{{ path_for('article.action.get_keyword') }}"></select>
                                     </div>
                                     <input type="submit" class="display-none">
 
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="edit_article_submit_button" class="btn btn-primary">Save</button>
+                            <button type="button" id="video-modal-edit-article-button-submit" class="btn btn-primary">Save</button>
                         </div>
                     </form>
                 </div>

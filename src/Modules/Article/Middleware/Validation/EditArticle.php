@@ -16,6 +16,7 @@ class EditArticle extends ModuleAbstract
             'keywords' => v::stringType(),
             'text' => v::stringType(),
             'headline' => v::notEmpty()->stringType(),
+            'status' => v::notEmpty()->stringType(),
             'id' => v::notEmpty()->intVal(),
             'ajax' => v::trueVal()
         ]);

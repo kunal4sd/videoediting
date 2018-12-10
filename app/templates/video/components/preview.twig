@@ -16,9 +16,9 @@
                 <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
                 </p>
             </video>
-            <div id="video_to_episode" class="card-body mx-auto px-0 display-none">
-                <button id="clear_player" class="btn btn-warning btn-md float-left">Clear Video</button>
-                <form id="get_episode" class="float-left mx-1" action="{{ base_url() }}{{ path_for('video.action.get_episode') }}" method="post" novalidate>
+            <div id="video-video-to-episode" class="card-body mx-auto px-0 display-none">
+                <button id="video-clear-player" class="btn btn-warning btn-md float-left">Clear Video</button>
+                <form id="video-get-episode" class="float-left mx-1" action="{{ base_url() }}{{ path_for('video.action.get_episode') }}" method="post" novalidate>
                     {{ csrf.fields | raw }}
                     <button type="button" class="btn btn-primary btn-md" data-loading="0">Generate Episode</button>
                 </form>

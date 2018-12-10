@@ -52,6 +52,23 @@ class UserActivity extends ModuleAbstract
      * @throws Exception
      * @return int
      */
+    public function save_media(UserActivityAR $user_activity_ar)
+    {
+
+        $insert_id = (new UserActivityDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))
+            ->save($user_activity_ar);
+
+        if (is_null($insert_id)) {
+            throw new Exception("Failed saving article", 400);
+        }
+
+        return $insert_id;
+    }
+
+    /**
+     * @throws Exception
+     * @return int
+     */
     public function save(UserActivityAR $user_activity_ar)
     {
 

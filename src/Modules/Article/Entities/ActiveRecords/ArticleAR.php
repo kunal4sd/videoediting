@@ -2,7 +2,6 @@
 
 namespace App\Modules\Article\Entities\ActiveRecords;
 
-use \Date;
 use App\Modules\Abstracts\ActiveRecordAbstract;
 
 class ArticleAR extends ActiveRecordAbstract
@@ -37,6 +36,14 @@ class ArticleAR extends ActiveRecordAbstract
      * @var string|null
      */
     public $headline_translated;
+
+    // TODO fix: maybe create separated Article entity class for Media server. Or smarter solution.
+    /**
+     * PLEASE NOTE: this property has a corresponding field only in the table on the MEDIA server
+     * Issues could arise because of this if not managed correctly
+     * @var string|null
+     */
+    public $headline_modified;
 
     /**
      * @var string|null
@@ -87,6 +94,11 @@ class ArticleAR extends ActiveRecordAbstract
      * @var int|null
      */
     public $created_by;
+
+    /**
+     * @var string|null
+     */
+    public $page_name;
 
     /**
      * @var float

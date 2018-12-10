@@ -1,7 +1,7 @@
 $( function() {
 
     event_emitter = $(document);
-    var global_alerts_holder = $('#global_alerts_holder');
+    var global_alerts_holder = $('#global-alerts-holder');
     var global_templates_holder = $('#global-templates-holder');
     var global_alert_danger = global_templates_holder.find('div[name="global_template_alert_danger"]');
     var global_alert_warning = global_templates_holder.find('div[name="global_template_alert_warning"]');

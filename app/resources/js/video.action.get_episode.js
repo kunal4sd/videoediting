@@ -1,11 +1,14 @@
 $( function() {
 
+    var episodes_holder = $('#video-episodes-holder');
+
+    if (episodes_holder.length === 0) return false;
+
     var active_episodes = 0;
     var episodes_counter = 0;
     var episodes_per_row = 4;
     var player = videojs.getPlayer('video-preview');
-    var episodes_holder = $('#episodes-holder');
-    var form_get_episode = $('#get_episode');
+    var form_get_episode = $('#video-get-episode');
     var button = form_get_episode.find('button[type="button"]');
     var is_loading = false;
     var add_episode = function(src, poster) {
@@ -28,7 +31,7 @@ $( function() {
             active_episodes--;
 
             if (active_episodes === 0) {
-                $('#episodes-to-movie').hide();
+                $('#video-episodes-to-movie').hide();
             }
             video_player.dispose();
         });
@@ -43,7 +46,7 @@ $( function() {
         active_episodes++;
 
         if (active_episodes) {
-            $('#episodes-to-movie').show();
+            $('#video-episodes-to-movie').show();
         }
     }
     var range_is_valid = function(from, to) {

@@ -3,6 +3,7 @@
 namespace App\Modules\Abstracts;
 
 use App\Libs\Json;
+use App\Libs\Enums\StatusClasses;
 use Pimple\Container;
 
 abstract class ModuleAbstract
@@ -45,5 +46,12 @@ abstract class ModuleAbstract
         );
 
         return Json::build($response, $result, 400);
+    }
+
+    protected function get_article_status_class($status)
+    {
+        $status_const = sprintf('STATUS_%s', strtoupper($status));
+
+        return constant(sprintf('\App\Libs\Enums\StatusClasses::%s', $status_const));
     }
 }

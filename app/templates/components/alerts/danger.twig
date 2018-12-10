@@ -1,4 +1,4 @@
-<div name="global_template_alert_danger" class="row alert alert-danger mb-0">
+<div name="{% if not content %}global_template_alert_danger{% endif %}" class="row alert alert-danger mb-0">
     <div name="content" class="col-md-11 mx-auto">
         {% if content %}
             {{ content }}

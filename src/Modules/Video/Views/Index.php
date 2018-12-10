@@ -26,13 +26,13 @@ class Index extends ModuleAbstract
             if (isset($args['activity_id'])) {
                 $user_activity_ar = $this->entity_user_activity->get_by_id_and_user(
                     $args['activity_id'],
-                    $_SESSION['user']->id
+                    $this->session_user->get_user()->id
                 );
             }
             else {
                 $user_activity_ar = $this->entity_user_activity->get_last_x_by_user_and_type(
                     1,
-                    $_SESSION['user']->id,
+                    $this->session_user->get_user()->id,
                     UserActivity::PLAYLIST
                 );
             }
@@ -58,7 +58,7 @@ class Index extends ModuleAbstract
                     $this->entity_article->get_for_interval_by_user_and_publication(
                         $data['start_date'],
                         $data['end_date'],
-                        $_SESSION['user']->id,
+                        $this->session_user->get_user()->id,
                         $data['publication_id'],
                         true
                     )
@@ -71,6 +71,7 @@ class Index extends ModuleAbstract
 
         return $this->view->render($response, 'video/index.twig', [
             'page_title' => 'Video Editing',
+            'page_name' => 'editing',
             'publications' => $publications,
             'form' => $form,
             'playlists' => $playlists,

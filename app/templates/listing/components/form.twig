@@ -4,13 +4,13 @@
             Search
         </div>
         <div class="card-body flex-fill">
-            <form id="get_list" action="{{ base_url() }}{{ path_for('video.listing.action.get_list') }}" method="post" novalidate>
+            <form id="listing-get-list" action="{{ base_url() }}{{ path_for('video.action.get_list') }}" method="post" novalidate>
                 {{ csrf.fields | raw }}
                 <div class="row form-group">
                     <div class="col-xl-4 mb-4">
                         <label for="publication">Publications</label>
-                        <input type="hidden" name="publication" id="publication_input">
-                        <select name="publication_select[]" id="publication_select" multiple="multiple" class="form-control">
+                        <input type="hidden" name="publication" id="listing-publication-input">
+                        <select name="publication_select[]" id="listing-publication-select" multiple="multiple" class="form-control">
                             {% for publication in publications %}
                                 <option
                                     value="{{ publication.id }}"
@@ -21,13 +21,13 @@
                     </div>
                     <div class="col-xl-4 mb-4">
                         <label for="status">Status</label>
-                        <input type="hidden" name="status" id="status_input">
-                        <select name="status_select[]" id="status_select" multiple="multiple" class="form-control">
+                        <input type="hidden" name="status" id="listing-status-input">
+                        <select name="status_select[]" id="listing-status-select" multiple="multiple" class="form-control">
                             {% for status in statuses %}
                                 <option
-                                    value="{{ status }}"
-                                    {% if form.status == status %} selected {% endif %}
-                                >{{ status }}</option>
+                                    value="{{ status.name }}"
+                                    {% if form.status == status.name %} selected {% endif %}
+                                >{{ status.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -36,7 +36,7 @@
                         <input
                             type="text"
                             name="date_range"
-                            id="date_range"
+                            id="listing-data-range"
                             class="form-control"
                             value="{{ form.date_range ? form.date_range : '' }}"
                             autocomplete="off"
@@ -50,8 +50,6 @@
                     </div>
                 </div>
             </form>
-            <div id="lsit_holder" class="flex-fill">
-            </div>
         </div>
     </div>
 </div>

@@ -1,9 +1,17 @@
-<li name="global_template_list_movie" class="list-group-item list-group-item-action mx-0 px-0">
+<li name="{% if not movie %}global_template_list_movie{% endif %}" class="list-group-item list-group-item-action mx-0 px-0">
     <div class="row mx-0 px-0">
         {{ csrf.fields | raw }}
         <span class="d-none" name="text">{% if movie.text %}{{ movie.text }}{% endif %}</span>
-        <div class="col-md-1 text-center">
-            <span class="badge badge-success" name="status">{% if movie.status %}{{ movie.status }}{% endif %}</span>
+        <span class="d-none" name="status">{% if movie.status %}{{ movie.status }}{% endif %}</span>
+        <div class="col-md-1 text-center" name="status_badge">
+            {% if movie is defined and movie.status_class %}
+                {% set badge = {
+                    "text": movie.status,
+                    "name": movie.id
+                } %}
+                {% set component = "components/badges/#{movie.status_class}.twig" %}
+                {% include component %}
+            {% endif %}
         </div>
         <div class="col-md-4 text-left" name="headline">{% if movie.headline %}{{ movie.headline }}{% endif %}</div>
         <div class="col-md-1 text-center" name="id">{% if movie.id %}{{ movie.id }}{% endif %}</div>

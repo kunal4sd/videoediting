@@ -28,7 +28,7 @@ class GetMovieList extends ModuleAbstract
             $articles_ar = $this->entity_article->get_for_interval_by_user_and_publication(
                 $request->getParam('start_date'),
                 $request->getParam('end_date'),
-                $_SESSION['user']->id,
+                $this->session_user->get_user()->id,
                 $request->getParam('publication')
             );
 

@@ -1,7 +1,7 @@
 $( function() {
 
     var event_emitter = $(document);
-    var form = $("#authenticate");
+    var form = $('#authenticate');
     var button = form.find('button[type="button"]');
     var is_loading = false;
 

@@ -86,7 +86,7 @@ class GetMovie extends ModuleAbstract
                     'type_id' => $type_id,
                     'modified' => $db_datetime,
                     'created' => $db_datetime,
-                    'created_by' => $_SESSION['user']->id,
+                    'created_by' => $this->session_user->get_user()->id,
                     'duration' => $duration,
                     'broadcast_time' => $this->playlist_ar->build_broadcast_time(),
                     'file_path' => $file_path,
@@ -97,7 +97,7 @@ class GetMovie extends ModuleAbstract
 
             $this->entity_user_activity->save(new UserActivityAR(
                 [
-                    'user_id' => $_SESSION['user']->id,
+                    'user_id' => $this->session_user->get_user()->id,
                     'publication_id' => $publication_id,
                     'article_id' => $article_ar->id,
                     'issue_date' => $this->playlist_ar->build_issue_date(),

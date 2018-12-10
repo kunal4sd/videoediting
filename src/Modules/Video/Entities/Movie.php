@@ -2,6 +2,7 @@
 
 namespace App\Modules\Video\Entities;
 
+use App\Libs\Enums\StatusClasses;
 use App\Modules\Abstracts\ModuleAbstract;
 use App\Modules\Video\Entities\ActiveRecords\PlaylistAR;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
@@ -57,6 +58,7 @@ class Movie extends ModuleAbstract
             'headline' => $article_ar->headline,
             'text' => $article_ar->text,
             'status' => $article_ar->status,
+            'status_class' => $this->get_article_status_class($article_ar->status),
             'keywords' => implode(', ', $keywords_en),
             'publication' => $publication_ar->name_en
         ];

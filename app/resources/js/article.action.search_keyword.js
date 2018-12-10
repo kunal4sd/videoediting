@@ -1,8 +1,8 @@
 $( function() {
 
-    var form_edit_article = $('#edit_article');
+    var form_edit_article = $('#article-edit-article');
     var keywords_input = form_edit_article.find('input[name="keywords"]');
-    var keywords_select = $('#keywords_selector');
+    var keywords_select = $('#article-keywords-selector');
     var url = keywords_select.attr('data-action');
     var url_initial = keywords_select.attr('data-initial-action');
     var csrf_name = form_edit_article.find('input[name="csrf_name"]').val();

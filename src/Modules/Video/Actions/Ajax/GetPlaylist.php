@@ -29,7 +29,7 @@ class GetPlaylist extends ModuleAbstract
 
             $this->entity_user_activity->save(new UserActivityAR(
                 [
-                    'user_id' => $_SESSION['user']->id,
+                    'user_id' => $this->session_user->get_user()->id,
                     'publication_id' => $request->getParam('publication'),
                     'article_id' => 0,
                     'issue_date' => date("Y-m-d", strtotime($request->getParam('start_date'))),

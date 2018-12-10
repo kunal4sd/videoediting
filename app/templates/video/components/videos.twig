@@ -4,7 +4,7 @@
             Select Range
         </div>
         <div class="card-body flex-fill">
-            <form id="get_playlist" action="{{ base_url() }}{{ path_for('video.action.get_playlist') }}" method="post" novalidate>
+            <form id="video-get-playlist" action="{{ base_url() }}{{ path_for('video.action.get_playlist') }}" method="post" novalidate>
                 {{ csrf.fields | raw }}
                 <input type="hidden" name="force" value="true">
                 <div class="row form-group">
@@ -60,8 +60,7 @@
                     </div>
                 </div>
             </form>
-            <div id="playlists_holder" class="flex-fill">
-
+            <div id="video-playlists-holder" class="flex-fill">
                 {% for playlist in playlists %}
                     {% include 'components/alerts/playlist.twig' %}
                 {% endfor %}

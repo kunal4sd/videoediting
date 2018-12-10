@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Video\Middleware\Standardization;
+namespace App\Modules\Core\Middleware\Standardization;
 
 use App\Libs\Json;
 use App\Modules\Abstracts\ModuleAbstract;

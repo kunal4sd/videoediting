@@ -270,6 +270,11 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
         return sprintf('%s/%s/%s.%s', PUBLIC_PATH, Videos::MOVIE_PATH, $name, Videos::MOVIE_FORMAT);
     }
 
+    public static function build_movie_path_live($name)
+    {
+        return sprintf('%s/%s/%s.%s', PUBLIC_PATH, Videos::MOVIE_PATH_LIVE, $name, Videos::MOVIE_FORMAT);
+    }
+
     public static function build_playlist_path($name)
     {
         return sprintf('%s/%s/%s.%s', PUBLIC_PATH, Videos::PLAYLIST_PATH, $name, Videos::PLAYLIST_FORMAT);

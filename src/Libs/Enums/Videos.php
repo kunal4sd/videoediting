@@ -10,6 +10,7 @@ class Videos
     const PLAYLIST_PATH = 'tmp/playlist';
     const POSTER_PATH = 'tmp/poster';
     const MOVIE_PATH = 'userfiles/output/testOutput';
+    const MOVIE_PATH_LIVE = 'userfiles/output/liveVideos';
     const PLAYLIST_FORMAT = 'm3u8';
     const POSTER_FORMAT = 'jpg';
     const MOVIE_FORMAT = 'mp4';

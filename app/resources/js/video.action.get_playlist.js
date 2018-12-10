@@ -1,7 +1,10 @@
 $( function() {
 
-    var form = $("#get_playlist");
-    var playlists_holder = $("#playlists_holder");
+    var form = $('#video-get-playlist');
+
+    if (form.length === 0) return false;
+
+    var playlists_holder = $('#video-playlists-holder');
     var global_templates_holder = $('#global-templates-holder');
     var global_alert_playlist = global_templates_holder.find('div[name="global_template_alert_playlist"]');
     var button = form.find('button[type="button"]');
@@ -59,6 +62,7 @@ $( function() {
                         && result.responseJSON.result.playlists !== undefined
                     ) {
                         add_playlists(result.responseJSON.result.playlists);
+                        global_functions.reset_player();
                         global_functions.clear_episodes();
                     }
                 }
