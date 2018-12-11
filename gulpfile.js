@@ -2,7 +2,7 @@ var gulp = require('gulp');
 var toolbox = require('gulp-toolbox');
 
 var config = {
-    production: false,
+    production: true,
     assets: {
         enabled: true,
         origin: 'app/resources',
