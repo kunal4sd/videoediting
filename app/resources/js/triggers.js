@@ -7,7 +7,10 @@ $( function() {
     var global_alert_warning = global_templates_holder.find('div[name="global_template_alert_warning"]');
     var video_preview = videojs.getPlayer('video-preview');
 
-    event_emitter.on('show_global_errors', function(e, errors, expire = true) {
+    event_emitter.on('show_global_errors', function(e, errors, expire) {
+
+        if (expire === undefined) expire = true;
+
         $.each(errors, function(i, error) {
             var alert = global_functions.launch_template(
                 global_functions.build_template(global_alert_danger, {content: error}),
