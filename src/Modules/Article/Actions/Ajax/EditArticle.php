@@ -32,7 +32,7 @@ class EditArticle extends ModuleAbstract
                 $this->session_user->get_user()->id
             );
 
-            if (!is_null($article_ar->id)) {
+            if (!is_null($article_ar->id) && $article_ar->status !== Status::LIVE) {
 
                 // save article
                 $article_ar->text = $request->getParam('text');
@@ -172,7 +172,7 @@ class EditArticle extends ModuleAbstract
 
                 }
             }
-            else {
+            elseif(is_null($article_ar->id)) {
                 throw new Exception(
                     sprintf(
                         'No article found with the provided id #%s for user %s',
