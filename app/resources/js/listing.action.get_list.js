@@ -20,6 +20,7 @@ $( function() {
     var table_cols_index = {};
     var table_cols = [
         { name: 'status' },
+        { name: 'keywords' },
         { name: 'status_badge' },
         { name: 'headline' },
         { name: 'id' },
@@ -40,6 +41,11 @@ $( function() {
         return table.DataTable({
             columns: table_cols,
             columnDefs: [
+                {
+                    "targets": [ table_cols_index.keywords ],
+                    "visible": false,
+                    "searchable": true
+                },
                 {
                     "targets": [ table_cols_index.text ],
                     "visible": false,

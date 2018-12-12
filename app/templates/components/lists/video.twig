@@ -1,5 +1,6 @@
 <li name="{% if not video %}global_template_list_video{% endif %}">
     <ul class="text-center" name="status">{% if video.status %}{{ video.status }}{% endif %}</ul>
+    <ul class="text-center" name="keywords">{% if video.keywords %}{{ video.keywords }}{% endif %}</ul>
     <ul class="text-center" name="status_badge">
         {% if video is defined and video.status_class %}
             {% set badge = {
@@ -10,7 +11,7 @@
             {% include component %}
         {% endif %}
     </ul>
-    <ul class="text-left" name="headline" data-toggle="tooltip" data-placement="top" title="{% if video.keywords %}{{ video.keywords }}{% endif %}">{% if video.headline %}{{ video.headline }}{% endif %}</ul>
+    <ul class="text-left" name="headline" data-update-title="keywords_name_en" data-toggle="tooltip" data-placement="top" title="{% if video.keywords_name_en %}{{ video.keywords_name_en }}{% endif %}">{% if video.headline %}{{ video.headline }}{% endif %}</ul>
     <ul class="text-center" name="id">{% if video.id %}{{ video.id }}{% endif %}</ul>
     <ul class="text-center" name="issue_datetime">{% if video.issue_datetime %}{{ video.issue_datetime }}{% endif %}</ul>
     <ul class="text-center" name="created">{% if video.created %}{{ video.created }}{% endif %}</ul>

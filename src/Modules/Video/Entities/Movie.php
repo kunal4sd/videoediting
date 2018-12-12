@@ -38,9 +38,17 @@ class Movie extends ModuleAbstract
     {
 
         $result = [];
+        $keywords_names = [];
+        $keywords_ids = [];
 
         $movie_path = PlaylistAR::build_movie_path($article_ar->id);
-        $keywords_en = $this->entity_keyword->get_keywords_name_en_by_article_id($article_ar->id);
+        $keywords_ar = $this->entity_keyword->get_by_article_id($article_ar->id);
+
+        foreach($keywords_ar as $keyword_ar) {
+            $keywords_names[] = $keyword_ar->name_en;
+            $keywords_ids[] = $keyword_ar->id;
+        }
+
         $publication_ar = $this->entity_publication->get_by_id($article_ar->publication_id);
 
         $result = [
@@ -59,7 +67,8 @@ class Movie extends ModuleAbstract
             'text' => $article_ar->text,
             'status' => $article_ar->status,
             'status_class' => $this->get_article_status_class($article_ar->status),
-            'keywords' => implode(', ', $keywords_en),
+            'keywords_name_en' => implode(', ', $keywords_names),
+            'keywords' => implode(', ', $keywords_ids),
             'publication' => $publication_ar->name_en
         ];
 

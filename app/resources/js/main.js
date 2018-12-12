@@ -26,7 +26,7 @@ var global_functions = {
         $.each(data, function(field, value) {
 
             switch(field) {
-                case 'keywords':
+                case 'keywords_name_en':
                     var target = new_element.find('[data-toggle]');
                     if (target !== undefined && target.attr('data-toggle') === 'tooltip') {
                         target.attr( 'title', value.length ? value : 'No Keywords' );
