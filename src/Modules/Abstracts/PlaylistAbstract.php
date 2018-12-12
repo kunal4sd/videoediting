@@ -194,6 +194,18 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
 
         try {
 
+            $dirname = dirname($path);
+
+            if (!is_dir($dirname)) {
+                if (!mkdir($dirname, 0777, true)) {
+                    throw new Exception('Could not create the poster path', 500);
+                }
+            }
+
+            if (!is_writable($dirname)) {
+                throw new Exception('Poster directory is not writable', 500);
+            }
+
             $cmd = sprintf(
                 'ffmpeg -i "%s" -ss 0.00 -vf scale=400:300:force_original_aspect_ratio=increase -vframes 1 -y "%s" 2>&1',
                 $this->get_first_file(),
