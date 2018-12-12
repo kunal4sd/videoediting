@@ -101,7 +101,9 @@ $( function() {
 
             input.val('');
             input.attr('value', '');
+            input.removeAttr('disabled');
         });
+        button_edit.removeAttr('disabled');
     };
 
     event_emitter.on('movie.get.list', function(e, data) {
