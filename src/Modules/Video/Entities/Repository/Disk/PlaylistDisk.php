@@ -46,16 +46,12 @@ class PlaylistDisk extends ModuleAbstract
         }
 
         $playlist_ar = new PlaylistAR($this->container);
-
         foreach($files as &$file) {
-            $file = preg_replace('/[^[:print:]]/', '', $file);
-            $file = preg_replace(
-                '/\/storage\/recordings/',
-                sprintf(
-                    '%s://%s/videos',
-                    SCHEME,
-                    HOST
-                ),
+            $file = str_replace(PUBLIC_PATH, '', $file);
+            $file = sprintf(
+                '%s://%s/%s',
+                SCHEME,
+                HOST,
                 $file
             );
         }

@@ -4,7 +4,7 @@ namespace App\Libs\Enums;
 
 class Videos
 {
-    const RAW_VIDEO_PATH = '/storage/recordings';
+    const RAW_VIDEO_PATH = 'videos';
     const RAW_VIDEO_FORMAT = 'ts';
     const RAW_VIDEO_LENGTH = 5;
     const PLAYLIST_PATH = 'tmp/playlist';
