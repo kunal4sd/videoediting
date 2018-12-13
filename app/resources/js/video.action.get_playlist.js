@@ -20,10 +20,23 @@ $( function() {
         activate_playlists();
     };
     var activate_playlists = function() {
-        playlists_holder.find('.list-group-item').unbind().on('click', function() {
+
+        var playlists = playlists_holder.find('.list-group-item');
+
+        playlists.unbind().on('click', function() {
 
             var playlist = $(this);
             var data = playlist.data();
+
+            $.each(playlists, function(i, tmp_playlist) {
+
+                tmp_playlist = $(tmp_playlist);
+
+                tmp_playlist.removeClass('list-group-item-warning');
+                tmp_playlist.addClass('list-group-item-success');
+            });
+            playlist.addClass('list-group-item-warning');
+            playlist.removeClass('list-group-item-success');
 
             global_functions.set_playlist_to_videojs(data.url);
             global_functions.set_poster_to_videojs(data.poster);
