@@ -163,7 +163,7 @@ var global_functions = {
         playlists_holder.height(418);
 
         if (height === undefined) {
-            height = playlists_holder.parent().height() - form.height();
+            var height = playlists_holder.parent().height() - form.height();
         }
         playlists_holder.height(height);
     },
@@ -286,4 +286,18 @@ var global_functions = {
 
         return badge;
     },
+    unselect_playlists: function(playlists) {
+
+        if (playlists === undefined) {
+            var playlists = $('#video-playlists-holder').find('.list-group-item');
+        }
+
+        $.each(playlists, function(i, playlist) {
+
+            playlist = $(playlist);
+
+            playlist.removeClass('list-group-item-warning');
+            playlist.addClass('list-group-item-success');
+        });
+    }
 }

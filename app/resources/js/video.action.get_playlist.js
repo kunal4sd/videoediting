@@ -29,13 +29,7 @@ $( function() {
             var playlist = $(this);
             var data = playlist.data();
 
-            $.each(playlists, function(i, tmp_playlist) {
-
-                tmp_playlist = $(tmp_playlist);
-
-                tmp_playlist.removeClass('list-group-item-warning');
-                tmp_playlist.addClass('list-group-item-success');
-            });
+            global_functions.unselect_playlists(playlists);
             playlist.addClass('list-group-item-warning');
             playlist.removeClass('list-group-item-success');
 

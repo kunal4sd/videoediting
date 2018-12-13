@@ -34,6 +34,7 @@ $( function() {
     button_clear_player.on('click', function(e) {
         e.preventDefault();
         global_functions.reset_player();
+        global_functions.unselect_playlists();
     });
 
 });
