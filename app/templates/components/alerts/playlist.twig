@@ -9,8 +9,8 @@
             <img name="poster" src="{{ playlist.poster }}" class="rounded img-fluid">
         </div>
         <div class="col-sm-9 d-fill m-auto row">
-            <div class="text-left" name="start_day"> {% if playlist.start_day %}{{ playlist.start_day }}{% endif %}&nbsp;</div>
-            <div class="text-left" name="start_hour">&nbsp;{% if playlist.start_hour %}{{ playlist.start_hour }}{% endif %} </div>
+            <div class="text-left" name="start_day"> {% if playlist.start_day %}{{ playlist.start_day }}{% endif %}</div>&nbsp;&nbsp;
+            <div class="text-left" name="start_hour">{% if playlist.start_hour %}{{ playlist.start_hour }}{% endif %} </div>
             <div class="text-left">&nbsp;-&nbsp;</div>
             <div class="text-left" name="end_hour"> {% if playlist.end_hour %}{{ playlist.end_hour }}{% endif %}</div>
         </div>
