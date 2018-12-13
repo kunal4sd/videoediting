@@ -11,7 +11,6 @@ $( function() {
     var is_loading = false;
     var add_playlists = function(playlists) {
 
-        playlists_holder.html('');
         $.each(playlists, function(i, playlist) {
             global_functions.launch_template(
                 global_functions.build_template(global_alert_playlist, playlist),
@@ -19,7 +18,7 @@ $( function() {
             );
         });
         activate_playlists();
-    }
+    };
     var activate_playlists = function() {
         playlists_holder.find('.list-group-item').unbind().on('click', function() {
 
@@ -29,7 +28,17 @@ $( function() {
             global_functions.set_playlist_to_videojs(data.url);
             global_functions.set_poster_to_videojs(data.poster);
         });
-    }
+    };
+    var clear_movies = function() {
+        $('#video-movies-holder').html('');
+    };
+    var clear_episodes = function() {
+        $('#video-episodes-holder').html('');
+        $('#video-episodes-to-movie').hide();
+    };
+    var clear_playlists = function() {
+        playlists_holder.html('');
+    };
 
     button.on('click', function(e) {
         e.preventDefault();
@@ -39,6 +48,10 @@ $( function() {
     form.on("submit", function(e) {
 
         e.preventDefault();
+        clear_movies();
+        clear_episodes();
+        clear_playlists();
+        global_functions.reset_player();
 
         if (!is_loading) {
 
@@ -62,8 +75,6 @@ $( function() {
                         && result.responseJSON.result.playlists !== undefined
                     ) {
                         add_playlists(result.responseJSON.result.playlists);
-                        global_functions.reset_player();
-                        global_functions.clear_episodes();
                     }
                 }
             });

@@ -149,10 +149,6 @@ var global_functions = {
         player.src_(false);
         $('#video-video-to-episode').hide();
     },
-    clear_episodes: function() {
-        $('#video-episodes-holder').html('');
-        $('#video-episodes-to-movie').hide();
-    },
     register_actions: function(list_holder) {
         list_holder.find('button[name="play-btn"]').unbind().on('click', function(e) {
 
