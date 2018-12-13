@@ -40,10 +40,6 @@ $( function() {
     var clear_movies = function() {
         $('#video-movies-holder').html('');
     };
-    var clear_episodes = function() {
-        $('#video-episodes-holder').html('');
-        $('#video-episodes-to-movie').hide();
-    };
     var clear_playlists = function() {
         playlists_holder.html('');
     };
@@ -57,7 +53,7 @@ $( function() {
 
         e.preventDefault();
         clear_movies();
-        clear_episodes();
+        global_functions.clear_episodes();
         clear_playlists();
         global_functions.reset_player();
 

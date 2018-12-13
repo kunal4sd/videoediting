@@ -299,5 +299,10 @@ var global_functions = {
             playlist.removeClass('list-group-item-warning');
             playlist.addClass('list-group-item-success');
         });
+    },
+    clear_episodes: function() {
+        $('#video-episodes-holder').html('');
+        $('#video-episodes-to-movie').hide();
+        global_functions.refresh_playlist_holder_height();
     }
 }

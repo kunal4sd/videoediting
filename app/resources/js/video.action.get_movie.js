@@ -243,6 +243,7 @@ $( function() {
                         if (result.responseJSON !== undefined && result.responseJSON.success) {
                             add_movie(result.responseJSON.result);
                             modal_new_movie.modal('hide');
+                            global_functions.clear_episodes();
                         }
                     }
                 });
