@@ -18,6 +18,7 @@ $( function() {
             );
         });
         activate_playlists();
+        global_functions.refresh_playlist_holder_height();
     };
     var activate_playlists = function() {
 

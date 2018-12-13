@@ -47,7 +47,14 @@ var global_functions = {
                         new_element.find('[name="status"]').html(value);
                     }
                     break;
+                case 'poster':
+                    var target = new_element.find('img[name="poster"]');
+                    if (target !== undefined) {
+                        target.attr( 'src', value );
 
+                        return true;
+                    }
+                    break;
             }
 
             // find clone's field holder and add the value to it
@@ -148,6 +155,17 @@ var global_functions = {
         player.reset();
         player.src_(false);
         $('#video-video-to-episode').hide();
+    },
+    refresh_playlist_holder_height: function(height) {
+
+        var playlists_holder = $('#video-playlists-holder');
+        var form = $('#video-get-playlist');
+        playlists_holder.height(418);
+
+        if (height === undefined) {
+            height = playlists_holder.parent().height() - form.height();
+        }
+        playlists_holder.height(height);
     },
     register_actions: function(list_holder) {
         list_holder.find('button[name="play-btn"]').unbind().on('click', function(e) {

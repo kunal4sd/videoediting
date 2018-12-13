@@ -35,3 +35,13 @@
 .z-index-above {
     z-index: 9999;
 }
+
+#video-playlists-holder {
+    height: 418px;
+    overflow: auto;
+}
+
+#video-episodes-holder {
+    max-height: 528px;
+    overflow: auto;
+}

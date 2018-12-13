@@ -39,9 +39,9 @@ class Playlist extends ModuleAbstract
                 'url' => $playlist_ar->path_to_url($playlist_ar->name),
                 'start_date' => date("Y-m-d H:i:s", $start_datetime),
                 'end_date' => date("Y-m-d H:i:s", $end_datetime),
-                'start_day' => date("l, M jS", $start_datetime),
+                'start_day' => date("l, Y-m-d", $start_datetime),
                 'start_hour' => date("H:i:s", $start_datetime),
-                'end_day' => date("l, M jS", $end_datetime),
+                'end_day' => date("l, Y-m-d", $end_datetime),
                 'end_hour' => date("H:i:s", $end_datetime),
                 'poster' => $playlist_ar->path_to_url($poster_path)
             ];

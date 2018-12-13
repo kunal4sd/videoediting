@@ -13,12 +13,13 @@
 </div>
 
 <div class="row">
-    {% include 'video/components/preview.twig' %}
-    {% include 'video/components/videos.twig' %}
-</div>
-
-<div class="row">
-    {% include 'video/components/episodes.twig' %}
+    <div class="row d-flex col-xl-8">
+        {% include 'video/components/preview.twig' %}
+        {% include 'video/components/episodes.twig' %}
+    </div>
+    <div class="row d-flex col-xl-4">
+        {% include 'video/components/videos.twig' %}
+    </div>
 </div>
 
 <div class="row">

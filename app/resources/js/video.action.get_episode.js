@@ -20,7 +20,7 @@ $( function() {
             + '<video id="' + id + '" class="col-sm-12 video-js vjs-big-play-centered vjs-default-skin mr-2 mt-2" controls poster="/images/no_video.png" preload="auto" data-setup=\'{"inactivityTimeout":0,"width":426,"height":225,"playbackRates":[0.5,1,1.25,1.5,2], "seekButtons":{"forward": 5,"back": 5}}\'></video>'
             + '</div>'
             + '<div class="row mx-auto">'
-            + '<button id="remove-' + id + '" class="col-sm-12 btn btn-danger btn-md oi oi-trash"></button>'
+            + '<button id="remove-' + id + '" class="col-sm-12 btn btn-danger btn-md oi oi-trash" style="top: 0px;"></button>'
             + '</div>'
             + '</div>'
         );
@@ -34,6 +34,7 @@ $( function() {
                 $('#video-episodes-to-movie').hide();
             }
             video_player.dispose();
+            global_functions.refresh_playlist_holder_height();
         });
 
         var video_player = videojs(id, { width: 426, height: 225, controls: true, plugins: {} });
@@ -94,6 +95,7 @@ $( function() {
                             && result.responseJSON.result.src !== undefined
                         ) {
                             add_episode(result.responseJSON.result.src, result.responseJSON.result.poster);
+                            global_functions.refresh_playlist_holder_height();
                         }
                     }
                 });
