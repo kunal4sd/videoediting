@@ -96,7 +96,6 @@ class PlaylistMasterDisk extends ModuleAbstract
                 )
             );
             $files = explode(PHP_EOL, trim($files_string));
-            array_unshift($files, $start_file);
 
             if ($sfile_mtime_day !== $efile_mtime_day) {
                 $files_string = shell_exec(
@@ -109,7 +108,10 @@ class PlaylistMasterDisk extends ModuleAbstract
                 $files = array_merge($files, explode(PHP_EOL, trim($files_string)));
             }
 
-            $files = array_unique(array_filter($files));
+            array_unshift($files, $start_file);
+            array_push($files, $end_file);
+            $files = array_filter($files);
+            $files = array_unique($files);
             sort($files);
 
             $files_count = count($files);
