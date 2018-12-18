@@ -109,6 +109,9 @@ class PlaylistMasterDisk extends ModuleAbstract
                 $files = array_merge($files, explode(PHP_EOL, trim($files_string)));
             }
 
+            $files = array_unique(array_filter($files));
+            sort($files);
+
             $files_count = count($files);
             $segment_count = intval($batch_size / Videos::RAW_VIDEO_LENGTH);
 
@@ -153,19 +156,19 @@ class PlaylistMasterDisk extends ModuleAbstract
     private function build_find_files_command($reference_file, $from, $to)
     {
 
+        $result = '';
         $sdir = explode('/', $reference_file);
         $sdir = array_splice($sdir, 0, count($sdir) - 1);
         $sdir = implode('/', $sdir) . '/';
 
-        // TODO look just in the day's directory
-        $result = sprintf(
-            'find %1$s -type f -newermt "%2$s" ! -newermt "%3$s" | sort -n | cut -f2',
-            $sdir,
-            $from,
-            $to
-        );
-
-        $this->logger->write(new Exception(sprintf('from %s to %s ::: %s', $from, $to, $result), 200));
+        if (file_exists($sdir)) {
+            $result = sprintf(
+                'find %1$s -type f -newermt "%2$s" ! -newermt "%3$s" | sort -n | cut -f2',
+                $sdir,
+                $from,
+                $to
+            );
+        }
 
         return $result;
     }
@@ -251,7 +254,6 @@ class PlaylistMasterDisk extends ModuleAbstract
                     )
                 );
                 $filename = trim($filename);
-                $this->logger->write(new Exception(sprintf('%d - %s --- %s', $i, $period, $filename), 200));
 
                 if (file_exists($filename)) {
                     return $filename;
