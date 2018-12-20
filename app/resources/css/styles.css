@@ -149,3 +149,17 @@
     top: 2em !important;
     left: 10.5em !important;
 }
+
+#video-preview .vjs-rangeslider-handle.vjs-selectionbar-left-RS .vjs-selectionbar-arrow-RS {
+    border-left: 3em solid transparent !important;
+    border-right: 1em solid transparent !important;
+    border-top: 2em solid #FFF273 !important;
+    margin-left: -3em !important;
+}
+
+#video-preview .vjs-rangeslider-handle.vjs-selectionbar-right-RS .vjs-selectionbar-arrow-RS {
+    border-left: 1em solid transparent !important;
+    border-right: 3em solid transparent !important;
+    border-top: 2em solid #FFF273 !important;
+    margin-left: -1em !important;
+}
