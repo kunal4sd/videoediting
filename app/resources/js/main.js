@@ -2,6 +2,16 @@ $( function() {
     $.ajaxSetup({
         data: {
             ajax: true
+        },
+        global: true
+    });
+    $( document ).ajaxError(function(event, jqxhr, settings, thrownError) {
+
+        var data = jqxhr.responseJSON;
+
+        if (data && data.message && data.message.csrf) {
+            console.log('triggered');
+            global_functions.launch_modal_reload();
         }
     });
 });
@@ -304,5 +314,15 @@ var global_functions = {
         $('#video-episodes-holder').html('');
         $('#video-episodes-to-movie').hide();
         global_functions.refresh_playlist_holder_height();
+    },
+    launch_modal_reload: function() {
+
+        console.log('modal:');
+        var modal = $('#modal-page-reload');
+        console.log(modal);
+        modal.modal({backdrop: 'static', keyboard: false});
+        modal.find('button').off().on('click', function() {
+            location.reload();
+        });
     }
 }

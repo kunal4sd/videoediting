@@ -63,7 +63,7 @@ class CoreServiceProvider implements ServiceProviderInterface
             $guard = new Guard();
             $guard->setPersistentTokenMode(true);
             $guard->setFailureCallable(function ($request, $response, $next) use ($container) {
-                return Json::build($response, ['message' => 'CSRF check failed'], 400);
+                return Json::build($response, [ 'csrf' => 'CSRF check failed' ], 400);
             });
 
             return $guard;
