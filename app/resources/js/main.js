@@ -10,7 +10,6 @@ $( function() {
         var data = jqxhr.responseJSON;
 
         if (data && data.message && data.message.csrf) {
-            console.log('triggered');
             global_functions.launch_modal_reload();
         }
     });
@@ -317,9 +316,8 @@ var global_functions = {
     },
     launch_modal_reload: function() {
 
-        console.log('modal:');
         var modal = $('#modal-page-reload');
-        console.log(modal);
+
         modal.modal({backdrop: 'static', keyboard: false});
         modal.find('button').off().on('click', function() {
             location.reload();
