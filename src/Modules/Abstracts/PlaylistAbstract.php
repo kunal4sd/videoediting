@@ -187,10 +187,11 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
         );
     }
 
-    public function build_poster($path)
+    public function build_poster($name)
     {
 
-        if ( file_exists($path) ) return $this;
+        $path = self::build_poster_path($name);
+        if (file_exists($path)) return $this;
 
         try {
 
@@ -211,20 +212,19 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
                 $this->get_first_file(),
                 $path
             );
-            $output = shell_exec($cmd);
+            shell_exec($cmd);
 
-            if( !file_exists( $path ) ) {
-                throw new Exception(
-                    sprintf(
-                        "Failed creating poster image for playlist with command `%s` and output `%s`",
-                        $cmd,
-                        $output
-                    ),
-                    500
-                );
+            if (file_exists($path)) {
+                chmod( $path, 0777 );
+                // throw new Exception(
+                //     sprintf(
+                //         "Failed creating poster image for playlist with command `%s` and output `%s`",
+                //         $cmd,
+                //         $output
+                //     ),
+                //     500
+                // );
             }
-
-            chmod( $path, 0777 );
         }
         catch(Exception $e) {
             throw $e;
@@ -253,28 +253,37 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
 
     public static function path_to_url($file_path)
     {
-        return str_replace(
-            PUBLIC_PATH,
-            sprintf(
-                '%s://%s',
-                SCHEME,
-                HOST
-            ),
-            $file_path
-        );
+        if (strlen($file_path)) {
+            return str_replace(
+                PUBLIC_PATH,
+                sprintf(
+                    '%s://%s',
+                    SCHEME,
+                    HOST
+                ),
+                $file_path
+            );
+        }
+
+        return false;
     }
 
     public static function url_to_path($file_url)
     {
-        return str_replace(
-            sprintf(
-                '%s://%s',
-                SCHEME,
-                HOST
-            ),
-            PUBLIC_PATH,
-            $file_url
-        );
+
+        if (strlen($file_url)) {
+            return str_replace(
+                sprintf(
+                    '%s://%s',
+                    SCHEME,
+                    HOST
+                ),
+                PUBLIC_PATH,
+                $file_url
+            );
+        }
+
+        return false;
     }
 
     public static function build_movie_path($name)
@@ -295,6 +304,16 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
     public static function build_poster_path($name)
     {
         return sprintf('%s/%s/%s.%s', PUBLIC_PATH, Videos::POSTER_PATH, $name, Videos::POSTER_FORMAT);
+    }
+
+    public static function get_poster_path($name)
+    {
+        $path = self::build_poster_path($name);
+        if (!file_exists($path)) {
+            return false;
+        }
+
+        return $path;
     }
 
     public static function build_hash_from_path($path)

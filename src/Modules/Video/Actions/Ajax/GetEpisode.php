@@ -46,8 +46,7 @@ class GetEpisode extends ModuleAbstract
                     false
                 );
 
-                $poster_path = $new_playlist_ar->build_poster_path($new_hash);
-                $new_playlist_ar->build_poster($poster_path);
+                $poster_path = $new_playlist_ar->build_poster($new_hash)->get_poster_path($new_hash);
 
                 $result['src'] = $new_playlist_ar->path_to_url($new_playlist_ar->name);
                 $result['poster'] = $new_playlist_ar->path_to_url($poster_path);

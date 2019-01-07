@@ -32,8 +32,7 @@ class Playlist extends ModuleAbstract
             $hash = build_hash($playlist_ar->files);
             $start_datetime = strtotime($playlist_ar->build_start_datetime());
             $end_datetime = strtotime($playlist_ar->build_end_datetime());
-            $poster_path = $playlist_ar->build_poster_path($hash);
-            $playlist_ar->build_poster($poster_path);
+            $poster_path = $playlist_ar->build_poster($hash)->get_poster_path($hash);
 
             $result[] = [
                 'url' => $playlist_ar->path_to_url($playlist_ar->name),

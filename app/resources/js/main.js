@@ -59,7 +59,14 @@ var global_functions = {
                 case 'poster':
                     var target = new_element.find('img[name="poster"]');
                     if (target !== undefined) {
-                        target.attr( 'src', value );
+
+                        if (value) {
+                            target.attr( 'src', value );
+                        }
+                        else {
+                            target = new_element.find('span[name="no_poster"]');
+                        }
+                        target.removeClass('d-none');
 
                         return true;
                     }
