@@ -216,14 +216,6 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
 
             if (file_exists($path)) {
                 chmod( $path, 0777 );
-                // throw new Exception(
-                //     sprintf(
-                //         "Failed creating poster image for playlist with command `%s` and output `%s`",
-                //         $cmd,
-                //         $output
-                //     ),
-                //     500
-                // );
             }
         }
         catch(Exception $e) {

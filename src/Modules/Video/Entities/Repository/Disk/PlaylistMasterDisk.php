@@ -258,29 +258,6 @@ class PlaylistMasterDisk extends ModuleAbstract
                 $filename = trim($filename);
 
                 if (file_exists($filename)) {
-                    // $tmp = shell_exec(
-                    //     sprintf(
-                    //         "TZ=UTC date --date='%s' +'%%Y%%m%%d%%H%%M.%%S UTC'",
-                    //         date('Y-m-d H:i:s', strtotime((strlen($ago) ? '-' : '+') . $i . ' seconds', strtotime($date)))
-                    //     )
-                    // );
-                    // shell_exec(
-                    //     sprintf(
-                    //         "touch %s --no-create -t %s",
-                    //         $filename,
-                    //         $tmp
-                    //     )
-                    // );
-                    // $this->logger->write(
-                    //     new Exception(
-                    //         sprintf(
-                    //             "touch %s --no-create -t %s",
-                    //             $filename,
-                    //             $tmp
-                    //         ),
-                    //         200
-                    //     )
-                    // );
                     return $filename;
                 }
             }
