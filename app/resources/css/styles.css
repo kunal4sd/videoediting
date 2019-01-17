@@ -52,7 +52,8 @@
  */
 
 #video-preview .vjs-control-bar {
-    height: 6em !important;
+    height: auto !important;
+    display: block !important;
 }
 
 
@@ -62,18 +63,10 @@
 
 #video-preview .vjs-control {
     height: 3em !important;
+    float: left !important;
 }
 
- #video-preview .vjs-play-control {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
- }
-
  #video-preview .vjs-volume-panel {
-    position: absolute !important;
-    top: 0 !important;
-    left: 4em !important;
     width: 17em !important;
  }
 
@@ -82,37 +75,8 @@
     width: 13em !important;
  }
 
- #video-preview .vjs-current-time {
-
- }
-
- #video-preview .vjs-time-control {
-
- }
-
- #video-preview .vjs-duration {
-
- }
-
  #video-preview .vjs-progress-control {
-    position: absolute;
-    top: 0;
-    left: 22em;
-    width: 50em;
- }
-
- #video-preview .vjs-remaining-time {
-    position: absolute;
-    top: 0px;
-    left: 71em;
- }
-
- #video-preview .vjs-live-control {
-
- }
-
- #video-preview .vjs-live-control {
-
+    min-width: 53em;
  }
 
 
@@ -120,34 +84,8 @@
   * bottom row
   */
 
-#video-preview .vjs-seek-button.skip-back {
-    position: absolute !important;
-    top: 3em !important;
-    left: 0 !important;
-}
-
-#video-preview .vjs-seek-button.skip-forward {
-    position: absolute !important;
-    top: 3em !important;
-    left: 4em !important;
-}
-
-#video-preview .vjs-playback-rate {
-    position: absolute !important;
-    top: 3em !important;
-    left: 8em !important;
-}
-
-#video-preview .vjs-fullscreen-control {
-    position: absolute !important;
-    top: 3em !important;
-    left: 12em !important;
-}
-
 #video-preview .vjs-controltimepanel-RS {
-    position: absolute !important;
-    top: 2em !important;
-    left: 10.5em !important;
+    height: auto !important;
 }
 
 #video-preview .vjs-rangeslider-handle.vjs-selectionbar-left-RS .vjs-selectionbar-arrow-RS {
@@ -162,4 +100,8 @@
     border-right: 3em solid transparent !important;
     border-top: 2em solid #FFF273 !important;
     margin-left: -1em !important;
+}
+
+.vjs-default-skin .vjs-timepanel-right-RS {
+    left: 95%;
 }

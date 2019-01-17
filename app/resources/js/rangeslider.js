@@ -648,7 +648,7 @@ _vjs7 = {
                 MaxP = this.player_.isFullScreen ? 97 : 93;
                 MinP = this.player_.isFullScreen ? 0.1 : 0.5;
             } else if (TimeText.length <= 5) {//00:00
-                MaxP = this.player_.isFullScreen ? 96 : 92;
+                MaxP = this.player_.isFullScreen ? 96 : 95;
                 MinP = this.player_.isFullScreen ? 0.1 : 0.5;
             } else {//0:00:00
                 MaxP = this.player_.isFullScreen ? 95 : 91;
