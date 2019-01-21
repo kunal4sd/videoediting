@@ -13753,12 +13753,12 @@
          */
         this.trigger('slideractive');
 
-        this.on(doc, 'mousemove', this.handleMouseMove);
+        // this.on(doc, 'mousemove', this.handleMouseMove);
         this.on(doc, 'mouseup', this.handleMouseUp);
-        this.on(doc, 'touchmove', this.handleMouseMove);
-        this.on(doc, 'touchend', this.handleMouseUp);
+        // this.on(doc, 'touchmove', this.handleMouseMove);
+        // this.on(doc, 'touchend', this.handleMouseUp);
 
-        this.handleMouseMove(event);
+        // this.handleMouseMove(event);
       };
 
       /**
