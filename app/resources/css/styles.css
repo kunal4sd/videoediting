@@ -53,7 +53,14 @@
 
 #video-preview .vjs-control-bar {
     height: auto !important;
-    display: block !important;
+    display: inline-flex !important;
+    flex-wrap: wrap;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+#video-preview .vjs-time-tooltip {
+    z-index: 20 !important;
 }
 
 
@@ -62,22 +69,28 @@
  */
 
 #video-preview .vjs-control {
+    width: 3.5em;
     height: 3em !important;
     float: left !important;
 }
 
- #video-preview .vjs-volume-panel {
+#video-preview .vjs-volume-panel {
     width: 17em !important;
- }
+}
 
- #video-preview .vjs-volume-panel .vjs-volume-control,
- #video-preview .vjs-volume-panel .vjs-volume-control .vjs-volume-bar {
+#video-preview .vjs-volume-panel .vjs-volume-control,
+#video-preview .vjs-volume-panel .vjs-volume-control .vjs-volume-bar {
     width: 13em !important;
- }
+}
 
- #video-preview .vjs-progress-control {
-    min-width: 53em;
- }
+#video-preview .vjs-progress-control {
+    cursor: pointer;
+    min-width: 52em;
+}
+
+#video-preview .vjs-remaining-time {
+    width: 5em !important;
+}
 
 
  /**
@@ -86,6 +99,7 @@
 
 #video-preview .vjs-controltimepanel-RS {
     height: auto !important;
+    width: auto !important;
 }
 
 #video-preview .vjs-rangeslider-handle.vjs-selectionbar-left-RS .vjs-selectionbar-arrow-RS {
