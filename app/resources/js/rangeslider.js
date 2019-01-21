@@ -330,27 +330,21 @@ _vjs7 = {
             }
         },
         _checkControlTime: function (index, TextInput, timeOld) {
-            var h = TextInput[0],
-                    m = TextInput[1],
-                    s = TextInput[2],
-                    newHour = h.value,
+            var m = TextInput[0],
+                    s = TextInput[1],
                     newMin = m.value,
                     newSec = s.value,
                     obj, objNew, objOld;
             index = index || 0;
 
-            if (newHour != timeOld[0]) {
-                obj = h;
-                objNew = newHour;
-                objOld = timeOld[0];
-            } else if (newMin != timeOld[1]) {
+            if (newMin != timeOld[0]) {
                 obj = m;
                 objNew = newMin;
-                objOld = timeOld[1];
-            } else if (newSec != timeOld[2]) {
+                objOld = timeOld[0];
+            } else if (newSec != timeOld[1]) {
                 obj = s;
                 objNew = newSec;
-                objOld = timeOld[2];
+                objOld = timeOld[1];
             } else {
                 return false;
             }
@@ -363,17 +357,17 @@ _vjs7 = {
                 objNew = objNew === "" ? "" : objOld;
             }
 
-            newHour = newHour === "" ? 0 : newHour;
             newMin = newMin === "" ? 0 : newMin;
             newSec = newSec === "" ? 0 : newSec;
 
-            durationSel = videojs.TextTrack.prototype.parseCueTime(newHour + ":" + newMin + ":" + newSec);
+            durationSel = parseInt(newMin) * 60 + parseInt(newSec);
+
             if (durationSel > duration) {
                 obj.value = objOld;
                 obj.style.border = "1px solid red";
             } else {
                 obj.value = objNew;
-                h.style.border = m.style.border = s.style.border = "1px solid transparent";
+                obj.style.border = m.style.border = s.style.border = "1px solid transparent";
                 this.setValue(index, durationSel, false);
 
                 // Trigger slider change
@@ -381,14 +375,14 @@ _vjs7 = {
             }
             if (index === 1) {
                 var oldTimeLeft = this.ctpl.el_.children,
-                        durationSelLeft = videojs.TextTrack.prototype.parseCueTime(oldTimeLeft[0].value + ":" + oldTimeLeft[1].value + ":" + oldTimeLeft[2].value);
+                    durationSelLeft = oldTimeLeft[0].value * 60 + oldTimeLeft[1].value;
                 if (durationSel < durationSelLeft) {
                     obj.style.border = "1px solid red";
                 }
             } else {
 
                 var oldTimeRight = this.ctpr.el_.children,
-                        durationSelRight = videojs.TextTrack.prototype.parseCueTime(oldTimeRight[0].value + ":" + oldTimeRight[1].value + ":" + oldTimeRight[2].value);
+                    durationSelRight = oldTimeRight[0].value * 60 + oldTimeRight[1].value;
                 if (durationSel > durationSelRight) {
                     obj.style.border = "1px solid red";
                 }
