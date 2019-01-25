@@ -13731,6 +13731,7 @@
 
       Slider.prototype.handleMouseDown = function handleMouseDown(event) {
         var doc = this.bar.el_.ownerDocument;
+        var isArrows = event.srcElement.className === 'vjs-selectionbar-arrow-RS';
 
         if (event.type === 'mousedown') {
           event.preventDefault();
@@ -13753,12 +13754,13 @@
          */
         this.trigger('slideractive');
 
-        // this.on(doc, 'mousemove', this.handleMouseMove);
         this.on(doc, 'mouseup', this.handleMouseUp);
-        // this.on(doc, 'touchmove', this.handleMouseMove);
-        // this.on(doc, 'touchend', this.handleMouseUp);
-
-        // this.handleMouseMove(event);
+        this.on(doc, 'touchend', this.handleMouseUp);
+        if (!isArrows) {
+          this.on(doc, 'mousemove', this.handleMouseMove);
+          this.on(doc, 'touchmove', this.handleMouseMove);
+          this.handleMouseMove(event);
+        }
       };
 
       /**
