@@ -100,3 +100,43 @@ function seconds_to_time($sec)
 
     return $hours . ':' . $minutes . ':' . $seconds;
 }
+
+/**
+ * Return the objects from $source_objs that have the value of $source_field
+ * found in any of $target_objs' $target_field values
+ * @param Object[] $source_objs
+ * @param string $source_field
+ * @param Object[] $target_objs
+ * @param string $target_field
+ * @return Object[] : filtered $source_objs
+ */
+function intersect_objects_by_fields(
+    array $source_objs,
+    $source_field,
+    array $target_objs,
+    $target_field
+) {
+
+    if (
+        empty($source_objs)
+        || empty($target_objs)
+        || strlen($source_field) === 0
+        || strlen($target_field) === 0
+    ) {
+        return [];
+    }
+
+    $target_fields_values = array_map(
+        function($obj) use ($target_field) {
+            return $obj->$target_field;
+        },
+        $target_objs
+    );
+
+    return array_filter(
+        $source_objs,
+        function($obj) use ($source_field, $target_fields_values) {
+            return in_array($obj->$source_field, $target_fields_values);
+        }
+    );
+}
