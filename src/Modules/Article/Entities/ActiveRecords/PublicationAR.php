@@ -2,7 +2,6 @@
 
 namespace App\Modules\Article\Entities\ActiveRecords;
 
-use \Date;
 use App\Modules\Abstracts\ActiveRecordAbstract;
 
 class PublicationAR extends ActiveRecordAbstract

@@ -91,15 +91,11 @@ class PublicationDB extends DatabaseAbstract
     {
         $result = [];
 
-        // TODO in old platform, publication_details is taken from a different server. MUST check.
         $data = $this->db->fetch_all(
             "
                 SELECT
                     p.*
                 FROM publication AS p
-                INNER JOIN publication_details AS pd
-                    ON pd.publication_id = p.id
-                    AND pd.recording247 = 'Y'
                 WHERE 1
                     AND p.type_id IN (3,4)
                     AND p.active = 1

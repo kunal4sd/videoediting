@@ -22,7 +22,7 @@ class Publication extends ModuleAbstract
         $publication_ar = $publication->get_by_id($id);
 
         if (is_null($publication_ar->id)) {
-            throw new Exception("Publication with id #{$id} does not exist", 400);
+            throw new Exception("Publication with id #{$id} does not exist", 200);
         }
 
         return $publication_ar;
@@ -38,7 +38,23 @@ class Publication extends ModuleAbstract
         $publications = $publication_db->get_all_active_tv_and_radio();
 
         if (empty($publications)) {
-            throw new Exception("No active TV and radio channels found in database", 400);
+            throw new Exception("No active TV and radio channels found in database", 200);
+        }
+
+        return $publications;
+    }
+
+    /**
+     * @throws Exception : if no publications are found
+     * @return PublicationAR[]
+     */
+    public function get_all_active_tv_and_radio_media()
+    {
+        $publication_db = new PublicationDB($this->db[Hosts::MEDIA][Dbs::MEDIA]);
+        $publications = $publication_db->get_all_active_tv_and_radio();
+
+        if (empty($publications)) {
+            throw new Exception("No active TV and radio channels found in database", 200);
         }
 
         return $publications;

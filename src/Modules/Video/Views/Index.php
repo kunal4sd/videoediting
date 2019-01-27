@@ -4,8 +4,6 @@ namespace App\Modules\Video\Views;
 
 use App\Modules\Abstracts\ModuleAbstract;
 use App\Libs\Enums\UserActivity;
-use App\Libs\Enums\Hosts;
-use App\Libs\Enums\Dbs;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
@@ -15,13 +13,20 @@ class Index extends ModuleAbstract
     public function __invoke(Request $request, Response $response, $args)
     {
 
-        $publications = [];
+        $publications_active = [];
         $form = [];
         $playlists = [];
         $movies = [];
 
         try {
-            $publications = $this->entity_publication->get_all_active_tv_and_radio();
+            $publications = $this->entity_publication->get_all_active_tv_and_radio_media();
+            $publications_details = $this->entity_publication_details->get_all_recording247();
+            $publications_active = intersect_objects_by_fields(
+                $publications,
+                'id',
+                $publications_details,
+                'publication_id'
+            );
 
             if (isset($args['activity_id'])) {
                 $user_activity_ar = $this->entity_user_activity->get_by_id_and_user(
@@ -72,7 +77,7 @@ class Index extends ModuleAbstract
         return $this->view->render($response, 'video/index.twig', [
             'page_title' => 'Video Editing',
             'page_name' => 'editing',
-            'publications' => $publications,
+            'publications' => $publications_active,
             'form' => $form,
             'playlists' => $playlists,
             'movies' => $movies

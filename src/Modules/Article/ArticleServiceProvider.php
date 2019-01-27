@@ -7,6 +7,7 @@ use App\Modules\Article\Entities\Article;
 use App\Modules\Article\Entities\Keyword;
 use App\Modules\Article\Entities\ArticleOne;
 use App\Modules\Article\Entities\Publication;
+use App\Modules\Article\Entities\PublicationDetails;
 use App\Modules\Article\Entities\ArticleKeyword;
 use App\Modules\Article\Actions\Ajax\GetKeyword;
 use App\Modules\Article\Actions\Ajax\EditArticle;
@@ -84,6 +85,9 @@ class ArticleServiceProvider implements ServiceProviderInterface
         };
         $container['entity_issue'] = function ($container) {
             return new Issue($container);
+        };
+        $container['entity_publication_details'] = function ($container) {
+            return new PublicationDetails($container);
         };
     }
 }
