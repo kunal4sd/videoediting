@@ -10,8 +10,6 @@ use App\Modules\Article\ArticleServiceProvider;
 use \Exception;
 use Pimple\Container;
 use Slim\App as Slim;
-use Slim\Http\Request;
-use Slim\Http\Response;
 
 class App
 {
