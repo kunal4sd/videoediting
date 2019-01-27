@@ -13,6 +13,7 @@ class UserActivityDB extends DatabaseAbstract
     /**
      * @param int $x : most recent X activities
      * @param int $user_id
+     * @param int $type_id
      * @return UserActivityAR[]
      */
     public function get_last_x_by_user_and_type($x, $user_id, $type_id)
@@ -73,25 +74,40 @@ class UserActivityDB extends DatabaseAbstract
     }
 
     /**
-     * @param int $id : user_activity database id
-     * @return UserActivityAR
+     * @param int $user_id
+     * @param int $type_id
+     * @return UserActivityAR[]
      */
-    public function get_by_id($id)
+    public function get_by_user_and_type_since($user_id, $type_id, $start_date)
     {
-        $data = $this->db->fetch(
+
+        $result = [];
+
+        $data = $this->db->fetch_all(
             "
                 SELECT
                     *
                 FROM user_activity
                 WHERE 1
-                    AND id = :id
+                    AND user_id = :user_id
+                    AND activity_id = :activity_id
+                    AND created >= :start_date
+                ORDER BY
+                    id
+                    DESC
             ",
             [
-                'id' => $id
+                'user_id' => $user_id,
+                'activity_id' => $type_id,
+                'start_date' => $start_date,
             ]
         );
 
-        return new UserActivityAR($data);
+        foreach($data as $row) {
+            $result[] = new UserActivityAR($row);
+        }
+
+        return $result;
     }
 
     /**

@@ -4,8 +4,6 @@ namespace App\Modules\Video\Entities\Repository\Disk;
 
 use App\Libs\Enums\Videos;
 use App\Modules\Abstracts\ModuleAbstract;
-use App\Modules\Video\Entities\PlaylistGenerator;
-use App\Modules\Video\Entities\ActiveRecords\PlaylistAR;
 use App\Modules\Video\Entities\ActiveRecords\PlaylistMasterAR;
 use \Datetime;
 use \DateTimeZone;
@@ -21,63 +19,27 @@ class PlaylistMasterDisk extends ModuleAbstract
      * @param int $batch_size
      * @return PlaylistMasterAR
      */
-    public function get_master_playlist($id, $start_date, $end_date, $batch_size)
-    {
-        try {
-            $playlist_master_ar = $this->get_master_playlist_by_hash(
-                build_hash($id, $start_date, $end_date, $batch_size)
-            );
-        }
-        catch (Exception $e) {
-            $this->logger->write($e);
-        }
-
-        return $playlist_master_ar;
-    }
-
-    /**
-     * @param int $id
-     * @param string $start_date
-     * @param string $end_date
-     * @param int $batch_size
-     * @return PlaylistMasterAR
-     */
-    public function get_master_playlist_by_hash($hash)
-    {
-        $playlist_master_ar = new PlaylistMasterAR($this->container);
-        $file_path = $playlist_master_ar->build_playlist_path($hash);
-
-        try {
-            $playlist_master_ar->build_from_file($file_path);
-        }
-        catch (Exception $e) {
-            $this->logger->write($e);
-        }
-
-        return $playlist_master_ar;
-    }
-
-    /**
-     * @param int $id
-     * @param string $start_date
-     * @param string $end_date
-     * @param int $batch_size
-     * @return PlaylistMasterAR
-     */
     public function create_master_playlist($id, $start_date, $end_date, $batch_size, $force = false)
     {
 
+        $force = $force === true || $force === 'true';
         if (!$force) {
 
-            $playlist_master_ar = $this->get_master_playlist($id, $start_date, $end_date, $batch_size);
+            $playlist_master_ar = $this->get_master_playlist(
+                $id,
+                $start_date,
+                $end_date,
+                $batch_size
+            );
 
-            if (!is_null($playlist_master_ar->name)) {
+            if (
+                !is_null($playlist_master_ar->name)
+                && !empty($playlist_master_ar->files)
+            ) {
                 return $playlist_master_ar;
             }
         }
-        else {
-            $playlist_master_ar = new PlaylistMasterAR($this->container);
-        }
+        $playlist_master_ar = new PlaylistMasterAR($this->container);
 
         list($start_file, $end_file) = $this->get_edges($id, $start_date, $end_date);
 
@@ -114,7 +76,6 @@ class PlaylistMasterDisk extends ModuleAbstract
             $files = array_unique($files);
             sort($files);
 
-            $files_count = count($files);
             $segment_count = intval($batch_size / Videos::RAW_VIDEO_LENGTH);
 
             if (!is_dir(Videos::PLAYLIST_PATH)) {
@@ -147,12 +108,41 @@ class PlaylistMasterDisk extends ModuleAbstract
                     'name' => $file_path,
                     'files' => $playlists
                 ]);
-                $playlist_master_ar->save($file_path);
+                $playlist_master_ar->save();
             }
 
         }
 
         return $playlist_master_ar;
+    }
+
+    /**
+     * @param int $id
+     * @param string $start_date
+     * @param string $end_date
+     * @param int $batch_size
+     * @return PlaylistMasterAR
+     */
+    public function get_master_playlist($id, $start_date, $end_date, $batch_size)
+    {
+        return $this->get_master_playlist_by_hash(
+            build_hash($id, $start_date, $end_date, $batch_size)
+        );
+    }
+
+    /**
+     * @param int $id
+     * @param string $start_date
+     * @param string $end_date
+     * @param int $batch_size
+     * @return PlaylistMasterAR
+     */
+    private function get_master_playlist_by_hash($hash)
+    {
+        $playlist_master_ar = new PlaylistMasterAR($this->container);
+        $file_path = $playlist_master_ar->build_playlist_path($hash);
+
+        return $playlist_master_ar->build_from_file($file_path);
     }
 
     private function build_find_files_command($reference_file, $from, $to)

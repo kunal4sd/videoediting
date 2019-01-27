@@ -35,12 +35,13 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
     public $footer;
 
     /**
-     * @param string $file_path
+     * @param string $file_url
      * @return PlaylistAbstract
      */
-    public function build_from_file($file_path)
+    public function build_from_file($file_url)
     {
 
+        $file_path = $this->url_to_path($file_url);
         if (file_exists($file_path) && ($content = file_get_contents($file_path))) {
 
             $content_arr = explode("\n", trim($content));
@@ -62,7 +63,7 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
                     $this->name = $this->url_to_path($file_path);
 
                     foreach($content_arr as $file) {
-                        $this->files[] = $this->url_to_path($file);
+                        $this->files[] = $this->path_to_url($file);
                     }
                 }
             }
@@ -100,8 +101,10 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
         return $content;
     }
 
-    public function save($file_path)
+    public function save()
     {
+
+        $file_path = $this->name;
 
         if ( file_exists($file_path) ){
             unlink($file_path);
@@ -125,7 +128,7 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
 
         throw new Exception(
             'Playlist does not contain any files.',
-            500
+            200
         );
     }
 
@@ -187,10 +190,10 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
         );
     }
 
-    public function build_poster($name)
+    public function build_poster()
     {
-
-        $path = self::build_poster_path($name);
+        $name = build_hash($this->files);
+        $path = $this->build_poster_path($name);
         if (file_exists($path)) return $this;
 
         try {
@@ -246,15 +249,12 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
     public static function path_to_url($file_path)
     {
         if (strlen($file_path)) {
-            return str_replace(
-                PUBLIC_PATH,
-                sprintf(
-                    '%s://%s',
-                    SCHEME,
-                    HOST
-                ),
-                $file_path
-            );
+            $url_base = sprintf('%s://%s', SCHEME, HOST);
+            $file_path = str_replace(PUBLIC_PATH, '', $file_path);
+            $file_path = str_replace($url_base, '', $file_path);
+            $file_path = sprintf('%s/%s', $url_base, ltrim($file_path, '/'));
+
+            return $file_path;
         }
 
         return false;
@@ -288,24 +288,36 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
         return sprintf('%s/%s/%s.%s', PUBLIC_PATH, Videos::MOVIE_PATH_LIVE, $name, Videos::MOVIE_FORMAT);
     }
 
-    public static function build_playlist_path($name)
+    public function build_playlist_path($hash = false)
     {
+        $name = $hash ? $hash : build_hash($this->files);
         return sprintf('%s/%s/%s.%s', PUBLIC_PATH, Videos::PLAYLIST_PATH, $name, Videos::PLAYLIST_FORMAT);
     }
 
-    public static function build_poster_path($name)
+    private function build_poster_path($hash = false)
     {
+        $name = $hash ? $hash : build_hash($this->files);
         return sprintf('%s/%s/%s.%s', PUBLIC_PATH, Videos::POSTER_PATH, $name, Videos::POSTER_FORMAT);
     }
 
-    public static function get_poster_path($name)
+    public function get_poster_path()
     {
-        $path = self::build_poster_path($name);
+        $path = $this->build_poster_path();
         if (!file_exists($path)) {
             return false;
         }
 
         return $path;
+    }
+
+    public function get_poster_url()
+    {
+        $path = $this->build_poster_path();
+        if (!file_exists($path)) {
+            return false;
+        }
+
+        return $this->path_to_url($path);
     }
 
     public static function build_hash_from_path($path)

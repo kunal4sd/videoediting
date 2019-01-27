@@ -13,8 +13,9 @@ class UserActivity extends ModuleAbstract
 {
 
     /**
-     * @param int $id
+     * @param int $x
      * @param int $user_id
+     * @param int $type_id
      * @return UserActivityAR[]|UserActivityAR
      */
     public function get_last_x_by_user_and_type($x, $user_id, $type_id)
@@ -28,6 +29,24 @@ class UserActivity extends ModuleAbstract
         }
 
         return $x === 1 ? array_shift($user_activities_ar) : $user_activities_ar;
+    }
+
+    /**
+     * @param int $user_id
+     * @param int $type_id
+     * @return UserActivityAR[]|UserActivityAR
+     */
+    public function get_by_user_and_type_since($user_id, $type_id, $start_date)
+    {
+
+        $user_activities_ar = (new UserActivityDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
+            ->get_by_user_and_type_since($user_id, $type_id, $start_date);
+
+        if (empty($user_activities_ar)) {
+            throw new Exception("No activities found", 400);
+        }
+
+        return $user_activities_ar;
     }
 
     /**

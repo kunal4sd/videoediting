@@ -10,7 +10,6 @@ use App\Libs\Enums\Dbs;
 use App\Libs\Json;
 use Slim\Http\Response;
 use Slim\Http\Request;
-use Pimple\Container;
 use \Exception;
 
 class GetPlaylist extends ModuleAbstract

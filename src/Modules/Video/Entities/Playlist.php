@@ -3,6 +3,7 @@
 namespace App\Modules\Video\Entities;
 
 use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Video\Entities\ActiveRecords\PlaylistMasterAR;
 use App\Modules\Video\Entities\Repository\Disk\PlaylistDisk;
 use App\Modules\Video\Entities\Repository\Disk\PlaylistMasterDisk;
 use \Exception;
@@ -32,7 +33,6 @@ class Playlist extends ModuleAbstract
             $hash = build_hash($playlist_ar->files);
             $start_datetime = strtotime($playlist_ar->build_start_datetime());
             $end_datetime = strtotime($playlist_ar->build_end_datetime());
-            $poster_path = $playlist_ar->build_poster($hash)->get_poster_path($hash);
 
             $result[] = [
                 'url' => $playlist_ar->path_to_url($playlist_ar->name),
@@ -42,7 +42,7 @@ class Playlist extends ModuleAbstract
                 'start_hour' => date("H:i:s", $start_datetime),
                 'end_day' => date("l, Y-m-d", $end_datetime),
                 'end_hour' => date("H:i:s", $end_datetime),
-                'poster' => $playlist_ar->path_to_url($poster_path)
+                'poster' => $playlist_ar->get_poster_url()
             ];
         }
 
@@ -53,31 +53,15 @@ class Playlist extends ModuleAbstract
      * @throws Exception : if no videos are found
      * @return PlaylistMasterAR
      */
-    public function get_playlist_master($id, $start_date, $end_date, $batch_size, $force)
+    public function get_playlist_master($id, $start_date, $end_date, $batch_size)
     {
-
-        $playlist_master_ar = (new PlaylistMasterDisk($this->container))
-            ->create_master_playlist(
+        return (new PlaylistMasterDisk($this->container))
+            ->get_master_playlist(
                 $id,
                 $start_date,
                 $end_date,
-                $batch_size,
-                $force
+                $batch_size
             );
-
-        if (empty($playlist_master_ar->name)) {
-            throw new Exception(
-                sprintf(
-                    "No videos found on disk for publication id %s, during period %s - %s",
-                    $id,
-                    $start_date,
-                    $end_date
-                ),
-                400
-            );
-        }
-
-        return $playlist_master_ar;
     }
 
     /**
@@ -104,7 +88,7 @@ class Playlist extends ModuleAbstract
                     $start_date,
                     $end_date
                 ),
-                400
+                200
             );
         }
 
@@ -122,7 +106,7 @@ class Playlist extends ModuleAbstract
         $playlist_ar = (new PlaylistDisk($this->container))->get_playlist_with_hash($hash);
 
         if (empty($playlist_ar->files)) {
-            throw new Exception(sprintf("No playlist found on disk with hash %s", $hash), 400);
+            throw new Exception(sprintf("No playlist found on disk with hash %s", $hash), 200);
         }
 
         return $playlist_ar;
@@ -139,10 +123,20 @@ class Playlist extends ModuleAbstract
         $playlist_ar = (new PlaylistDisk($this->container))->create_playlist($files, $force);
 
         if (empty($playlist_ar->files)) {
-            throw new Exception(sprintf("No playlist found on disk with files %s", print_r($files, true)), 400);
+            throw new Exception(sprintf("No playlist found on disk with files %s", print_r($files, true)), 200);
         }
 
         return $playlist_ar;
     }
 
+    public function delete_playlist_files(PlaylistMasterAR $playlist_master_ar)
+    {
+        foreach($playlist_master_ar->files as $playlist_ar) {
+            if (file_exists($playlist_ar->name)) unlink($playlist_ar->name);
+            $poster_path = $playlist_ar->get_poster_path(build_hash($playlist_ar->files));
+            $this->logger->write(new \Exception($poster_path, 200));
+            if (file_exists($poster_path)) unlink($poster_path);
+        }
+        if (file_exists($playlist_master_ar->name)) unlink($playlist_master_ar->name);
+    }
 }

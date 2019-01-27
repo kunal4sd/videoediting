@@ -7,7 +7,6 @@ use App\Libs\Enums\Videos;
 use App\Modules\Abstracts\ModuleAbstract;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Pimple\Container;
 use \Exception;
 
 class GetEpisode extends ModuleAbstract
@@ -46,10 +45,8 @@ class GetEpisode extends ModuleAbstract
                     false
                 );
 
-                $poster_path = $new_playlist_ar->build_poster($new_hash)->get_poster_path($new_hash);
-
                 $result['src'] = $new_playlist_ar->path_to_url($new_playlist_ar->name);
-                $result['poster'] = $new_playlist_ar->path_to_url($poster_path);
+                $result['poster'] = $new_playlist_ar->get_poster_url();
             }
         }
         catch(Exception $e) {

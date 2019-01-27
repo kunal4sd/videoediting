@@ -5,7 +5,6 @@ namespace App\Modules\Video\Entities\ActiveRecords;
 use App\Modules\Video\Entities\ActiveRecords\PlaylistAR;
 use App\Modules\Abstracts\PlaylistAbstract;
 use Pimple\Container;
-use \Exception;
 
 class PlaylistMasterAR extends PlaylistAbstract
 {
@@ -53,15 +52,11 @@ class PlaylistMasterAR extends PlaylistAbstract
         parent::build_from_file($file_path);
 
         foreach($this->files as &$file) {
-
-            $file_path = $file;
+            $file_path = $this->url_to_path($file);
             $file = (new PlaylistAR($this->container))->build_from_file($file_path);
-
             if (is_null($file->name)) {
-                throw new Exception(
-                    sprintf('Missing playlist file `%s`.', $file_path),
-                    400
-                );
+                $this->files = [];
+                break;
             }
         }
 
