@@ -20,7 +20,6 @@ class GetKeyword extends ModuleAbstract
             $keywords_ar = $this->entity_keyword->get_by_article_id($request->getParam('article_id'));
 
             foreach($keywords_ar as $keyword_ar) {
-                $this->logger->write(new Exception(print_r($keyword_ar->id, true), 200));
                 $result[] = [
                     'id' => $keyword_ar->id,
                     'text' => sprintf('%s ::: %s', $keyword_ar->name_en, $keyword_ar->name_ar)

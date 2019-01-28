@@ -134,7 +134,6 @@ class Playlist extends ModuleAbstract
         foreach($playlist_master_ar->files as $playlist_ar) {
             if (file_exists($playlist_ar->name)) unlink($playlist_ar->name);
             $poster_path = $playlist_ar->get_poster_path(build_hash($playlist_ar->files));
-            $this->logger->write(new \Exception($poster_path, 200));
             if (file_exists($poster_path)) unlink($poster_path);
         }
         if (file_exists($playlist_master_ar->name)) unlink($playlist_master_ar->name);

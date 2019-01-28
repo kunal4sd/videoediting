@@ -96,29 +96,29 @@ class EditArticle extends ModuleAbstract
 
                     $media_now = $this->db[Hosts::MEDIA][Dbs::MEDIA]->now();
 
-                    $media_article_ar = clone $article_ar;
-                    $media_article_ar->id = null;
-                    $media_article_ar->publish_id = null;
-                    $media_article_ar->status = null;
-                    $media_article_ar->file_path = null;
-                    $media_article_ar->size = '0.00';
-                    $media_article_ar->section_id = 10;
-                    $media_article_ar->page_name = ' ';
-                    $media_article_ar->ave = $publication_ar->adrate * $article_ar->duration;
-                    $media_article_ar->created = $media_now;
+                    $article_ar_media = clone $article_ar;
+                    $article_ar_media->id = null;
+                    $article_ar_media->publish_id = null;
+                    $article_ar_media->status = null;
+                    $article_ar_media->file_path = null;
+                    $article_ar_media->size = '0.00';
+                    $article_ar_media->section_id = 10;
+                    $article_ar_media->page_name = ' ';
+                    $article_ar_media->ave = $publication_ar->adrate * $article_ar->duration;
+                    $article_ar_media->created = $media_now;
 
                     $this->entity_article_one->save(
-                        new ArticleOneAR($media_article_ar->build_to_array())
+                        new ArticleOneAR($article_ar_media->build_to_array())
                     );
 
-                    $media_article_ar->headline_modified = $media_now;
-                    $media_article_ar->id = $this->entity_article->save_media($media_article_ar);
+                    $article_ar_media->headline_modified = $media_now;
+                    $article_ar_media->id = $this->entity_article->save_media($article_ar_media);
 
                     $remote_file_ar = new RemoteFileAR([
                         'path' => sprintf(
                             '%s/%s-1.%s',
-                             $media_article_ar->issue_date,
-                             $media_article_ar->id,
+                             $article_ar_media->issue_date,
+                             $article_ar_media->id,
                              Videos::MOVIE_FORMAT
                         ),
                         'status' => 0,
@@ -129,7 +129,7 @@ class EditArticle extends ModuleAbstract
                     $this->entity_remote_file->save_media($remote_file_ar);
 
                     foreach($article_keywords_ar as &$article_keyword_ar) {
-                        $article_keyword_ar->article_id = $media_article_ar->id;
+                        $article_keyword_ar->article_id = $article_ar_media->id;
                     }
                     $this->entity_article_keyword->save_multiple_media($article_keywords_ar);
 
@@ -137,19 +137,19 @@ class EditArticle extends ModuleAbstract
                         '%s/%s/%s',
                         PUBLIC_PATH,
                         Videos::MOVIE_PATH_LIVE,
-                        $media_article_ar->issue_date
+                        $article_ar_media->issue_date
                     );
 
                     if (!file_exists($live_path)) {
-						mkdir($live_path, 0777, true);
+                        mkdir($live_path, 0777, true);
                     }
 
                     copy(
                         PlaylistAR::build_movie_path($article_ar->id),
-                        PlaylistAR::build_movie_path_live($media_article_ar->id)
+                        PlaylistAR::build_movie_path_live($article_ar_media->id)
                     );
 
-                    $article_ar->publish_id = $media_article_ar->id;
+                    $article_ar->publish_id = $article_ar_media->id;
                     $article_ar->status = Status::LIVE;
                     $this->entity_article->save($article_ar);
 
@@ -157,8 +157,8 @@ class EditArticle extends ModuleAbstract
                         new UserActivityAR([
                             'user_id' => $this->session_user->get_user()->id,
                             'publication_id' => $publication_ar->id,
-                            'article_id' => $media_article_ar->id,
-                            'issue_date' => $media_article_ar->issue_date,
+                            'article_id' => $article_ar_media->id,
+                            'issue_date' => $article_ar_media->issue_date,
                             'activity_id' => UserActivity::LIVE_MEDIA,
                             'created' => $media_now
                         ])
@@ -167,7 +167,7 @@ class EditArticle extends ModuleAbstract
                     $user_activity_ar = $this->entity_user_activity->get_last_x_by_user_and_type(
                         1, $this->session_user->get_user()->id, UserActivity::CLIP
                     );
-                    $user_activity_ar->article_id = $media_article_ar->id;
+                    $user_activity_ar->article_id = $article_ar_media->id;
                     $this->entity_user_activity->save_media($user_activity_ar);
 
                 }

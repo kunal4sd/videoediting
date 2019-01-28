@@ -116,7 +116,7 @@ $( function() {
 
                 var row = this.data();
                 if (row[table_cols_index.id] === id) {
-                    populate_form_edit_article(row);
+                    populate_form_edit_article(row, true);
                     return false;
                 }
             });
@@ -167,31 +167,29 @@ $( function() {
         });
         button_edit.removeAttr('disabled');
     };
-    var populate_form_edit_article = function(row) {
+    var populate_form_edit_article = function(row, is_modal) {
 
         var status = row[table_cols_index.status];
 
-        if (status === 'live') {
-            button_edit.attr('disabled', 'disabled');
-        }
+        if (status === 'live' && is_modal) button_edit.attr('disabled', 'disabled');
         $.each(form_edit_article.find('input'), function(i, input) {
 
             input = $(input);
-            var type = input.attr('type');
-
-            if (status === 'live') {
-                input.attr('disabled', 'disabled');
-            }
-
-            if (type === 'submit') return true;
+            if (input.attr('type') === 'submit') return true;
+            if (status === 'live' && is_modal) input.attr('disabled', 'disabled');
 
             var field_name = input.attr('name');
-
             if (field_name === 'csrf_name') {
-                input.attr('value', list_holder.find('input[name="csrf_name"]').val());
+                input.attr(
+                    'value',
+                    list_holder.find('input[name="csrf_name"]').val()
+                );
             }
             else if (field_name === 'csrf_value') {
-                input.attr('value', list_holder.find('input[name="csrf_value"]').val());
+                input.attr(
+                    'value',
+                    list_holder.find('input[name="csrf_value"]').val()
+                );
             }
             else {
                 input.val(row[table_cols_index[field_name]]);
@@ -323,7 +321,7 @@ $( function() {
             selected_rows.every(function( rowIdx, table_loop, row_loop ) {
                 var row = this.data();
                 row[table_cols_index.status] = data.value;
-                populate_form_edit_article(row);
+                populate_form_edit_article(row, false);
                 form_edit_article.submit();
             });
         }
