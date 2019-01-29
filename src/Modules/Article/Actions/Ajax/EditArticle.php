@@ -77,7 +77,7 @@ class EditArticle extends ModuleAbstract
                             'article_id' => $article_ar->id,
                             'issue_date' => $article_ar->issue_date,
                             'activity_id' => UserActivity::LIVE,
-                            'created' => $this->db->now()
+                            'created' => $this->db[Hosts::LOCAL][Dbs::MAIN]->now()
                         ])
                     );
 
