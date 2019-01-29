@@ -10,6 +10,7 @@ use App\Libs\Enums\Videos;
 use App\Libs\Enums\UserActivity;
 use App\Modules\Abstracts\ModuleAbstract;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
+use App\Modules\Video\Entities\ActiveRecords\PlaylistAR;
 use App\Modules\Video\Entities\ActiveRecords\RemoteFileAR;
 use App\Modules\Article\Entities\ActiveRecords\IssueAR;
 use App\Modules\Article\Entities\ActiveRecords\ArticleOneAR;
