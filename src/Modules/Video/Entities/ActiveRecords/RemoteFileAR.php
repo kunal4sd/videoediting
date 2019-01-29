@@ -31,4 +31,9 @@ class RemoteFileAR extends ActiveRecordAbstract
      * @var string
      */
     public $created;
+
+    public function __construct(array $data = [])
+    {
+        $this->build_from_array($data);
+    }
 }
