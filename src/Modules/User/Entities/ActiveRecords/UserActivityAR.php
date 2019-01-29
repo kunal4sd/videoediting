@@ -2,7 +2,6 @@
 
 namespace App\Modules\User\Entities\ActiveRecords;
 
-use \Date;
 use App\Modules\Abstracts\ActiveRecordAbstract;
 
 class UserActivityAR extends ActiveRecordAbstract
