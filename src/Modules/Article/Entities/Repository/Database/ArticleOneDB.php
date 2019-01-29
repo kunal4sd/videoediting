@@ -26,7 +26,7 @@ class ArticleOneDB extends DatabaseAbstract
         return $this->db->insert_id(
             sprintf(
                 "
-                    INSERT INTO article
+                    INSERT INTO article1
                     (
                         %s
                     )
