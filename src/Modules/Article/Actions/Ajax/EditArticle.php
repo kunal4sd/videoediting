@@ -26,6 +26,7 @@ class EditArticle extends ModuleAbstract
     {
 
         $result = [];
+        $code = 200;
 
         try {
             $article_ar = $this->entity_article->get_by_id(
@@ -182,14 +183,17 @@ class EditArticle extends ModuleAbstract
                     400
                 );
             }
-
+            else {
+                $result['message'] = "Article status is Live and cannot be changed.";
+                $code = 400;
+            }
         }
         catch(Exception $e) {
             $this->logger->write($e);
-
-            return Json::build($response, $result, 400);
+            $result['message'] = $e->getMessage();
+            $code = 400;
         }
 
-        return Json::build($response, $result, 200);
+        return Json::build($response, $result, $code);
     }
 }
