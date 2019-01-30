@@ -25,10 +25,6 @@ class Issue extends ModuleAbstract
             $issue_date, $publication_id
         );
 
-        if (is_null($issue_ar->id)) {
-            throw new Exception("Issue with provided details does not exist", 400);
-        }
-
         return $issue_ar;
     }
 
