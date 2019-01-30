@@ -67,13 +67,11 @@ class Article extends ModuleAbstract
 
     /**
      * @param int $id
-     * @param int $user_id
      * @return ArticleAR[]
      */
-    public function get_by_id_and_user($id, $user_id)
+    public function get_by_id($id)
     {
-        return (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
-            ->get_by_id_and_user($id, $user_id);
+        return (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_id($id);
     }
 
     /**

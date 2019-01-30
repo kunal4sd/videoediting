@@ -4,7 +4,6 @@ namespace App\Modules\User\Entities\Repository\Database;
 
 use App\Modules\Abstracts\DatabaseAbstract;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
-use \Exception;
 use \PDO;
 
 class UserActivityDB extends DatabaseAbstract

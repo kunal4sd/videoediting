@@ -28,9 +28,8 @@ class EditArticle extends ModuleAbstract
         $result = [];
 
         try {
-            $article_ar = $this->entity_article->get_by_id_and_user(
-                $request->getParam('id'),
-                $this->session_user->get_user()->id
+            $article_ar = $this->entity_article->get_by_id(
+                $request->getParam('id')
             );
 
             if (!is_null($article_ar->id) && $article_ar->status !== Status::LIVE) {

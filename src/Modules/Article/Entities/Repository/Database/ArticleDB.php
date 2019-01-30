@@ -141,10 +141,9 @@ class ArticleDB extends DatabaseAbstract
 
     /**
      * @param int $article_id
-     * @param int $user_id
      * @return ArticleAR
      */
-    public function get_by_id_and_user($article_id, $user_id)
+    public function get_by_id($article_id)
     {
 
         $data = $this->db->fetch(
@@ -154,11 +153,9 @@ class ArticleDB extends DatabaseAbstract
                 FROM article
                 WHERE 1
                     AND id = :id
-                    AND created_by = :user_id
             ",
             [
-                'id' => [$article_id, PDO::PARAM_INT],
-                'user_id' => [$user_id, PDO::PARAM_INT]
+                'id' => [$article_id, PDO::PARAM_INT]
             ]
         );
 
@@ -167,10 +164,9 @@ class ArticleDB extends DatabaseAbstract
 
     /**
      * @param int $article_id
-     * @param int $user_id
      * @return int nb of affected rows
      */
-    public function delete_by_id_and_user($article_id, $user_id)
+    public function delete_by_id($article_id)
     {
 
         return $this->db->row_count(
@@ -178,11 +174,9 @@ class ArticleDB extends DatabaseAbstract
                 DELETE FROM article
                 WHERE 1
                     AND id = :id
-                    AND created_by = :user_id
             ",
             [
-                'id' => [$article_id, PDO::PARAM_INT],
-                'user_id' => [$user_id, PDO::PARAM_INT]
+                'id' => [$article_id, PDO::PARAM_INT]
             ]
         );
     }
