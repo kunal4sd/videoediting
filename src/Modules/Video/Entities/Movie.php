@@ -2,12 +2,10 @@
 
 namespace App\Modules\Video\Entities;
 
-use App\Libs\Enums\StatusClasses;
 use App\Modules\Abstracts\ModuleAbstract;
 use App\Modules\Video\Entities\ActiveRecords\PlaylistAR;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
 use \Exception;
-use Slim\Http\Request;
 
 class Movie extends ModuleAbstract
 {
@@ -37,7 +35,6 @@ class Movie extends ModuleAbstract
     public function get_movie_for_output(ArticleAR $article_ar)
     {
 
-        $result = [];
         $keywords_names = [];
         $keywords_ids = [];
 
@@ -51,7 +48,7 @@ class Movie extends ModuleAbstract
 
         $publication_ar = $this->entity_publication->get_by_id($article_ar->publication_id);
 
-        $result = [
+        return [
             'download' => $this->container
                 ->get('router')
                 ->pathFor('video.action.download_movie', ['article_id' => $article_ar->id]),
@@ -71,8 +68,6 @@ class Movie extends ModuleAbstract
             'keywords' => implode(', ', $keywords_ids),
             'publication' => $publication_ar->name_en
         ];
-
-        return $result;
     }
 
 }

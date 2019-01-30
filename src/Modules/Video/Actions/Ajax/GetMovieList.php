@@ -10,7 +10,6 @@ use App\Libs\Enums\Dbs;
 use App\Libs\Json;
 use Slim\Http\Response;
 use Slim\Http\Request;
-use Pimple\Container;
 use \Exception;
 
 class GetMovieList extends ModuleAbstract
@@ -25,10 +24,9 @@ class GetMovieList extends ModuleAbstract
 
         try {
 
-            $articles_ar = $this->entity_article->get_for_interval_by_user_and_publication(
+            $articles_ar = $this->entity_article->get_for_interval_by_publication(
                 $request->getParam('start_date'),
                 $request->getParam('end_date'),
-                $this->session_user->get_user()->id,
                 $request->getParam('publication')
             );
 

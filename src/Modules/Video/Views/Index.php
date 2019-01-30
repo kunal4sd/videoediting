@@ -60,10 +60,9 @@ class Index extends ModuleAbstract
                 );
 
                 $movies = $this->entity_movie->get_movies_for_output(
-                    $this->entity_article->get_for_interval_by_user_and_publication(
+                    $this->entity_article->get_for_interval_by_publication(
                         $data['start_date'],
                         $data['end_date'],
-                        $this->session_user->get_user()->id,
                         $data['publication_id'],
                         true
                     )

@@ -2,15 +2,10 @@
 
 namespace App\Modules\Video\Actions\Ajax;
 
-use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use App\Modules\Abstracts\ModuleAbstract;
-use App\Libs\Enums\UserActivity;
-use App\Libs\Enums\Hosts;
-use App\Libs\Enums\Dbs;
 use App\Libs\Json;
 use Slim\Http\Response;
 use Slim\Http\Request;
-use Pimple\Container;
 use \Exception;
 
 class GetVideoList extends ModuleAbstract
@@ -31,15 +26,13 @@ class GetVideoList extends ModuleAbstract
                 $articles_ar = $this->entity_article->get_for_interval_by_user_and_publication(
                     $request->getParam('start_date'),
                     $request->getParam('end_date'),
-                    $this->session_user->get_user()->id,
                     $publications
                 );
             }
             else {
-                $articles_ar = $this->entity_article->get_for_interval_by_user(
+                $articles_ar = $this->entity_article->get_for_interval(
                     $request->getParam('start_date'),
-                    $request->getParam('end_date'),
-                    $this->session_user->get_user()->id
+                    $request->getParam('end_date')
                 );
             }
 

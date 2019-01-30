@@ -67,7 +67,7 @@ class Article extends ModuleAbstract
 
     /**
      * @param int $id
-     * @param int $publication_id
+     * @param int $user_id
      * @return ArticleAR[]
      */
     public function get_by_id_and_user($id, $user_id)
@@ -79,31 +79,27 @@ class Article extends ModuleAbstract
     /**
      * @param string $from : start date
      * @param string $to : end date
-     * @param int $user_id
      * @return ArticleAR[]
      */
-    public function get_for_interval_by_user(
+    public function get_for_interval(
         $from,
         $to,
-        $user_id,
         $order_desc = false
     )
     {
         return (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
-            ->get_for_interval_by_user($from, $to, $user_id, $order_desc);
+            ->get_for_interval($from, $to, $order_desc);
     }
 
     /**
      * @param string $from : start date
      * @param string $to : end date
-     * @param int $user_id
      * @param int|array $publication_id
      * @return ArticleAR[]
      */
-    public function get_for_interval_by_user_and_publication(
+    public function get_for_interval_by_publication(
         $from,
         $to,
-        $user_id,
         $publication_id,
         $order_desc = false
     )
@@ -114,8 +110,8 @@ class Article extends ModuleAbstract
         }
 
         return (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
-            ->get_for_interval_by_user_and_publication(
-                $from, $to, $user_id, $publication_id, $order_desc
+            ->get_for_interval_by_publication(
+                $from, $to, $publication_id, $order_desc
             );
     }
 

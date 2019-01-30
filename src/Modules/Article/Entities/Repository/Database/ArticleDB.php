@@ -5,7 +5,6 @@ namespace App\Modules\Article\Entities\Repository\Database;
 use App\Modules\Abstracts\DatabaseAbstract;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
 use \PDO;
-use \Exception;
 
 class ArticleDB extends DatabaseAbstract
 {
@@ -16,6 +15,7 @@ class ArticleDB extends DatabaseAbstract
     public function get_status_values()
     {
 
+        $matches = [];
         $type = $this->db->fetch_column(
             '
                 SHOW COLUMNS
@@ -34,13 +34,11 @@ class ArticleDB extends DatabaseAbstract
     /**
      * @param string $from : start date
      * @param string $to : end date
-     * @param int $user_id
      * @return ArticleAR[]
      */
-    public function get_for_interval_by_user(
+    public function get_for_interval(
         $from,
         $to,
-        $user_id,
         $order_desc = false
     )
     {
@@ -61,7 +59,6 @@ class ArticleDB extends DatabaseAbstract
                     WHERE 1
                         AND issue_date >= DATE_FORMAT(:from, '%%Y-%%m-%%d')
                         AND issue_date <= DATE_FORMAT(:to, '%%Y-%%m-%%d')
-                        AND created_by = :user_id
                     ORDER BY
                         id
                         %s
@@ -70,8 +67,7 @@ class ArticleDB extends DatabaseAbstract
             ),
             [
                 'from' => $from,
-                'to' => $to,
-                'user_id' => [$user_id, PDO::PARAM_INT]
+                'to' => $to
             ]
         );
 
@@ -85,14 +81,12 @@ class ArticleDB extends DatabaseAbstract
     /**
      * @param string $from : start date
      * @param string $to : end date
-     * @param int $user_id
      * @param array $publication_ids
      * @return ArticleAR[]
      */
-    public function get_for_interval_by_user_and_publication(
+    public function get_for_interval_by_publication(
         $from,
         $to,
-        $user_id,
         $publication_ids,
         $order_desc = false
     )
@@ -108,13 +102,11 @@ class ArticleDB extends DatabaseAbstract
 
         $params = [
             'from' => $from,
-            'to' => $to,
-            'user_id' => [$user_id, PDO::PARAM_INT]
+            'to' => $to
         ];
 
         $in = [];
-        foreach ($publication_ids as $i => $id)
-        {
+        foreach($publication_ids as $id) {
             $key = "id_{$id}";
             $in[] = ":{$key}";
             $params[$key] = [$id, PDO::PARAM_INT];
@@ -130,7 +122,6 @@ class ArticleDB extends DatabaseAbstract
                         AND issue_date >= DATE_FORMAT(:from, '%%Y-%%m-%%d')
                         AND issue_date <= DATE_FORMAT(:to, '%%Y-%%m-%%d')
                         AND publication_id IN (%1\$s)
-                        AND created_by = :user_id
                     ORDER BY
                         id
                         %2\$s
