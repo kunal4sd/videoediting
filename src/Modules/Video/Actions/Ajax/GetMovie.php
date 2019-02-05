@@ -13,7 +13,6 @@ use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Pimple\Container;
 use \Exception;
 
 class GetMovie extends ModuleAbstract

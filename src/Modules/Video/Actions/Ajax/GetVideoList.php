@@ -23,7 +23,7 @@ class GetVideoList extends ModuleAbstract
             $publications = $request->getParam('publication');
             if (strlen($publications)) {
                 $publications = explode(',', $publications);
-                $articles_ar = $this->entity_article->get_for_interval_by_user_and_publication(
+                $articles_ar = $this->entity_article->get_for_interval_by_publication(
                     $request->getParam('start_date'),
                     $request->getParam('end_date'),
                     $publications

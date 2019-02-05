@@ -39,7 +39,6 @@ class GetEpisode extends ModuleAbstract
                 $new_files = array_values(
                     array_slice($files, $from_index, ( $to_index - $from_index + 1 ))
                 );
-                $new_hash = build_hash($new_files);
                 $new_playlist_ar = $this->entity_playlist->get_playlist_with_files(
                     $new_files,
                     false

@@ -3,7 +3,6 @@
 namespace App\Modules\Abstracts;
 
 use App\Libs\Json;
-use App\Libs\Enums\StatusClasses;
 use Pimple\Container;
 
 abstract class ModuleAbstract
