@@ -42,7 +42,7 @@ class Article extends ModuleAbstract
     {
 
         $article_db = new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
-        $rows = $article_db->delete_by_id_and_user(
+        $rows = $article_db->delete_by_id(
             $article_id, $this->session_user->get_user()->id
         );
         if ($rows === 1) {
