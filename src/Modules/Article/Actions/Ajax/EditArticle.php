@@ -134,20 +134,9 @@ class EditArticle extends ModuleAbstract
                     }
                     $this->entity_article_keyword->save_multiple_media($article_keywords_ar);
 
-                    $live_path = sprintf(
-                        '%s/%s/%s',
-                        PUBLIC_PATH,
-                        Videos::MOVIE_PATH_LIVE,
-                        $article_ar_media->issue_date
-                    );
-
-                    if (!file_exists($live_path)) {
-                        mkdir($live_path, 0777, true);
-                    }
-
                     copy(
-                        PlaylistAR::build_movie_path($article_ar->id),
-                        PlaylistAR::build_movie_path_live($article_ar_media->id)
+                        $article_ar->build_movie_path($article_ar->id),
+                        $article_ar_media->build_movie_path_live()
                     );
 
                     $article_ar->publish_id = $article_ar_media->id;
