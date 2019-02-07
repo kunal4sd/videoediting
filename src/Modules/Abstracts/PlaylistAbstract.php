@@ -6,6 +6,7 @@ use App\Libs\Enums\Videos;
 use App\Modules\Abstracts\ActiveRecordAbstract;
 use \Exception;
 
+// TODO clean this class and keep only methods specific to Playlists. Everything else must go!!
 abstract class PlaylistAbstract extends ActiveRecordAbstract
 {
 
@@ -121,30 +122,40 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
 
     public function get_first_file()
     {
-
-        if ( isset($this->files[0]) ) {
+        if (isset($this->files[0])) {
             return $this->files[0];
         }
 
-        throw new Exception(
-            'Playlist does not contain any files.',
-            200
-        );
+        return false;
     }
 
     public function build_broadcast_time()
     {
-        $details = explode('-', basename($this->get_first_file(), '.'.Videos::RAW_VIDEO_FORMAT));
-        return $details[1];
+        $result = '0000-00-00 00:00:00';
+        if ($file = $this->get_first_file()) {
+
+            $details = explode('-', basename($file, '.'.Videos::RAW_VIDEO_FORMAT));
+            if (isset($details[1])) {
+                $result = $details[1];
+            }
+        }
+
+        return $result;
     }
 
     public function build_issue_date()
     {
-        $details = explode('.', basename($this->get_first_file(),  '.'.Videos::RAW_VIDEO_FORMAT));
-        $datetime = str_replace(array('-','_') , array(' ','-'), $details[1]);
-        $datetime_details = explode(' ', $datetime);
+        $result = '0000-00-00';
+        if ($file = $this->get_first_file()) {
+            $details = explode('.', basename($file,  '.'.Videos::RAW_VIDEO_FORMAT));
+            if (isset($details[1])) {
+                $datetime = str_replace(array('-','_') , array(' ','-'), $details[1]);
+                $datetime_details = explode(' ', $datetime);
+                $result = array_shift($datetime_details);
+            }
+        }
 
-        return array_shift($datetime_details);
+        return $result;
     }
 
     public function build_start_datetime()
@@ -283,20 +294,20 @@ abstract class PlaylistAbstract extends ActiveRecordAbstract
         return sprintf('%s/%s/%s.%s', PUBLIC_PATH, Videos::MOVIE_PATH, $name, Videos::MOVIE_FORMAT);
     }
 
-    public function build_movie_path_live()
+    public static function build_movie_path_live($name, $issue_date)
     {
         $path = sprintf(
             '%s/%s/%s',
             PUBLIC_PATH,
             Videos::MOVIE_PATH_LIVE,
-            $this->issue_date
+            $issue_date
         );
 
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
         }
 
-        return sprintf('%s/%s-1.%s', $path, $this->id, Videos::MOVIE_FORMAT);
+        return sprintf('%s/%s-1.%s', $path, $name, Videos::MOVIE_FORMAT);
     }
 
     public function build_playlist_path($hash = false)

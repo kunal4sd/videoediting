@@ -135,8 +135,8 @@ class EditArticle extends ModuleAbstract
                     $this->entity_article_keyword->save_multiple_media($article_keywords_ar);
 
                     copy(
-                        $article_ar->build_movie_path($article_ar->id),
-                        $article_ar_media->build_movie_path_live()
+                        PlaylistAR::build_movie_path($article_ar->id),
+                        PlaylistAR::build_movie_path_live($article_ar_media->id, $article_ar_media->issue_date)
                     );
 
                     $article_ar->publish_id = $article_ar_media->id;
