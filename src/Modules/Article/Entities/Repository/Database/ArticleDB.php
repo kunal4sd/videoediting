@@ -2,11 +2,11 @@
 
 namespace App\Modules\Article\Entities\Repository\Database;
 
-use App\Modules\Abstracts\DatabaseAbstract;
+use App\Modules\Abstracts\AbstractDatabase;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
 use \PDO;
 
-class ArticleDB extends DatabaseAbstract
+class ArticleDB extends AbstractDatabase
 {
 
     /**

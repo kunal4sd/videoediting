@@ -4,14 +4,13 @@ namespace App\Modules\Article\Entities;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
-use App\Modules\Abstracts\ModuleAbstract;
-use App\Modules\Video\Entities\Repository\Disk\MovieDisk;
+use App\Modules\Abstracts\AbstractModule;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
 use App\Modules\Article\Entities\Repository\Database\ArticleDB;
 use App\Modules\Article\Entities\Repository\Database\ArticleKeywordDB;
 use \Exception;
 
-class ArticleKeyword extends ModuleAbstract
+class ArticleKeyword extends AbstractModule
 {
     /**
      * @param int

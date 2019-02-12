@@ -5,7 +5,7 @@ namespace App\Modules\Abstracts;
 use App\Libs\Json;
 use Pimple\Container;
 
-abstract class ModuleAbstract
+abstract class AbstractModule
 {
 
     /**

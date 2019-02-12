@@ -4,12 +4,12 @@ namespace App\Modules\User\Entities;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use App\Modules\User\Entities\Repository\Database\UserActivityDB;
 use \Exception;
 
-class UserActivity extends ModuleAbstract
+class UserActivity extends AbstractModule
 {
 
     /**
@@ -36,11 +36,11 @@ class UserActivity extends ModuleAbstract
      * @param int $type_id
      * @return UserActivityAR[]|UserActivityAR
      */
-    public function get_by_user_and_type_since($user_id, $type_id, $start_date)
+    public function get_by_user_and_type_since($user_id, $start_date, ...$type_ids)
     {
 
         $user_activities_ar = (new UserActivityDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
-            ->get_by_user_and_type_since($user_id, $type_id, $start_date);
+            ->get_by_user_and_type_since($user_id, $start_date, ...$type_ids);
 
         if (empty($user_activities_ar)) {
             throw new Exception("No activities found", 400);

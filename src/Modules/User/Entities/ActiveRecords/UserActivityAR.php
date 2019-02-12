@@ -2,9 +2,9 @@
 
 namespace App\Modules\User\Entities\ActiveRecords;
 
-use App\Modules\Abstracts\ActiveRecordAbstract;
+use App\Modules\Abstracts\AbstractActiveRecord;
 
-class UserActivityAR extends ActiveRecordAbstract
+class UserActivityAR extends AbstractActiveRecord
 {
 
     /**

@@ -4,14 +4,14 @@ namespace App\Modules\Article\Entities;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
-use App\Modules\Abstracts\ModuleAbstract;
-use App\Modules\Video\Entities\Repository\Disk\MovieDisk;
+use App\Modules\Abstracts\AbstractModule;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
 use App\Modules\Article\Entities\Repository\Database\ArticleDB;
 use App\Modules\Article\Entities\Repository\Database\ArticleKeywordDB;
+use App\Modules\Video\Entities\Files\VideoFile;
 use \Exception;
 
-class Article extends ModuleAbstract
+class Article extends AbstractModule
 {
 
     /**
@@ -42,13 +42,16 @@ class Article extends ModuleAbstract
     {
 
         $article_db = new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
+        $article_ar = $this->entity_article->get_by_id($article_id);
         $rows = $article_db->delete_by_id(
             $article_id, $this->session_user->get_user()->id
         );
         if ($rows === 1) {
             (new ArticleKeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
                 ->delete_by_article_id($article_id);
-            (new MovieDisk($this->container))->delete_by_id($article_id);
+            $this->entity_playlist->delete_file_by_path(
+                (new VideoFile())->set_locations(VideoFile::build_movie_path($article_ar))
+            );
 
             return true;
         }

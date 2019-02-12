@@ -2,11 +2,11 @@
 
 namespace App\Modules\User\Entities\Repository\Database;
 
-use App\Modules\Abstracts\DatabaseAbstract;
+use App\Modules\Abstracts\AbstractDatabase;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use \PDO;
 
-class UserActivityDB extends DatabaseAbstract
+class UserActivityDB extends AbstractDatabase
 {
 
     /**
@@ -77,29 +77,32 @@ class UserActivityDB extends DatabaseAbstract
      * @param int $type_id
      * @return UserActivityAR[]
      */
-    public function get_by_user_and_type_since($user_id, $type_id, $start_date)
+    public function get_by_user_and_type_since($user_id, $start_date, ...$type_ids)
     {
 
         $result = [];
-
+        $activity_keys = array_map(function($val) { return 'activity_'.$val; }, $type_ids);
+        $values = array_merge(
+            ['user_id' => $user_id,'start_date' => $start_date],
+            array_combine($activity_keys, $type_ids)
+        );
         $data = $this->db->fetch_all(
-            "
-                SELECT
-                    *
-                FROM user_activity
-                WHERE 1
-                    AND user_id = :user_id
-                    AND activity_id = :activity_id
-                    AND created >= :start_date
-                ORDER BY
-                    id
-                    DESC
-            ",
-            [
-                'user_id' => $user_id,
-                'activity_id' => $type_id,
-                'start_date' => $start_date,
-            ]
+            sprintf(
+                "
+                    SELECT
+                        *
+                    FROM user_activity
+                    WHERE 1
+                        AND user_id = :user_id
+                        AND created >= :start_date
+                        AND activity_id IN (%s)
+                    ORDER BY
+                        id
+                        DESC
+                ",
+                implode(',', array_map(function($val) { return ':'.$val; }, $activity_keys))
+            ),
+            $values
         );
 
         foreach($data as $row) {

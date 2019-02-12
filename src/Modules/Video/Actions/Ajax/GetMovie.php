@@ -6,30 +6,31 @@ use App\Libs\Json;
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
 use App\Libs\Enums\UserActivity;
-use App\Modules\Abstracts\ModuleAbstract;
-use App\Modules\Abstracts\PlaylistAbstract;
-use App\Modules\Video\Entities\ActiveRecords\PlaylistAR;
+use App\Modules\Abstracts\AbstractModule;
+use App\Modules\Abstracts\AbstractPlaylist;
+use App\Modules\Video\Entities\Files\VideoFile;
+use App\Modules\Video\Entities\Files\PlaylistFile;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
 
-class GetMovie extends ModuleAbstract
+class GetMovie extends AbstractModule
 {
 
-    private $playlist_ar;
+    private $playlist_file;
 
     public function __invoke(Request $request, Response $response)
     {
 
         $result = [];
-
+        $code = 200;
         try {
 
             $episodes = $request->getParam('episodes');
-            $raw_files_urls = [];
-            $this->playlist_ar = new PlaylistAR($this->container);
+            $raw_video_paths = [];
+            $this->playlist_file = new PlaylistFile($this->container);
 
             $publication_id = false;
             $section_id = 0;
@@ -40,46 +41,40 @@ class GetMovie extends ModuleAbstract
 
             $first = true;
             foreach($episodes as $url) {
-                if ( ($hash = PlaylistAbstract::build_hash_from_path($url)) !== false ) {
+                if ( ($hash = AbstractPlaylist::build_hash_from_path($url)) !== false ) {
 
-                    $playlist_ar = $this->entity_playlist->get_playlist_with_hash($hash);
+                    $playlist_file = $this->entity_playlist->get_playlist_with_hash($hash);
 
                     if ( $first && $publication_id === false ) {
-                        $publication_id = $playlist_ar->build_publication_id();
+                        $publication_id = $playlist_file->get_first_file()->build_publication_id();
                     }
-                    elseif ($publication_id !== $playlist_ar->build_publication_id()) {
-                        throw new Exception(
-                            sprintf(
-                                'Anomaly detected while checking movie episodes: %s',
-                                print_r($episodes, true)
-                            ),
-                            400
+                    elseif ($publication_id !== $playlist_file->get_first_file()->build_publication_id()) {
+                        $result['message'] = sprintf(
+                            'Anomaly detected while checking movie episodes: %s',
+                            print_r($episodes, true)
                         );
+                        $code = 400;
+                        throw new Exception($result['message'], $code);
                     }
 
-                    $raw_files_urls = array_merge($raw_files_urls, $playlist_ar->files);
+                    $this->playlist_file->add_files($playlist_file->get_files());
                     $first = false;
                 }
                 else {
-                    throw new Exception(
-                        sprintf(
-                            'Anomaly detected while generating hash for movie episode with url: %s',
-                            $url
-                        ),
-                        400
+                    $result['message'] = sprintf(
+                        'Anomaly detected while generating hash for movie episode with url: %s',
+                        $url
                     );
+                    $code = 400;
+                    throw new Exception($result['message'], $code);
                 }
             }
-
-            $raw_files_urls = array_unique($raw_files_urls);
-            $raw_files_paths = array_map( [$this, 'url_to_path'], $raw_files_urls );
-            $this->playlist_ar->build_from_array(['files' => $raw_files_paths]);
 
             $db_datetime = $this->db[Hosts::LOCAL][Dbs::MAIN]->now();
             $article_ar = new ArticleAR(
                 [
                     'publication_id' => $publication_id,
-                    'issue_date' => $this->playlist_ar->build_issue_date(),
+                    'issue_date' => $this->playlist_file->get_first_file()->build_issue_date(),
                     'section_id' => $section_id,
                     'headline' => $request->getParam('title'),
                     'type_id' => $type_id,
@@ -87,7 +82,7 @@ class GetMovie extends ModuleAbstract
                     'created' => $db_datetime,
                     'created_by' => $this->session_user->get_user()->id,
                     'duration' => $duration,
-                    'broadcast_time' => $this->playlist_ar->build_broadcast_time(),
+                    'broadcast_time' => $this->playlist_file->get_first_file()->build_broadcast_time(),
                     'file_path' => $file_path,
                     'status' => $status
                 ]
@@ -99,51 +94,33 @@ class GetMovie extends ModuleAbstract
                     'user_id' => $this->session_user->get_user()->id,
                     'publication_id' => $publication_id,
                     'article_id' => $article_ar->id,
-                    'issue_date' => $this->playlist_ar->build_issue_date(),
+                    'issue_date' => $this->playlist_file->get_first_file()->build_issue_date(),
                     'activity_id' => UserActivity::CLIP,
-                    'created' => $db_datetime
+                    'created' => $db_datetime,
+                    'description' => json_encode(['hash' => $this->playlist_file->get_hash()])
                 ]
             ));
 
-            $movie_path = PlaylistAR::build_movie_path($article_ar->id);
-            $files_str = implode('|', $raw_files_paths);
-            $cmd = sprintf(
-                "ffmpeg -i  \"concat:%s\" -c copy %s\n\r",
-                $files_str,
-                $movie_path
-            );
-            $output = shell_exec($cmd);
+            $movie_file = new VideoFile();
+            $movie_path = $movie_file->build_movie_path($article_ar);
+            $movie_file->set_locations($movie_path)
+                ->save($this->playlist_file)
+                ->build_length()
+                ->build_size();
 
-            if ( !file_exists( $movie_path ) ) {
-                throw new Exception(
-                    sprintf(
-                        "Failed creating movie with command `%s` and output `%s`",
-                        $cmd,
-                        $output
-                    ),
-                    500
-                );
-            }
-
-            $cmd = sprintf(
-                "ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 %s",
-                $movie_path
-            );
-            $article_ar->duration = (int) shell_exec($cmd);
+            $article_ar->duration = $movie_file->get_length();
             $this->entity_article->save($article_ar);
 
-            $result = $this->entity_movie->get_movie_for_output($article_ar);
+            $result = $this->entity_movie->get_movie_for_output($article_ar, $movie_file);
+            $result['message'] = 'Article created successfully';
         }
         catch(Exception $e) {
             $this->logger->write($e);
+            $result['message'] = $e->getMessage();
+            $code = $e->getCode();
         }
 
-        return Json::build($response, $result, 200);
-    }
-
-    private function url_to_path($file_url)
-    {
-        return $this->playlist_ar->url_to_path($file_url);
+        return Json::build($response, $result, $code);
     }
 
 }

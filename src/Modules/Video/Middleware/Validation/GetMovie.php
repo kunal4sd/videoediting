@@ -2,12 +2,12 @@
 
 namespace App\Modules\Video\Middleware\Validation;
 
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Respect\Validation\Validator as v;
 
-class GetMovie extends ModuleAbstract
+class GetMovie extends AbstractModule
 {
     public function __invoke(Request $request, Response $response, $next)
     {

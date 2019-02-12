@@ -85,7 +85,6 @@ function human_filesize($bytes, $decimals = 2)
 
 function seconds_to_time($sec)
 {
-
     if( !is_float( $sec ) ) $sec = floatval( $sec );
 
     $hours   = floor($sec / 3600);
@@ -94,11 +93,10 @@ function seconds_to_time($sec)
 
     if ( $hours < 10 ) $hours   = "0" . $hours;
     if ( $minutes < 10 ) $minutes = "0" . $minutes;
+    $seconds = number_format( $seconds, 2, '.', '' );
     if ( $seconds < 10 ) $seconds = "0" . $seconds;
 
-    $seconds = number_format( $seconds, 2, '.', '' );
-
-    return $hours . ':' . $minutes . ':' . $seconds;
+    return sprintf('%s:%s:%s', $hours, $minutes, $seconds);
 }
 
 /**
@@ -139,4 +137,41 @@ function intersect_objects_by_fields(
             return in_array($obj->$source_field, $target_fields_values);
         }
     );
+}
+
+function path_to_url($file_path)
+{
+    if (strlen($file_path)) {
+        $url_base = sprintf('%s://%s', SCHEME, HOST);
+        $file_path = str_replace(PUBLIC_PATH, '', $file_path);
+        $file_path = str_replace($url_base, '', $file_path);
+
+        return sprintf('%s/%s', $url_base, ltrim($file_path, '/'));
+    }
+
+    return false;
+}
+
+function url_to_path($file_url)
+{
+    if (strlen($file_url)) {
+        $url_base = sprintf('%s://%s', SCHEME, HOST);
+        $file_url = str_replace(PUBLIC_PATH, '', $file_url);
+        $file_url = str_replace($url_base, '', $file_url);
+
+        return sprintf('%s/%s', PUBLIC_PATH, ltrim($file_url, '/'));
+    }
+
+    return false;
+}
+
+function get_file_details_from_path($path)
+{
+    $path_details = explode('/', $path);
+    if ( ($filename = array_pop($path_details)) !== null ) {
+        $filename_details = explode('.', $filename);
+        return $filename_details;
+    }
+
+    return [false, false];
 }

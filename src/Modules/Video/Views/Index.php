@@ -2,13 +2,13 @@
 
 namespace App\Modules\Video\Views;
 
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use App\Libs\Enums\UserActivity;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
 
-class Index extends ModuleAbstract
+class Index extends AbstractModule
 {
     public function __invoke(Request $request, Response $response, $args)
     {
@@ -52,7 +52,7 @@ class Index extends ModuleAbstract
                     'start_date' => $data['start_date'],
                     'end_date' => $data['end_date'],
                     'batch' => $data['batch_size'],
-                    'force' => false,
+                    'use_cached' => true,
                     'date_range' => sprintf('%s - %s', $data['start_date'], $data['end_date'])
                 ];
                 $playlists = $this->entity_playlist->get_playlists_for_output(

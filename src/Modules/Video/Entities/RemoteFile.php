@@ -4,12 +4,12 @@ namespace App\Modules\Video\Entities;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use App\Modules\Video\Entities\ActiveRecords\RemoteFileAR;
 use App\Modules\Video\Entities\Repository\Database\RemoteFileDB;
 use \Exception;
 
-class RemoteFile extends ModuleAbstract
+class RemoteFile extends AbstractModule
 {
 
     /**

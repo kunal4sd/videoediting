@@ -4,11 +4,11 @@ namespace App\Modules\User\Entities;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use App\Modules\User\Entities\Repository\Database\UserDB;
 use \Exception;
 
-class User extends ModuleAbstract
+class User extends AbstractModule
 {
 
     /**

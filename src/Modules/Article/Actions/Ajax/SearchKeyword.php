@@ -3,19 +3,19 @@
 namespace App\Modules\Article\Actions\Ajax;
 
 use App\Libs\Json;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
 
-class SearchKeyword extends ModuleAbstract
+class SearchKeyword extends AbstractModule
 {
 
     public function __invoke(Request $request, Response $response)
     {
 
         $result = [];
-
+        $code = 200;
         try {
             $keywords_ar = $this->entity_keyword->search_by_name($request->getParam('string'), true);
             foreach($keywords_ar as $keyword_ar) {
@@ -27,10 +27,10 @@ class SearchKeyword extends ModuleAbstract
         }
         catch(Exception $e) {
             $this->logger->write($e);
-
-            return Json::build($response, $result, $e->getCode());
+            $result['message'] = $e->getMessage();
+            $code = $e->getCode();
         }
 
-        return Json::build($response, $result, 200);
+        return Json::build($response, $result, $code);
     }
 }

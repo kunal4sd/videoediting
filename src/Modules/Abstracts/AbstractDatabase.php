@@ -4,7 +4,7 @@ namespace App\Modules\Abstracts;
 
 use App\Libs\Db\Container as ContainerDB;
 
-abstract class DatabaseAbstract
+abstract class AbstractDatabase
 {
 
     /**

@@ -3,9 +3,9 @@
 namespace App\Modules\User\Entities\ActiveRecords;
 
 use \Date;
-use App\Modules\Abstracts\ActiveRecordAbstract;
+use App\Modules\Abstracts\AbstractActiveRecord;
 
-class UserAR extends ActiveRecordAbstract
+class UserAR extends AbstractActiveRecord
 {
 
     /**

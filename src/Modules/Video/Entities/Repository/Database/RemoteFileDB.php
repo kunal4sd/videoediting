@@ -2,12 +2,12 @@
 
 namespace App\Modules\Video\Entities\Repository\Database;
 
-use App\Modules\Abstracts\DatabaseAbstract;
+use App\Modules\Abstracts\AbstractDatabase;
 use App\Modules\Video\Entities\ActiveRecords\RemoteFileAR;
 use \PDO;
 use \Exception;
 
-class RemoteFileDB extends DatabaseAbstract
+class RemoteFileDB extends AbstractDatabase
 {
 
     /**

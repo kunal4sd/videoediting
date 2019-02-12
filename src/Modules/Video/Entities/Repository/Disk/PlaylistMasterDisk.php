@@ -3,13 +3,14 @@
 namespace App\Modules\Video\Entities\Repository\Disk;
 
 use App\Libs\Enums\Videos;
-use App\Modules\Abstracts\ModuleAbstract;
-use App\Modules\Video\Entities\ActiveRecords\PlaylistMasterAR;
+use App\Modules\Abstracts\AbstractModule;
+use App\Modules\Video\Entities\Files\RawVideoFile;
+use App\Modules\Video\Entities\Files\PlaylistMasterFile;
 use \Datetime;
 use \DateTimeZone;
 use \Exception;
 
-class PlaylistMasterDisk extends ModuleAbstract
+class PlaylistMasterDisk extends AbstractModule
 {
 
     /**
@@ -17,7 +18,7 @@ class PlaylistMasterDisk extends ModuleAbstract
      * @param string $start_date
      * @param string $end_date
      * @param int $batch_size
-     * @return PlaylistMasterAR
+     * @return PlaylistMasterFile
      */
     public function create_master_playlist($id, $start_date, $end_date, $batch_size, $force = false)
     {
@@ -25,25 +26,29 @@ class PlaylistMasterDisk extends ModuleAbstract
         $force = $force === true || $force === 'true';
         if (!$force) {
 
-            $playlist_master_ar = $this->get_master_playlist(
+            $playlist_master_file = $this->get_master_playlist(
                 $id,
                 $start_date,
                 $end_date,
                 $batch_size
             );
 
-            if (
-                !is_null($playlist_master_ar->name)
-                && !empty($playlist_master_ar->files)
-            ) {
-                return $playlist_master_ar;
-            }
+            if (!empty($playlist_master_file->get_files())) return $playlist_master_file;
         }
-        $playlist_master_ar = new PlaylistMasterAR($this->container);
 
+        $playlist_master_file = new PlaylistMasterFile($this->container);
         list($start_file, $end_file) = $this->get_edges($id, $start_date, $end_date);
-
         if ($start_file && $end_file) {
+
+            if (!is_dir(Videos::PLAYLIST_PATH)) {
+                if (!mkdir(Videos::PLAYLIST_PATH, 0777, true)) {
+                    throw new Exception('Could not create the playlist path', 500);
+                }
+            }
+
+            if (!is_writable(Videos::PLAYLIST_PATH)) {
+                throw new Exception('Playlist directory is not writable', 500);
+            }
 
             $sfile_mtime = date('Y/m/d H:i:s', filemtime($start_file));
             $efile_mtime = date('Y/m/d H:i:s', filemtime($end_file));
@@ -76,44 +81,65 @@ class PlaylistMasterDisk extends ModuleAbstract
             $files = array_unique($files);
             sort($files);
 
-            $segment_count = intval($batch_size / Videos::RAW_VIDEO_LENGTH);
-
-            if (!is_dir(Videos::PLAYLIST_PATH)) {
-                if (!mkdir(Videos::PLAYLIST_PATH, 0777, true)) {
-                    throw new Exception('Could not create the playlist path', 500);
+            $prev_file = false;
+            foreach($files as &$raw_file) {
+                $file = (new RawVideoFile())
+                    ->set_locations($raw_file)
+                    ->set_name($raw_file)
+                    ->build_length();
+                $raw_file = $file;
+                if (
+                    $prev_file
+                    && strtotime($prev_file->build_end_datetime()) >= strtotime($file->build_end_datetime())
+                ) {
+                    $raw_file = false;
                 }
+                $prev_file = $file;
             }
-
-            if (!is_writable(Videos::PLAYLIST_PATH)) {
-                throw new Exception('Playlist directory is not writable', 500);
-            }
-
+            $files = array_filter($files);
+            $files_copy = $files;
             $playlist_disk = new PlaylistDisk($this->container);
             $playlists = [];
-            while($chunks = array_splice($files, 0, $segment_count)) {
+            foreach($this->get_segment_count($files_copy, $batch_size) as $segment_count) {
 
-                $playlist_ar = $playlist_disk->create_playlist($chunks, $force);
+                $chunks = array_splice($files, 0, $segment_count);
+                $playlist_file = $playlist_disk->create_playlist($chunks, $force);
 
-                if (!is_null($playlist_ar->name)) {
-                    $playlists[] = $playlist_ar;
+                if (!is_null($playlist_file->get_hash())) {
+                    $playlists[] = $playlist_file;
                 }
             }
-
             if (!empty($playlists)) {
-
-                $file_path = $playlist_master_ar->build_playlist_path(
-                    build_hash($id, $start_date, $end_date, $batch_size)
-                );
-                $playlist_master_ar->build_from_array([
-                    'name' => $file_path,
-                    'files' => $playlists
-                ]);
-                $playlist_master_ar->save();
+                $playlist_master_file
+                    ->set_files($playlists)
+                    ->build_hash($id, $start_date, $end_date, $batch_size);
+                $playlist_master_file->set_locations($playlist_master_file->build_playlist_path())
+                    ->save();
             }
 
         }
 
-        return $playlist_master_ar;
+        return $playlist_master_file;
+    }
+
+    private function get_segment_count(array $files, $batch_size)
+    {
+
+        $current_batch_size = 0;
+        $segment_count = 0;
+        while($file = array_shift($files)) {
+
+            $segment_count++;
+            $current_batch_size += $file->get_length();
+
+            if ($batch_size <= $current_batch_size) {
+                yield $segment_count;
+                $current_batch_size = 0;
+                $segment_count = 0;
+            }
+        }
+
+        if ($segment_count) yield $segment_count;
     }
 
     /**
@@ -121,28 +147,13 @@ class PlaylistMasterDisk extends ModuleAbstract
      * @param string $start_date
      * @param string $end_date
      * @param int $batch_size
-     * @return PlaylistMasterAR
+     * @return PlaylistMasterFile
      */
     public function get_master_playlist($id, $start_date, $end_date, $batch_size)
     {
-        return $this->get_master_playlist_by_hash(
-            build_hash($id, $start_date, $end_date, $batch_size)
-        );
-    }
-
-    /**
-     * @param int $id
-     * @param string $start_date
-     * @param string $end_date
-     * @param int $batch_size
-     * @return PlaylistMasterAR
-     */
-    private function get_master_playlist_by_hash($hash)
-    {
-        $playlist_master_ar = new PlaylistMasterAR($this->container);
-        $file_path = $playlist_master_ar->build_playlist_path($hash);
-
-        return $playlist_master_ar->build_from_file($file_path);
+        $master_playlist_file = (new PlaylistMasterFile($this->container))
+            ->build_hash($id, $start_date, $end_date, $batch_size);
+        return $master_playlist_file->build_from_file();
     }
 
     private function build_find_files_command($reference_file, $from, $to)
@@ -236,7 +247,8 @@ class PlaylistMasterDisk extends ModuleAbstract
 
                 $filename = shell_exec(
                     sprintf(
-                        'date \'+%1$s/%2$s/%%Y/%%m/%%d/%2$s.%%Y_%%m_%%d-%%H:%%M:%%S.%3$s\' --date="%4$s +%5$d seconds %6$s"',
+                        'date \'+%1$s/%2$s/%%Y/%%m/%%d/%2$s.%%Y_%%m_%%d-%%H:%%M:%%S.%3$s\' \
+                        --date="%4$s +%5$d seconds %6$s"',
                         Videos::RAW_VIDEO_PATH,
                         $id,
                         Videos::RAW_VIDEO_FORMAT,

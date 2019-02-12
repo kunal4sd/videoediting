@@ -2,9 +2,9 @@
 
 namespace App\Modules\Video\Entities\ActiveRecords;
 
-use App\Modules\Abstracts\ActiveRecordAbstract;
+use App\Modules\Abstracts\AbstractActiveRecord;
 
-class RemoteFileAR extends ActiveRecordAbstract
+class RemoteFileAR extends AbstractActiveRecord
 {
 
     /**

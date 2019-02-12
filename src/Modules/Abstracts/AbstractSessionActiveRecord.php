@@ -4,10 +4,10 @@ namespace App\Modules\Abstracts;
 
 use App\Libs\Session;
 use App\Libs\Log\Log;
-use App\Modules\Abstracts\ActiveRecordAbstract;
+use App\Modules\Abstracts\AbstractActiveRecord;
 use \Exception;
 
-abstract class SessionActiveRecordAbstract
+abstract class AbstractSessionActiveRecord
 {
 
     /**
@@ -21,7 +21,7 @@ abstract class SessionActiveRecordAbstract
     protected $session;
 
     /**
-     * @var ActiveRecordAbstract
+     * @var AbstractActiveRecord
      */
     protected $entity;
 
@@ -37,9 +37,9 @@ abstract class SessionActiveRecordAbstract
     }
 
     /**
-     * @return SessionActiveRecordAbstract
+     * @return AbstractSessionActiveRecord
      */
-    public function init_from_entity(ActiveRecordAbstract $entity)
+    public function init_from_entity(AbstractActiveRecord $entity)
     {
         $this->entity = $entity;
         $this->session->set_data($this->entity_field, $entity);
@@ -48,7 +48,7 @@ abstract class SessionActiveRecordAbstract
     }
 
     /**
-     * @return SessionActiveRecordAbstract
+     * @return AbstractSessionActiveRecord
      */
     public function init_from_session()
     {
@@ -75,7 +75,7 @@ abstract class SessionActiveRecordAbstract
     }
 
     /**
-     * @return ActiveRecordAbstract|null
+     * @return AbstractActiveRecord|null
      */
     public function get_entity()
     {

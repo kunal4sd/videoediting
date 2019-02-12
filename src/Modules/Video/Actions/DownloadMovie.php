@@ -4,14 +4,14 @@ namespace App\Modules\Video\Actions;
 
 use App\Libs\Json;
 use App\Libs\Enums\Videos;
-use App\Modules\Abstracts\ModuleAbstract;
-use App\Modules\Video\Entities\ActiveRecords\PlaylistAR;
+use App\Modules\Abstracts\AbstractModule;
+use App\Modules\Video\Entities\Files\VideoFile;
 use Slim\Http\Stream;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
 
-class DownloadMovie extends ModuleAbstract
+class DownloadMovie extends AbstractModule
 {
 
     public function __invoke(Request $request, Response $response, $args)
@@ -19,7 +19,8 @@ class DownloadMovie extends ModuleAbstract
 
         if (isset($args['article_id'])) {
 
-            $file_path = PlaylistAR::build_movie_path($args['article_id']);
+            $article_ar = $this->entity_article->get_by_id($args['article_id']);
+            $file_path = VideoFile::build_movie_path($article_ar);
             $resource = fopen($file_path, 'rb');
             $stream = new Stream($resource);
 

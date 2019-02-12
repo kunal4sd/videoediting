@@ -2,10 +2,10 @@
 
 namespace App\Modules\Abstracts;
 
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use \ReflectionClass;
 
-abstract class ActiveRecordAbstract extends ModuleAbstract
+abstract class AbstractActiveRecord extends AbstractModule
 {
 
     public function build_from_array(array $array)
@@ -22,14 +22,11 @@ abstract class ActiveRecordAbstract extends ModuleAbstract
 
     public function build_to_array()
     {
-
-        $result = array();
-
+        $result = [];
         $reflection = new ReflectionClass($this);
         $properties = $reflection->getProperties();
 
         foreach ($properties as $property) {
-
             $name = $property->getName();
             if ($property->isPublic()) {
                 $result[$name] = $this->$name;

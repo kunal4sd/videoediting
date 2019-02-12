@@ -2,10 +2,10 @@
 
 namespace App\Modules\User\Entities\Repository\Database;
 
-use App\Modules\Abstracts\DatabaseAbstract;
+use App\Modules\Abstracts\AbstractDatabase;
 use App\Modules\User\Entities\ActiveRecords\UserAR;
 
-class UserDB extends DatabaseAbstract
+class UserDB extends AbstractDatabase
 {
 
     public function get_by_id($id, $with_password = false)

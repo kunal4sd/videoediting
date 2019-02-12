@@ -3,11 +3,11 @@
 namespace App\Modules\Core\Middleware\Standardization;
 
 use App\Libs\Json;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class DateRange extends ModuleAbstract
+class DateRange extends AbstractModule
 {
     public function __invoke(Request $request, Response $response, $next)
     {

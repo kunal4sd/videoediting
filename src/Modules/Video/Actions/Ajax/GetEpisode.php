@@ -3,13 +3,18 @@
 namespace App\Modules\Video\Actions\Ajax;
 
 use App\Libs\Json;
+use App\Libs\Enums\Dbs;
+use App\Libs\Enums\Hosts;
+use App\Libs\Enums\UserActivity;
 use App\Libs\Enums\Videos;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
+use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
+use App\Modules\Video\Entities\Files\PlaylistFile;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
 
-class GetEpisode extends ModuleAbstract
+class GetEpisode extends AbstractModule
 {
     public function __invoke(Request $request, Response $response)
     {
@@ -19,37 +24,42 @@ class GetEpisode extends ModuleAbstract
             'poster' => '',
             'warnings' => []
         ];
+        $code = 200;
 
         try {
 
-            $playlist_details = explode('/', $request->getParam('playlist'));
-            $filename = array_pop($playlist_details);
-            $filename_details = explode('.', $filename);
-            $hash = array_shift($filename_details);
-            $file_type = array_shift($filename_details);
-
-            if ($hash && $file_type === Videos::PLAYLIST_FORMAT) {
-
-                $playlist_ar = $this->entity_playlist->get_playlist_with_hash($hash);
-                $files = $playlist_ar->files;
+            $hash = PlaylistFile::build_hash_from_path($request->getParam('playlist'));
+            if ($hash) {
+                $playlist_file = $this->entity_playlist->get_playlist_with_hash($hash);
+                $files = $playlist_file->get_files();
                 $from = $request->getParam('from');
                 $to = $request->getParam('to');
-                $from_index = floor($from / Videos::RAW_VIDEO_LENGTH);
-                $to_index = floor($to / Videos::RAW_VIDEO_LENGTH);
+                list($from_index, $to_index) = $playlist_file->get_range_indexes($from, $to);
                 $new_files = array_values(
                     array_slice($files, $from_index, ( $to_index - $from_index + 1 ))
                 );
-                $new_playlist_ar = $this->entity_playlist->get_playlist_with_files(
-                    $new_files,
-                    false
-                );
-
-                $result['src'] = $new_playlist_ar->path_to_url($new_playlist_ar->name);
-                $result['poster'] = $new_playlist_ar->get_poster_url();
+                $new_playlist_file = $this->entity_playlist->get_playlist_with_files($new_files);
+                $this->entity_user_activity->save(new UserActivityAR(
+                    [
+                        'user_id' => $this->session_user->get_user()->id,
+                        'publication_id' => 0,
+                        'article_id' => 0,
+                        'issue_date' => date("Y-m-d"),
+                        'activity_id' => UserActivity::EPISODE,
+                        'created' => $this->db[Hosts::LOCAL][Dbs::MAIN]->now(),
+                        'description' => json_encode(['hash' => $new_playlist_file->get_hash()])
+                    ]
+                ));
+                $result['src'] = $new_playlist_file->get_url();
+                $result['poster'] = $new_playlist_file->get_poster()->get_url();
+                $result['message'] = 'Episode created successfully';
+            }
+            else {
+                $code = 400;
+                $result['message'] = 'Could not find the source playlist for this episode';
             }
         }
         catch(Exception $e) {
-            $this->flash->addMessage('alerts_errors', $e->getMessage());
             $this->logger->write(
                 new Exception(
                     sprintf(
@@ -59,9 +69,11 @@ class GetEpisode extends ModuleAbstract
                     $e->getCode()
                 )
             );
+            $result['message'] = $e->getMessage();
+            $code = $e->getCode();
         }
 
-        return Json::build($response, $result, 200);
+        return Json::build($response, $result, $code);
     }
 
 }

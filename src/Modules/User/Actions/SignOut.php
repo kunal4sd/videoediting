@@ -2,12 +2,12 @@
 
 namespace App\Modules\User\Actions;
 
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Pimple\Container;
 
-class SignOut extends ModuleAbstract
+class SignOut extends AbstractModule
 {
     public function __invoke(Request $request, Response $response)
     {

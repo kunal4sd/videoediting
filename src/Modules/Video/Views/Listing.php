@@ -2,12 +2,12 @@
 
 namespace App\Modules\Video\Views;
 
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
 
-class Listing extends ModuleAbstract
+class Listing extends AbstractModule
 {
     public function __invoke(Request $request, Response $response)
     {

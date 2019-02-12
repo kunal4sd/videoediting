@@ -5,6 +5,7 @@ $( function() {
     var global_templates_holder = $('#global-templates-holder');
     var global_alert_danger = global_templates_holder.find('div[name="global_template_alert_danger"]');
     var global_alert_warning = global_templates_holder.find('div[name="global_template_alert_warning"]');
+    var global_alert_info = global_templates_holder.find('div[name="global_template_alert_info"]');
     var video_preview = videojs.getPlayer('video-preview');
 
     event_emitter.on('show_global_errors', function(e, errors, expire) {
@@ -131,14 +132,12 @@ $( function() {
             }
         }
         else if (result.status === 302) {
-
             if (
                 result.responseJSON.result !== undefined
                 && result.responseJSON.result.redirect_to !== undefined
             ) {
                 window.location.replace(result.responseJSON.result.redirect_to);
             }
-
         }
         else {
             if (
@@ -172,6 +171,18 @@ $( function() {
                         });
                     }
                 });
+            }
+
+            if (result.responseJSON.message) {
+                global_functions
+                    .launch_template(
+                        global_functions.build_template(
+                            global_alert_info,
+                            {content: result.responseJSON.message}
+                        ),
+                        global_alerts_holder
+                    )
+                    .attr('data-name', 'info');
             }
         }
 

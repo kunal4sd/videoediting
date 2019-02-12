@@ -9,7 +9,8 @@ class Json
 
     const JSON_RESPONSE_OUTPUT_FIELDS_SUCCESS = [
         'success',
-        'result'
+        'result',
+        'message'
     ];
 
     const JSON_RESPONSE_OUTPUT_FIELDS_FAIL = [
@@ -25,7 +26,12 @@ class Json
     {
 
         if ($code < 400) {
-            $response_array = self::response_success(true, $data);
+            $message = false;
+            if (isset($data['message'])) {
+                $message = $data['message'];
+                unset($data['message']);
+            }
+            $response_array = self::response_success(true, $data, $message);
         }
         else {
             $response_array = self::response_fail(false, $data);
@@ -38,14 +44,15 @@ class Json
             ;
     }
 
-    private static function response_success($success, $data)
+    private static function response_success($success, $data, $message)
     {
 
         return array_combine(
             self::JSON_RESPONSE_OUTPUT_FIELDS_SUCCESS,
             [
                 $success,
-                $data
+                $data,
+                $message
             ]
         );
     }

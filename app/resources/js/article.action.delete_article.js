@@ -11,6 +11,7 @@ $(function() {
                     && result.responseJSON.success
                 ) {
                     event_emitter.trigger('article.delete.article.done', btn);
+                    event_emitter.trigger('form.ajax.result.alert', [result]);
                 }
             }
         });

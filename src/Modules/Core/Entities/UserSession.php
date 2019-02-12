@@ -2,11 +2,11 @@
 
 namespace App\Modules\Core\Entities;
 
-use App\Modules\Abstracts\SessionActiveRecordAbstract;
+use App\Modules\Abstracts\AbstractSessionActiveRecord;
 use App\Libs\Enums\SessionFields;
 use \Exception;
 
-class UserSession extends SessionActiveRecordAbstract
+class UserSession extends AbstractSessionActiveRecord
 {
 
     protected $entity_field = SessionFields::USER;

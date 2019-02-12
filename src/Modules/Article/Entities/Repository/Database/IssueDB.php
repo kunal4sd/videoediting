@@ -2,10 +2,10 @@
 
 namespace App\Modules\Article\Entities\Repository\Database;
 
-use App\Modules\Abstracts\DatabaseAbstract;
+use App\Modules\Abstracts\AbstractDatabase;
 use App\Modules\Article\Entities\ActiveRecords\IssueAR;
 
-class IssueDB extends DatabaseAbstract
+class IssueDB extends AbstractDatabase
 {
 
     /**

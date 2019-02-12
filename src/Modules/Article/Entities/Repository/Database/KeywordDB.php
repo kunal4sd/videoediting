@@ -2,12 +2,12 @@
 
 namespace App\Modules\Article\Entities\Repository\Database;
 
-use App\Modules\Abstracts\DatabaseAbstract;
+use App\Modules\Abstracts\AbstractDatabase;
 use App\Modules\Article\Entities\ActiveRecords\KeywordAR;
 use \PDO;
 use \Exception;
 
-class KeywordDB extends DatabaseAbstract
+class KeywordDB extends AbstractDatabase
 {
 
     /**

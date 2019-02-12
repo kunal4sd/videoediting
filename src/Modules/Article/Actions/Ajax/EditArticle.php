@@ -8,9 +8,9 @@ use App\Libs\Enums\Hosts;
 use App\Libs\Enums\Status;
 use App\Libs\Enums\Videos;
 use App\Libs\Enums\UserActivity;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
-use App\Modules\Video\Entities\ActiveRecords\PlaylistAR;
+use App\Modules\Video\Entities\Files\VideoFile;
 use App\Modules\Video\Entities\ActiveRecords\RemoteFileAR;
 use App\Modules\Article\Entities\ActiveRecords\IssueAR;
 use App\Modules\Article\Entities\ActiveRecords\ArticleOneAR;
@@ -19,7 +19,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
 
-class EditArticle extends ModuleAbstract
+class EditArticle extends AbstractModule
 {
 
     public function __invoke(Request $request, Response $response)
@@ -134,11 +134,7 @@ class EditArticle extends ModuleAbstract
                     }
                     $this->entity_article_keyword->save_multiple_media($article_keywords_ar);
 
-                    copy(
-                        PlaylistAR::build_movie_path($article_ar->id),
-                        PlaylistAR::build_movie_path_live($article_ar_media->id, $article_ar_media->issue_date)
-                    );
-
+                    $movie_file = (new VideoFile())->copy_media($article_ar, $article_ar_media);
                     $article_ar->publish_id = $article_ar_media->id;
                     $article_ar->status = Status::LIVE;
                     $this->entity_article->save($article_ar);
@@ -161,26 +157,22 @@ class EditArticle extends ModuleAbstract
                     $this->entity_user_activity->save_media($user_activity_ar);
 
                 }
+
+                $result['message'] = "Article updated successfully";
             }
             elseif(is_null($article_ar->id)) {
-                throw new Exception(
-                    sprintf(
-                        'No article found with the provided id #%s for user %s',
-                        $request->getParam('id'),
-                        $this->session_user->get_user()->id
-                    ),
-                    400
-                );
+                $result['message'] = "No article found with the provided details";
+                $code = 400;
             }
             else {
-                $result['message'] = "Article status is Live and cannot be changed.";
+                $result['message'] = "Article status is Live and cannot be changed";
                 $code = 400;
             }
         }
         catch(Exception $e) {
             $this->logger->write($e);
             $result['message'] = $e->getMessage();
-            $code = 400;
+            $code = $e->getCode();
         }
 
         return Json::build($response, $result, $code);

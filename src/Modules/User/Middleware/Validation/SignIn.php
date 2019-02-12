@@ -3,12 +3,12 @@
 namespace App\Modules\User\Middleware\Validation;
 
 use App\Libs\Json;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Respect\Validation\Validator as v;
 
-class SignIn extends ModuleAbstract
+class SignIn extends AbstractModule
 {
     public function __invoke(Request $request, Response $response, $next)
     {

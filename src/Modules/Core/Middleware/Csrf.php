@@ -2,11 +2,11 @@
 
 namespace App\Modules\Core\Middleware;
 
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Csrf extends ModuleAbstract
+class Csrf extends AbstractModule
 {
     public function __invoke(Request $request, Response $response, $next)
     {

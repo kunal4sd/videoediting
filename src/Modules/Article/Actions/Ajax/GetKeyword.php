@@ -3,18 +3,19 @@
 namespace App\Modules\Article\Actions\Ajax;
 
 use App\Libs\Json;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
 
-class GetKeyword extends ModuleAbstract
+class GetKeyword extends AbstractModule
 {
 
     public function __invoke(Request $request, Response $response)
     {
 
         $result = [];
+        $code = 200;
 
         try {
             $keywords_ar = $this->entity_keyword->get_by_article_id($request->getParam('article_id'));
@@ -28,10 +29,10 @@ class GetKeyword extends ModuleAbstract
         }
         catch(Exception $e) {
             $this->logger->write($e);
-
-            return Json::build($response, $result, $e->getCode());
+            $result['message'] = $e->getMessage();
+            $code = $e->getCode();
         }
 
-        return Json::build($response, $result, 200);
+        return Json::build($response, $result, $code);
     }
 }

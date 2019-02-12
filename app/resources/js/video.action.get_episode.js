@@ -6,7 +6,7 @@ $( function() {
 
     var active_episodes = 0;
     var episodes_counter = 0;
-    var episodes_per_row = 4;
+    var episodes_per_row = 3;
     var player = videojs.getPlayer('video-preview');
     var form_get_episode = $('#video-get-episode');
     var button = form_get_episode.find('button[type="button"]');

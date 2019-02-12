@@ -36,6 +36,13 @@
     z-index: 9999;
 }
 
+.unselectable-text {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 #video-playlists-holder {
     height: 418px;
     overflow: auto;

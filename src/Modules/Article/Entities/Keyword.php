@@ -4,12 +4,12 @@ namespace App\Modules\Article\Entities;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use App\Modules\Article\Entities\ActiveRecords\KeywordAR;
 use App\Modules\Article\Entities\Repository\Database\KeywordDB;
 use \Exception;
 
-class Keyword extends ModuleAbstract
+class Keyword extends AbstractModule
 {
 
     /**

@@ -2,13 +2,13 @@
 
 namespace App\Modules\Video\Actions\Ajax;
 
-use App\Modules\Abstracts\ModuleAbstract;
+use App\Modules\Abstracts\AbstractModule;
 use App\Libs\Json;
 use Slim\Http\Response;
 use Slim\Http\Request;
 use \Exception;
 
-class GetMovieList extends ModuleAbstract
+class GetMovieList extends AbstractModule
 {
     public function __invoke(Request $request, Response $response)
     {

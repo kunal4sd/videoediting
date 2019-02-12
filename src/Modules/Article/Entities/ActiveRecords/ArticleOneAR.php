@@ -2,9 +2,9 @@
 
 namespace App\Modules\Article\Entities\ActiveRecords;
 
-use App\Modules\Abstracts\ActiveRecordAbstract;
+use App\Modules\Abstracts\AbstractActiveRecord;
 
-class ArticleOneAR extends ActiveRecordAbstract
+class ArticleOneAR extends AbstractActiveRecord
 {
 
     /**
