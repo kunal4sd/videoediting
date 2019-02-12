@@ -67,7 +67,7 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
 
     public function get_poster()
     {
-        return $this->poster;
+        return $this->poster ? $this->poster : (new PosterFile());
     }
 
     public function set_poster(AbstractFile $poster)

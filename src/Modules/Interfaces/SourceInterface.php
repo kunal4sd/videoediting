@@ -6,7 +6,7 @@ interface SourceInterface
 {
 
     /**
-     * @return SourceInterface
+     * @return string
      */
     public function get_source();
 

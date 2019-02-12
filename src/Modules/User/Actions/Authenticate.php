@@ -45,11 +45,7 @@ class Authenticate extends AbstractModule
         $this->delete_previous_sessions_files();
 
         if ($request->getParam('ajax')) {
-            return Json::build(
-                $response,
-                $result,
-                $code
-            );
+            return Json::build($response, $result, $code);
         }
 
         if ($code < 400) {
