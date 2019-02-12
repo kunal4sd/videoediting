@@ -54,7 +54,7 @@ class Authenticate extends AbstractModule
 
         if ($code < 400) {
             return $response->withRedirect(
-                $this->router->pathFor('video.view.index', [], ['redirect' => 'asdafa'])
+                $this->router->pathFor('video.view.index')
             );
         }
 
