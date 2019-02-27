@@ -43,9 +43,7 @@ class Article extends AbstractModule
 
         $article_db = new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
         $article_ar = $this->entity_article->get_by_id($article_id);
-        $rows = $article_db->delete_by_id(
-            $article_id, $this->session_user->get_user()->id
-        );
+        $rows = $article_db->delete_by_id($article_id);
         if ($rows === 1) {
             (new ArticleKeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
                 ->delete_by_article_id($article_id);
