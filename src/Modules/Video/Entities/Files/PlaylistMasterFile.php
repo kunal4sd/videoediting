@@ -4,7 +4,6 @@ namespace App\Modules\Video\Entities\Files;
 
 use App\Libs\Enums\Files;
 use App\Modules\Abstracts\AbstractPlaylist;
-use App\Modules\Video\Entities\Files\RawVideoFile;
 use App\Modules\Interfaces\FooterInterface;
 use App\Modules\Interfaces\HashInterface;
 use App\Modules\Parameters\PlaylistParameter;
