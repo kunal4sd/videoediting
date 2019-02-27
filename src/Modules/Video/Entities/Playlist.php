@@ -115,7 +115,7 @@ class Playlist extends AbstractModule
             Videos::MOVIE_FORMAT
         ];
         list($hash, $file_type) = get_file_details_from_path($path);
-        if (in_array($file_type, $deletable_file_types) && file_exists($path)) unlink($path);
+        if ($hash && in_array($file_type, $deletable_file_types) && file_exists($path)) unlink($path);
 
         return $this;
     }
