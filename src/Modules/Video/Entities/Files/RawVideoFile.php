@@ -29,8 +29,8 @@ class RawVideoFile extends AbstractFile implements LengthInterface
             $this->length = round(
                 shell_exec(
                     sprintf(
-                        "ffprobe -v quiet -show_entries format=duration -of \
-                        default=noprint_wrappers=1:nokey=1 %s",
+                        "%s/duration %s",
+                        BIN_PATH,
                         $this->get_path()
                     )
                 ),
