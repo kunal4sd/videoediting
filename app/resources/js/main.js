@@ -161,9 +161,6 @@ var global_functions = {
         var player = videojs.getPlayer('video-preview');
 
         player.hasStarted(false);
-        if (player.rangeslider !== undefined && player.rangeslider.bar.rs !== undefined) {
-            player.rangeslider._reset();
-        }
         player.poster($('#video-preview').attr('poster'));
         player.posterImage.show();
         player.bigPlayButton.show();

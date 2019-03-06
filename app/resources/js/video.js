@@ -18,7 +18,7 @@ $( function() {
                         volumePanel: {
                             vertical: true
                         }
-                    },
+                    }
                 };
                 player.rangeslider(options);
 
