@@ -1,4 +1,16 @@
-/**
+/*
+
+####################################################################
+####################################################################
+########## WARNING: THIS LIBRARY CONTAINS NUMEROUS TWEAKS ##########
+########## WARNING: REPLACING IT WITH THE VANILLA VERSION ##########
+################### CAN LEAD TO COMPLETE BEHAVIOUR FAILURE #########
+####################################################################
+####################################################################
+
+ */
+
+ /**
  * @license
  * Video.js 7.2.3 <http://videojs.com/>
  * Copyright Brightcove, Inc. <https://www.brightcove.com/>
@@ -23161,6 +23173,14 @@
 
       Player.prototype.handleTechDurationChange_ = function handleTechDurationChange_() {
         this.duration(this.techGet_('duration'));
+        if (
+          this.rangeslider !== undefined
+          && this.rangeslider.bar !== undefined
+          && this.rangeslider.bar.rs !== undefined
+        ) {
+            this.rangeslider._reset();
+            this.rangeslider._setValuesLocked(0, this.techGet_('duration'), true);
+        }
       };
 
       /**
