@@ -82,11 +82,12 @@ class PlaylistMasterDisk extends AbstractModule
             sort($files);
 
             $prev_file = false;
-            foreach($files as &$raw_file) {
+            $files_duration = $this->get_files_duration($files);
+            foreach($files as $key => &$raw_file) {
                 $file = (new RawVideoFile())
                     ->set_locations($raw_file)
                     ->set_name($raw_file)
-                    ->build_length();
+                    ->set_length($files_duration[$key]);
                 $raw_file = $file;
                 if (
                     $prev_file
@@ -120,6 +121,22 @@ class PlaylistMasterDisk extends AbstractModule
         }
 
         return $playlist_master_file;
+    }
+
+    private function get_files_duration(array $files)
+    {
+        $durations = json_decode(
+            shell_exec(
+                sprintf(
+                    "%s/duration_multiple %s",
+                    BIN_PATH,
+                    implode(' ', $files)
+                )
+            ),
+            true
+        );
+
+        return array_map(function($file) { return $file['duration']; }, $durations);
     }
 
     private function get_segment_count(array $files, $batch_size)

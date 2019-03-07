@@ -49,7 +49,7 @@ class RawVideoFile extends AbstractFile implements LengthInterface
 
     public function set_length($length)
     {
-        $this->length = $length;
+        $this->length = round((float) $length, 4, PHP_ROUND_HALF_UP);
         return $this;
     }
 
