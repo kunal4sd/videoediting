@@ -35,6 +35,7 @@ var config = {
             glob: [
                 'main.js',
                 'triggers.js',
+                'rangeslider.js',
                 '*.js'
             ]
         }

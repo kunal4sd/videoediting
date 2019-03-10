@@ -1,0 +1,27 @@
+ @import url(https://fonts.googleapis.com/css?family=Material+Icons);
+ .video-js .vjs-rangeset-button {
+    font-family:'Material Icons';
+    cursor:pointer
+}
+.video-js .vjs-rangeset-button.from::before {
+    content:'\e14e';
+}
+.video-js .vjs-rangeset-button.to::before {
+    content:'\e14e';
+    transform: rotate(180deg);
+}
+.video-js.vjs-v6 .vjs-rangeset-button.from::before,
+.video-js.vjs-v6 .vjs-rangeset-button.to::before,
+.video-js.vjs-v7 .vjs-rangeset-button.from::before,
+.video-js.vjs-v7 .vjs-rangeset-button.to::before {
+    content:none;
+}
+.video-js.vjs-v6 .vjs-rangeset-button.from .vjs-icon-placeholder::before,
+.video-js.vjs-v7 .vjs-rangeset-button.from .vjs-icon-placeholder::before {
+    content:'\e14e';
+}
+.video-js.vjs-v6 .vjs-rangeset-button.to .vjs-icon-placeholder::before,
+.video-js.vjs-v7 .vjs-rangeset-button.to .vjs-icon-placeholder::before {
+    content:'\e14e';
+    transform: rotate(180deg);
+}

@@ -17,7 +17,7 @@ $( function() {
         episodes_holder.append(
             '<div class="col-md-' + Math.floor( 12 / episodes_per_row ) + '">'
             + '<div class="row mx-auto">'
-            + '<video id="' + id + '" class="col-sm-12 video-js vjs-big-play-centered vjs-default-skin mr-2 mt-2" controls poster="/images/no_video.png" preload="auto" data-setup=\'{"inactivityTimeout":0,"width":426,"height":225,"playbackRates":[0.5,1,1.25,1.5,2], "seekButtons":{"forward": 5,"back": 5}}\'></video>'
+            + '<video id="' + id + '" class="col-sm-12 video-js vjs-big-play-centered vjs-default-skin mr-2 mt-2" controls poster="/images/no_video.png" preload="auto" data-setup=\'{"inactivityTimeout":0,"width":426,"height":225,"playbackRates":[0.5,1,1.25,1.5,2]}\'></video>'
             + '</div>'
             + '<div class="row mx-auto">'
             + '<button id="remove-' + id + '" class="col-sm-12 btn btn-danger btn-md oi oi-trash" style="top: 0px;"></button>'
