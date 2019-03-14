@@ -658,10 +658,11 @@
     height: 0.3em; }
 
   .video-js .vjs-progress-control .vjs-progress-holder {
+    font-size: 1.666666666666666666em;
     margin: 0 10px; }
 
-  .video-js .vjs-progress-control:hover .vjs-progress-holder {
-    font-size: 1.666666666666666666em; }
+  /* .video-js .vjs-progress-control:hover .vjs-progress-holder {
+    font-size: 1.666666666666666666em; } */
 
   .video-js .vjs-progress-control:hover .vjs-progress-holder.disabled {
     font-size: 1em; }
@@ -704,7 +705,8 @@
     position: absolute;
     top: -3.4em;
     visibility: hidden;
-    z-index: 1; }
+    z-index: 1;
+    display: none; }
 
   .video-js .vjs-progress-holder:focus .vjs-time-tooltip {
     display: none; }
@@ -713,10 +715,16 @@
   .video-js .vjs-progress-control:hover .vjs-progress-holder:focus .vjs-time-tooltip {
     display: block;
     font-size: 0.6em;
-    visibility: visible; }
+    visibility: visible;
+    display: none; }
+
+  .video-js .vjs-progress-control:hover .vjs-mouse-display .vjs-time-tooltip {
+    visibility: visible;
+    display: block; }
 
   .video-js .vjs-progress-control.disabled:hover .vjs-time-tooltip {
-    font-size: 1em; }
+    font-size: 1em;
+    display: none; }
 
   .video-js .vjs-progress-control .vjs-mouse-display {
     display: none;
