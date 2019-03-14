@@ -14,7 +14,6 @@
     var o = function (e, o) {
       if (!(e instanceof o)) { throw new TypeError('Cannot call a class as a function') }
     }
-
     var t = function (e, o) {
       if (typeof o !== 'function' && o !== null) {
         throw new TypeError(
@@ -33,7 +32,6 @@
               ? Object.setPrototypeOf(e, o)
               : (e.__proto__ = o))
     }
-
     var n = function (e, o) {
       if (!e) {
         throw new ReferenceError(
@@ -42,15 +40,10 @@
       }
       return !o || (typeof o !== 'object' && typeof o !== 'function') ? e : o
     }
-
     var r = (e = 'default' in e ? e.default : e).getComponent('Button')
-
     var i = e.getComponent('Component')
-
     var s = {}
-
     var c = e.registerPlugin || e.plugin
-
     var a = function (e, o) {
       e.addClass('vjs-rangeset-buttons'),
       o.to &&
@@ -88,7 +81,6 @@
         a(t, e.mergeOptions(s, o))
       })
     }
-
     var d = (function (e) {
       function r (t, i) {
         o(this, r)
@@ -97,12 +89,12 @@
           s.options_.cut === 'to'
             ? s.controlText(
               s
-                .localize('Set end time here')
+                .localize('Set Range Slider end time to current time')
             )
             : s.options_.cut === 'from' &&
                 s.controlText(
                   s
-                    .localize('Set start time here')
+                    .localize('Set Range Slider start time to current time')
                 ),
           s
         )
