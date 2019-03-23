@@ -173,5 +173,5 @@ function get_file_details_from_path($path)
         return $filename_details;
     }
 
-    return [false, false];
+    return array_fill(0, 5, false);
 }
