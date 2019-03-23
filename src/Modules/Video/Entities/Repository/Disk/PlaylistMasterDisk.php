@@ -74,7 +74,6 @@ class PlaylistMasterDisk extends AbstractModule
                 );
                 $files = array_merge($files, explode(PHP_EOL, trim($files_string)));
             }
-
             array_unshift($files, $start_file);
             array_push($files, $end_file);
             $files = array_filter($files);
@@ -83,7 +82,6 @@ class PlaylistMasterDisk extends AbstractModule
 
             $prev_file = false;
             $files_duration = $this->get_files_duration($files);
-            $discontinuity = false;
             foreach($files as $key => &$raw_file) {
                 $file = (new RawVideoFile())
                     ->set_locations($raw_file)
@@ -94,6 +92,7 @@ class PlaylistMasterDisk extends AbstractModule
                 $prev_file = $file;
             }
             $files = array_filter($files);
+
             $files_copy = $files;
             $playlist_disk = new PlaylistDisk($this->container);
             $playlists = [];
@@ -106,6 +105,7 @@ class PlaylistMasterDisk extends AbstractModule
                     $playlists[] = $playlist_file;
                 }
             }
+
             if (!empty($playlists)) {
                 $playlist_master_file
                     ->set_files($playlists)
@@ -113,7 +113,6 @@ class PlaylistMasterDisk extends AbstractModule
                 $playlist_master_file->set_locations($playlist_master_file->build_playlist_path())
                     ->save();
             }
-
         }
 
         return $playlist_master_file;
