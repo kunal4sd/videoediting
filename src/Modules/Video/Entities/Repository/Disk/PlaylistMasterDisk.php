@@ -55,15 +55,7 @@ class PlaylistMasterDisk extends AbstractModule
             $sfile_mtime_day = date('d', filemtime($start_file));
             $efile_mtime_day = date('d', filemtime($end_file));
 
-            $files_string = shell_exec(
-                $this->build_find_files_command(
-                    $start_file,
-                    $sfile_mtime,
-                    $efile_mtime
-                )
-            );
-            $files = explode(PHP_EOL, trim($files_string));
-
+            $files = [];
             foreach ($this->get_paths_in_range($start_file, $end_file) as $path) {
                 $files_string = shell_exec(
                     $this->build_find_files_command(
@@ -295,18 +287,22 @@ class PlaylistMasterDisk extends AbstractModule
         $to_name = array_shift($to_details);
         $start_date = Datetime::createFromFormat('Y_m_d-H:i:s', $from_name, $tz);
         $end_date = Datetime::createFromFormat('Y_m_d-H:i:s', $to_name, $tz);
-        $diff = $end_date->format('d') - $start_date->format('d');
+        $diff = strtotime($end_date->format('Y-m-d')) - strtotime($start_date->format('Y-m-d'));
+        $diff = abs($diff / 3600 / 24);
 
-        while($diff >= 0) {
+        do {
 
             yield sprintf(
                 '%s/%s/%s',
                 Videos::RAW_VIDEO_PATH,
                 $to_pub_id,
-                $end_date->modify(sprintf('-%s days', $diff))->format('Y/m/d')
+                Datetime::createFromFormat('Y_m_d-H:i:s', $to_name, $tz)
+                    ->modify(sprintf('-%s days', $diff))
+                    ->format('Y/m/d')
             );
             $diff--;
         }
+        while($diff > 0);
     }
 
 }
