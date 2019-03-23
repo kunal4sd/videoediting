@@ -6,15 +6,21 @@ use App\Libs\Enums\Files;
 use App\Libs\Enums\Videos;
 use App\Modules\Abstracts\AbstractFile;
 use App\Modules\Interfaces\LengthInterface;
+use App\Modules\Interfaces\DiscontinuityBoolInterface;
 use Pimple\Container;
 
-class RawVideoFile extends AbstractFile implements LengthInterface
+class RawVideoFile extends AbstractFile implements LengthInterface, DiscontinuityBoolInterface
 {
 
     /**
      * @var float
      */
     private $length;
+
+    /**
+     * @var string
+     */
+    private $discontinuity;
 
     public function __construct()
     {
@@ -50,6 +56,17 @@ class RawVideoFile extends AbstractFile implements LengthInterface
     public function set_length($length)
     {
         $this->length = round((float) $length, 4, PHP_ROUND_HALF_UP);
+        return $this;
+    }
+
+    public function get_discontinuity()
+    {
+        return $this->discontinuity;
+    }
+
+    public function set_discontinuity($discontinuity)
+    {
+        $this->discontinuity = (bool) $discontinuity;
         return $this;
     }
 

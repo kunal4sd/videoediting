@@ -51,6 +51,7 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
         $this->add_header((new PlaylistParameter)->set_name('EXT-X-ALLOW-CACHE')->set_value('NO'));
         $this->add_header((new PlaylistParameter)->set_name('EXT-X-TARGETDURATION')->set_value('60'));
         $this->set_file_details((new PlaylistParameter)->set_name('EXTINF'));
+        $this->set_discontinuity((new PlaylistParameter)->set_name('EXT-X-DISCONTINUITY'));
         $this->set_footer((new PlaylistParameter)->set_name('EXT-X-ENDLIST'));
     }
 
@@ -93,7 +94,7 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
         try {
             if (empty($this->get_files())) {
                 throw new Exception(
-                    'Cannot generate hash because $this->files is empty, in PlaylistFile',
+                    'Cannot generate hash because PlaylistFile::files is empty',
                     500
                 );
             }
@@ -124,6 +125,7 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
         if (file_exists($path) && ($content = file_get_contents($path))) {
 
             $file_details_row = $this->get_file_details()->get_row();
+            $discontinuity_row = $this->get_discontinuity()->get_row();
             $content_arr = explode("\n", trim($content));
             $original_length = count($content_arr);
             $all_props = $this->headers_to_string_array();
@@ -139,9 +141,16 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
                 }
 
                 $content_arr = array_values($content_arr);
+                $is_discontinuity = false;
                 for($i=0; $i < count($content_arr); $i += 2) {
 
                     $row = $content_arr[$i];
+                    if ($discontinuity_row === $row) {
+                        $is_discontinuity = true;
+                        $i++;
+                        $row = $content_arr[$i];
+                    }
+
                     $next_row = isset($content_arr[$i+1]) ? $content_arr[$i+1] : false;
                     if ($next_row) {
                         $this->add_file(
@@ -155,7 +164,9 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
                                         PHP_ROUND_HALF_UP
                                     )
                                 )
+                                ->set_discontinuity($is_discontinuity)
                         );
+                        $is_discontinuity = false;
                     }
                 }
 
@@ -223,6 +234,9 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
             $headers[] = $header->get_row();
         }
         foreach($this->get_files() as $file) {
+            if ($file->get_discontinuity()) {
+                $files[] = $this->get_discontinuity()->get_row();
+            }
             $files[] = $this->get_file_details()->set_value($file->get_length())->get_row();
             $files[] = $file->get_url();
         }

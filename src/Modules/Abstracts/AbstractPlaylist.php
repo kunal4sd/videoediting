@@ -4,6 +4,7 @@ namespace App\Modules\Abstracts;
 
 use App\Libs\Enums\Videos;
 use App\Modules\Abstracts\AbstractFile;
+use App\Modules\Interfaces\DiscontinuityInterface;
 use App\Modules\Interfaces\FileDetailsInterface;
 use App\Modules\Interfaces\FilesInterface;
 use App\Modules\Interfaces\FooterInterface;
@@ -12,7 +13,7 @@ use App\Modules\Interfaces\SaveInterface;
 use App\Modules\Parameters\PlaylistParameter;
 use \Exception;
 
-abstract class AbstractPlaylist extends AbstractFile implements HeadersInterface, FileDetailsInterface, FilesInterface, SaveInterface
+abstract class AbstractPlaylist extends AbstractFile implements HeadersInterface, FileDetailsInterface, FilesInterface, SaveInterface, DiscontinuityInterface
 {
 
     /**
@@ -24,6 +25,11 @@ abstract class AbstractPlaylist extends AbstractFile implements HeadersInterface
      * @var PlaylistParameter
      */
     protected $file_details;
+
+    /**
+     * @var PlaylistParameter
+     */
+    protected $discontinuity;
 
     /**
      * @var AbstractFile[]
@@ -57,6 +63,17 @@ abstract class AbstractPlaylist extends AbstractFile implements HeadersInterface
     public function set_file_details(PlaylistParameter $file_details)
     {
         $this->file_details = $file_details;
+        return $this;
+    }
+
+    public function get_discontinuity()
+    {
+        return $this->discontinuity;
+    }
+
+    public function set_discontinuity(PlaylistParameter $discontinuity)
+    {
+        $this->discontinuity = $discontinuity;
         return $this;
     }
 

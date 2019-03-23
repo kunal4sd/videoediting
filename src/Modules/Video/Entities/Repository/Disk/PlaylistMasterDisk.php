@@ -64,10 +64,10 @@ class PlaylistMasterDisk extends AbstractModule
             );
             $files = explode(PHP_EOL, trim($files_string));
 
-            if ($sfile_mtime_day !== $efile_mtime_day) {
+            foreach ($this->get_paths_in_range($start_file, $end_file) as $path) {
                 $files_string = shell_exec(
                     $this->build_find_files_command(
-                        $end_file,
+                        $path,
                         $sfile_mtime,
                         $efile_mtime
                     )
@@ -83,18 +83,14 @@ class PlaylistMasterDisk extends AbstractModule
 
             $prev_file = false;
             $files_duration = $this->get_files_duration($files);
+            $discontinuity = false;
             foreach($files as $key => &$raw_file) {
                 $file = (new RawVideoFile())
                     ->set_locations($raw_file)
                     ->set_name($raw_file)
-                    ->set_length($files_duration[$key]);
+                    ->set_length($files_duration[$key])
+                    ->set_discontinuity(true);
                 $raw_file = $file;
-                if (
-                    $prev_file
-                    && strtotime($prev_file->build_end_datetime()) >= strtotime($file->build_end_datetime())
-                ) {
-                    $raw_file = false;
-                }
                 $prev_file = $file;
             }
             $files = array_filter($files);
@@ -287,6 +283,31 @@ class PlaylistMasterDisk extends AbstractModule
         }
 
         return false;
+    }
+
+    private function get_paths_in_range($from, $to)
+    {
+        $tz = new DateTimeZone('Asia/Amman');
+        $from_details = get_file_details_from_path($from);
+        $to_details = get_file_details_from_path($to);
+        $from_pub_id = array_shift($from_details);
+        $from_name = array_shift($from_details);
+        $to_pub_id = array_shift($to_details);
+        $to_name = array_shift($to_details);
+        $start_date = Datetime::createFromFormat('Y_m_d-H:i:s', $from_name, $tz);
+        $end_date = Datetime::createFromFormat('Y_m_d-H:i:s', $to_name, $tz);
+        $diff = $end_date->format('d') - $start_date->format('d');
+
+        while($diff >= 0) {
+
+            yield sprintf(
+                '%s/%s/%s',
+                Videos::RAW_VIDEO_PATH,
+                $to_pub_id,
+                $end_date->modify(sprintf('-%s days', $diff))->format('Y/m/d')
+            );
+            $diff--;
+        }
     }
 
 }
