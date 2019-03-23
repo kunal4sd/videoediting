@@ -29,6 +29,7 @@ $( function() {
             var playlist = $(this);
             var data = playlist.data();
 
+            global_functions.reset_player();
             global_functions.unselect_playlists(playlists);
             playlist.addClass('list-group-item-warning');
             playlist.removeClass('list-group-item-success');
