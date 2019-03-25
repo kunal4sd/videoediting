@@ -28,6 +28,7 @@ class KeywordDB extends AbstractDatabase
                         name_en like :name
                         OR name_ar like :name
                     )
+                    AND active = 1
             ",
             [
                 'name' => ["%{$name}%", PDO::PARAM_STR]
