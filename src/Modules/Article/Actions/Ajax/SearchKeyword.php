@@ -17,7 +17,7 @@ class SearchKeyword extends AbstractModule
         $result = [];
         $code = 200;
         try {
-            $keywords_ar = $this->entity_keyword->search_by_name($request->getParam('string'), true);
+            $keywords_ar = $this->entity_keyword->search_by_name_media($request->getParam('string'), true);
             foreach($keywords_ar as $keyword_ar) {
                 $result[] = [
                     'id' => $keyword_ar->id,

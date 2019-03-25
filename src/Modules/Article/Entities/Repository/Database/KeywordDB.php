@@ -28,7 +28,51 @@ class KeywordDB extends AbstractDatabase
                         name_en like :name
                         OR name_ar like :name
                     )
-                    AND active = 1
+            ",
+            [
+                'name' => ["%{$name}%", PDO::PARAM_STR]
+            ]
+        );
+
+        foreach($data as $row) {
+            $result[] = new KeywordAR($row);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $name
+     * @return KeywordAR[]
+     */
+    public function search_by_name_media($name)
+    {
+        $result = [];
+
+        $data = $this->db->fetch_all(
+            "
+                SELECT
+                    k.*
+                FROM keyword AS k
+                INNER JOIN customer_keyword AS ck
+                    ON ck.keyword_id = k.id
+                INNER JOIN customer AS c
+                    ON c.id = ck.customer_id
+                    AND c.expiry_date >= NOW()
+                INNER JOIN customer_mediatype AS cmt
+                    ON cmt.customer_id = c.id
+                    AND (
+                        cmt.publication_types LIKE '%3%'
+                        OR cmt.publication_types LIKE '%4%'
+                    )
+                WHERE 1
+                    AND (
+                        k.name_en like :name
+                        OR k.name_ar like :name
+                    )
+                    AND k.active = 1
+                GROUP BY
+                    k.id
             ",
             [
                 'name' => ["%{$name}%", PDO::PARAM_STR]
