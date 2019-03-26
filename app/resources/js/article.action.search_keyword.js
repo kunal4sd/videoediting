@@ -29,7 +29,7 @@ $( function() {
 
     keywords_select.select2({
         width: '100%',
-        tokenSeparators: [",", " "],
+        tokenSeparators: [","],
         multiple: true,
         closeOnSelect: true,
         minimumInputLength: 2,
