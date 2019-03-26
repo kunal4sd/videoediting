@@ -126,3 +126,26 @@
 .vjs-default-skin .vjs-timepanel-right-RS {
     left: 95%;
 }
+
+
+ /**
+ * bootstrap modal
+ */
+
+@media (min-width:992px) {
+    .modal-xl {
+        max-width: 992px
+    }
+}
+
+@media (min-width:1200px) {
+    .modal-xl {
+        max-width: 1200px
+    }
+}
+
+@media (min-width:1500px) {
+    .modal-xl {
+        max-width: 1500px
+    }
+}

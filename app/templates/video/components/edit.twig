@@ -30,13 +30,13 @@
                 {% endif %}
             {% endfor %}
         </ul>
-        <div class="modal fade bd-example-modal-lg" id="video-modal-edit-article" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal fade" id="video-modal-edit-article" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <form id="article-edit-article" action="{{ base_url() }}{{ path_for('article.action.edit_article') }}" method="post" novalidate>
                         <div class="modal-body row">
                             <div class="col-lg-6 m-auto">
-                                <video id="video-modal-movie-play" controls="true" autoplay="false" name="media" width="368">
+                                <video id="video-modal-movie-play" controls="true" autoplay="false" name="media" width="100%">
                                     <source src="" type="video/mp4">
                                 </video>
                             </div>
