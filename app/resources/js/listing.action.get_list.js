@@ -104,10 +104,9 @@ $( function() {
         return new_element
     };
     var register_actions = function() {
+        movie_modal.on('show.bs.modal', function(e) {
 
-        list_holder.find('button[name="play-btn"]').unbind().on('click', function(e) {
-
-            var btn = $(this);
+            var btn = $(e.relatedTarget);
             var this_holder = btn.closest('tr');
 
             var id = this_holder.find('td[name="id"]').html().trim();
@@ -125,13 +124,12 @@ $( function() {
                 show: true
             });
 
-            movie_player.find('source').attr('src', $(this).attr('data-src'));
+            movie_player.find('source').attr('src', btn.attr('data-src'));
             movie_player[0].load();
             movie_player[0].pause();
             event_emitter.trigger('movie.edit.open', this_holder.find('td[name="id"]').html().trim());
-
         });
-        list_holder.find('button[name="download-btn"]').unbind().on('click', function(e) {
+        list_holder.unbind('click').on('click', 'button[name="download-btn"]', function(e) {
             window.location.href = $(this).attr('data-download');
         });
         modal_delete_movie.on('show.bs.modal', function(e) {

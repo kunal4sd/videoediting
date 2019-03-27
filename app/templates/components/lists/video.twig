@@ -22,7 +22,7 @@
         {{ csrf.fields | raw }}
         <div class="btn-toolbar" role="toolbar">
             <div class="btn-group mr-2 mx-auto" role="group">
-                <button name="play-btn" type="button" class="btn btn-primary oi oi-media-play" data-toggle="modal" data-target="#modal_video" data-src="{% if video.src %}{{ video.src }}{% endif %}"></button>
+                <button name="play-btn" type="button" class="btn btn-primary oi oi-media-play" data-toggle="modal" data-target="#listing-modal-edit-article" data-src="{% if video.src %}{{ video.src }}{% endif %}"></button>
                 <button name="download-btn" type="button" class="btn btn-success oi oi-data-transfer-download" data-download="{% if video.download %}{{ video.download }}{% endif %}"></button>
                 <button name="delete-btn" type="button" class="btn btn-danger oi oi-trash" data-toggle="modal" data-target="#listing-modal-delete-article" data-action-url="{{ base_url() }}{{ path_for('article.action.delete_article') }}"></button>
             </div>
