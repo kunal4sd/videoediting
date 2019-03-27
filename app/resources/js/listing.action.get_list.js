@@ -11,6 +11,7 @@ $( function() {
     var live_btn = $('#listing-status-live');
     var list_holder = $("#listing-list-holder");
     var movie_modal = $('#listing-modal-edit-article');
+    var modal_delete_movie = $('#listing-modal-delete-article');
     var movie_player = $('#listing-modal-movie-play');
     var form_edit_article = $('#article-edit-article');
     var button_edit = form_edit_article.find('#listing-modal-edit-article-button-submit');
@@ -133,21 +134,22 @@ $( function() {
         list_holder.find('button[name="download-btn"]').unbind().on('click', function(e) {
             window.location.href = $(this).attr('data-download');
         });
-        list_holder.find('button[name="delete-btn"]').unbind().on('click', function(e) {
+        modal_delete_movie.on('show.bs.modal', function(e) {
+            var triggerButton = $(e.relatedTarget);
+            modal_delete_movie.unbind('click').on('click', 'button[name="delete-btn"]', function(e) {
+                var url = triggerButton.attr('data-action-url');
+                var this_holder = triggerButton.closest('tr');
+                var id = this_holder.find('td[name="id"]').html().trim();
+                var data = {
+                    id: id,
+                    csrf_name: list_holder.find('input[name="csrf_name"]').val(),
+                    csrf_value: list_holder.find('input[name="csrf_value"]').val()
+                };
 
-            var btn = $(this);
-            var url = btn.attr('data-action-url');
-            var this_holder = btn.closest('tr');
-            var id = this_holder.find('td[name="id"]').html().trim();
-            var data = {
-                id: id,
-                csrf_name: list_holder.find('input[name="csrf_name"]').val(),
-                csrf_value: list_holder.find('input[name="csrf_value"]').val()
-            };
-
-            if (id) {
-                event_emitter.trigger('article.delete.article', [btn, url, data]);
-            }
+                if (id) {
+                    event_emitter.trigger('article.delete.article', [triggerButton, url, data]);
+                }
+            });
         });
     };
     var clear_form_edit_article = function() {
@@ -219,6 +221,7 @@ $( function() {
                 return false;
             }
         });
+        modal_delete_movie.modal('hide');
     });
 
     event_emitter.on('article.edit.article.done', function(event, result, data) {

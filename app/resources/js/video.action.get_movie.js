@@ -74,7 +74,7 @@ $( function() {
         });
         modal_delete_movie.on('show.bs.modal', function(e) {
             var triggerButton = $(e.relatedTarget);
-            modal_delete_movie.on('click', 'button[name="delete-btn"]', function(e) {
+            modal_delete_movie.unbind('click').on('click', 'button[name="delete-btn"]', function(e) {
                 var url = triggerButton.attr('data-action-url');
                 var this_holder = triggerButton.closest('li');
                 var id = this_holder.find('div[name="id"]').html().trim();
