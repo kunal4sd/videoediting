@@ -245,7 +245,7 @@ $( function() {
                             add_movie(result.responseJSON.result);
                             modal_new_movie.modal('hide');
                             global_functions.clear_episodes();
-                            form.find('input[type="text"]').val('');
+                            form.find('input[name="title"]').val('');
                         }
                     }
                 });
