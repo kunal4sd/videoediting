@@ -6,6 +6,7 @@ $( function() {
     if (form_get_movie.length === 0) return false;
 
     var modal_new_movie = $('#video-new-movie');
+    var modal_delete_movie = $('#video-modal-delete-article');
     var button = form_get_movie.find('#video-get-movie-submit-button');
     var movies_holder = $('#video-movies-holder');
     var global_templates_holder = $('#global-templates-holder');
@@ -71,21 +72,22 @@ $( function() {
         movies_holder.find('button[name="download-btn"]').unbind().on('click', function(e) {
             window.location.href = $(this).attr('data-download');
         });
-        movies_holder.find('button[name="delete-btn"]').unbind().on('click', function(e) {
+        modal_delete_movie.on('show.bs.modal', function(e) {
+            var triggerButton = $(e.relatedTarget);
+            modal_delete_movie.on('click', 'button[name="delete-btn"]', function(e) {
+                var url = triggerButton.attr('data-action-url');
+                var this_holder = triggerButton.closest('li');
+                var id = this_holder.find('div[name="id"]').html().trim();
+                var data = {
+                    id: id,
+                    csrf_name: movies_holder.find('input[name="csrf_name"]').val(),
+                    csrf_value: movies_holder.find('input[name="csrf_value"]').val()
+                };
 
-            var btn = $(this);
-            var url = btn.attr('data-action-url');
-            var this_holder = btn.closest('li');
-            var id = this_holder.find('div[name="id"]').html().trim();
-            var data = {
-                id: id,
-                csrf_name: movies_holder.find('input[name="csrf_name"]').val(),
-                csrf_value: movies_holder.find('input[name="csrf_value"]').val()
-            };
-
-            if (id) {
-                event_emitter.trigger('article.delete.article', [btn, url, data]);
-            }
+                if (id) {
+                    event_emitter.trigger('article.delete.article', [triggerButton, url, data]);
+                }
+            });
         });
     };
     var clear_form_edit_article = function() {
@@ -141,6 +143,7 @@ $( function() {
 
     event_emitter.on('article.delete.article.done', function(e, btn) {
         $(btn).closest('li').remove();
+        modal_delete_movie.modal('hide');
     });
 
     event_emitter.on('article.edit.article.done', function(e, result) {
