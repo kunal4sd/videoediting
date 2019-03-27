@@ -215,12 +215,10 @@ $( function() {
             var episodes = [];
 
             for(var i = 0; i < players.length; i++) {
-
                 var player = players[i];
                 if (player.id_.search("video-episode") > -1) {
                     episodes.push(player.currentSource().src);
                 };
-
             }
 
             if (episodes.length) {

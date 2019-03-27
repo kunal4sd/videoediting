@@ -314,6 +314,12 @@ var global_functions = {
         });
     },
     clear_episodes: function() {
+        var players = videojs.getAllPlayers();
+        for(var i = 0; i < players.length; i++) {
+            if (players[i].id_.search("video-episode") > -1) {
+                players[i].dispose();
+            };
+        }
         $('#video-episodes-holder').html('');
         $('#video-episodes-to-movie').hide();
         global_functions.refresh_playlist_holder_height();
