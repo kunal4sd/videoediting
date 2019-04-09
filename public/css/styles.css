@@ -104,6 +104,16 @@
   * bottom row
   */
 
+#video-preview .vjs-control-bar {
+    bottom: -60px;
+    background-color: rgba(43, 51, 63, 1.0);
+}
+
+#video-preview.vjs-fullscreen .vjs-control-bar {
+    bottom: 0px !important;
+    background-color: rgba(43, 51, 63, 0.5) !important;
+}
+
 #video-preview .vjs-controltimepanel-RS {
     height: auto !important;
     width: auto !important;
