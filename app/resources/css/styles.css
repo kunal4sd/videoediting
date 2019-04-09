@@ -137,6 +137,10 @@
     left: 95%;
 }
 
+.vjs-timebar-RS {
+    top: -0.75em !important;
+}
+
 
  /**
  * bootstrap modal
