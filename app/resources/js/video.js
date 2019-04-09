@@ -16,6 +16,7 @@ $( function() {
                     controlTime: true,
                     controlBar: {
                         volumePanel: {
+                            inline: false,
                             vertical: true
                         }
                     }

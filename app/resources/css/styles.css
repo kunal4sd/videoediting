@@ -81,18 +81,37 @@
     float: left !important;
 }
 
-#video-preview .vjs-volume-panel {
-    width: 17em !important;
-}
-
-#video-preview .vjs-volume-panel .vjs-volume-control,
-#video-preview .vjs-volume-panel .vjs-volume-control .vjs-volume-bar {
-    width: 13em !important;
+#video-preview .vjs-volume-panel .vjs-volume-control {
+    height: 8em !important;
 }
 
 #video-preview .vjs-progress-control {
     cursor: pointer;
-    min-width: 52em;
+    min-width: 65em;
+    padding-left: 3em;
+}
+
+#video-preview .vjs-volume-panel .vjs-volume-control {
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: visibility 0.5s, opacity 0.5s linear;
+    -webkit-transition-delay: 1s; /* Safari */
+    transition: visibility 0.5s, opacity 0.5s linear;
+    transition-delay: 1s;
+}
+
+#video-preview .vjs-volume-panel:hover .vjs-volume-control {
+    visibility: visible;
+    opacity: 1;
+    -webkit-transition: visibility 0s, opacity 0.5s linear;
+    -webkit-transition-delay: 1s; /* Safari */
+    transition: visibility 0s, opacity 0.5s linear;
+    transition-delay: 0s;
+}
+
+#video-preview .vjs-volume-panel .vjs-volume-control:hover {
+    visibility: visible;
+    opacity: 1;
 }
 
 #video-preview .vjs-remaining-time {
@@ -120,17 +139,33 @@
 }
 
 #video-preview .vjs-rangeslider-handle.vjs-selectionbar-left-RS .vjs-selectionbar-arrow-RS {
-    border-left: 3em solid transparent !important;
-    border-right: 1em solid transparent !important;
-    border-top: 2em solid #FFF273 !important;
-    margin-left: -3em !important;
+    margin-left: -2em !important;
+    width: 2em !important;
+    height: 2em !important;
+    border: 1em solid #fff273 !important;
 }
 
 #video-preview .vjs-rangeslider-handle.vjs-selectionbar-right-RS .vjs-selectionbar-arrow-RS {
-    border-left: 1em solid transparent !important;
-    border-right: 3em solid transparent !important;
-    border-top: 2em solid #FFF273 !important;
-    margin-left: -1em !important;
+    margin-left: 0em !important;
+    width: 2em !important;
+    height: 2em !important;
+    border: 1em solid #fff273 !important;
+}
+
+.vjs-slider-vertical .vjs-volume-level:before {
+    left: -0.4em !important;
+}
+
+.video-js .vjs-volume-level:before {
+    font-size: 1.25em !important;
+}
+
+.vjs-slider-vertical .vjs-volume-level {
+    width: 0.25em !important;
+}
+
+.vjs-volume-bar.vjs-slider-vertical {
+    width: 0.25em !important;
 }
 
 .vjs-default-skin .vjs-timepanel-right-RS {
