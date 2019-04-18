@@ -7,8 +7,8 @@ use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Libs\Enums\UserActivity;
-use \Exception;
 use App\Libs\Enums\Config\MandatoryFields;
+use \Exception;
 
 class SameSessionId extends AbstractModule
 {
