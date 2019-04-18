@@ -8,6 +8,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Libs\Enums\UserActivity;
 use \Exception;
+use App\Libs\Enums\Config\MandatoryFields;
 
 class SameSessionId extends AbstractModule
 {
@@ -17,7 +18,7 @@ class SameSessionId extends AbstractModule
         try {
 
             $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type(
-                5,
+                $this->config->{MandatoryFields::USER_SESSIONS_MAX},
                 $this->session_user->get_user()->id,
                 UserActivity::LOGIN
             );

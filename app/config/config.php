@@ -21,6 +21,11 @@ $config = [
             'cache' => false,
             'debug' => true
         ]
+    ],
+    'user' => [
+        'sessions' => [
+            'max' => 5
+        ]
     ]
 ];
 
