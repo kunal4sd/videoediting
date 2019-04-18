@@ -17,6 +17,7 @@ use App\Modules\Article\Middleware\Validation\GetKeyword as GetKeywordValidation
 use App\Modules\Article\Middleware\Validation\EditArticle as EditArticleValidationMiddleware;
 use App\Modules\Article\Middleware\Validation\DeleteArticle as DeleteArticleValidationMiddleware;
 use App\Modules\Article\Middleware\Validation\SearchKeyword as SearchKeywordValidationMiddleware;
+use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -50,18 +51,22 @@ class ArticleServiceProvider implements ServiceProviderInterface
     {
         $container->slim->post('/articles/actions/delete/article', 'article.action.ajax.delete_article')
                         ->add(new DeleteArticleValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('article.action.delete_article');
         $container->slim->post('/articles/actions/edit/article', 'article.action.ajax.edit_article')
                         ->add(new EditArticleValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('article.action.edit_article');
         $container->slim->post('/articles/actions/search/keyword', 'article.action.ajax.search_keyword')
                         ->add(new SearchKeywordValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('article.action.search_keyword');
         $container->slim->post('/articles/actions/get/keyword', 'article.action.ajax.get_keyword_by_article_id')
                         ->add(new GetKeywordValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('article.action.get_keyword');
     }

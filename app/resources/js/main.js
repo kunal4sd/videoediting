@@ -9,7 +9,7 @@ $( function() {
 
         var data = jqxhr.responseJSON;
 
-        if (data && data.message && data.message.csrf) {
+        if (data && data.message && ( data.message.csrf || data.message.authorization )) {
             global_functions.launch_modal_reload();
         }
     });

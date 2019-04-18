@@ -70,7 +70,7 @@ class Authenticate extends AbstractModule
 
         // remove latest playlist from array, so its files won't be deleted
         $latest_user_activity_ar = false;
-        $latest_hash = false;
+        $latest_hashes = [];
         for($i = 0; $i < count($user_activities_ar); $i++) {
             if ($user_activities_ar[$i]->activity_id == UserActivity::PLAYLIST) {
                 $latest_user_activity_ar = $user_activities_ar[$i];

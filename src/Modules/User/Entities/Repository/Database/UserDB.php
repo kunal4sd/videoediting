@@ -25,13 +25,15 @@ class UserDB extends AbstractDatabase
                     expiry_date,
                     created,
                     modified,
-                    created_by
+                    created_by,
+                    :ip AS ip
                 FROM user
                 WHERE 1
                     AND id = :id
             ",
             [
-                'id' => $id
+                'id' => $id,
+                'ip' => $_SERVER['REMOTE_ADDR']
             ]
         );
 
@@ -55,7 +57,8 @@ class UserDB extends AbstractDatabase
                     expiry_date,
                     created,
                     modified,
-                    created_by
+                    created_by,
+                    :ip AS ip
                 FROM user
                 WHERE 1
                     AND username = :username
@@ -63,7 +66,8 @@ class UserDB extends AbstractDatabase
             ",
             [
                 'username' => $username,
-                'password' => $password
+                'password' => $password,
+                'ip' => $_SERVER['REMOTE_ADDR']
             ]
         );
 

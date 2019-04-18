@@ -63,6 +63,11 @@ class UserAR extends AbstractActiveRecord
      */
     public $created_by;
 
+    /**
+     * @var string
+     */
+    public $ip;
+
     public function __construct(array $data = [])
     {
         $this->build_from_array($data);

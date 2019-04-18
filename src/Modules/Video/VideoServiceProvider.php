@@ -19,6 +19,7 @@ use App\Modules\Video\Middleware\Validation\GetEpisode as GetEpisodeValidationMi
 use App\Modules\Video\Middleware\Validation\GetPlaylist as GetPlaylistValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetMovieList as GetMovieListValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetVideoList as GetVideoListValidationMiddleware;
+use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Standardization\DateRange as DateRangeStandardizationMiddleware;
 use Pimple\Container;
@@ -71,6 +72,7 @@ class VideoServiceProvider implements ServiceProviderInterface
 
         // video editing
         $container->slim->get('/[/{activity_id}]', 'video.view.index')
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.index');
 
@@ -78,37 +80,44 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new DateRangeStandardizationMiddleware($container))
                         ->add(new GetPlaylistValidationMiddleware($container))
                         ->add(new PersistantMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.get_playlist');
 
         $container->slim->post('/videos/actions/get/episode', 'video.action.ajax.get_episode')
                         ->add(new GetEpisodeValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.get_episode');
 
         $container->slim->post('/videos/actions/get/movie', 'video.action.ajax.get_movie')
                         ->add(new GetMovieValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.get_movie');
 
         $container->slim->post('/videos/actions/get/movie/list', 'video.action.ajax.get_movie_list')
                         ->add(new DateRangeStandardizationMiddleware($container))
                         ->add(new GetMovieListValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.get_movie_list');
 
         $container->slim->get('/videos/actions/download/{article_id}', 'video.action.ajax.download_movie')
+        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.download_movie');
 
         // video listing
         $container->slim->get('/videos/listing', 'video.view.listing')
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.listing');
 
         $container->slim->post('/videos/actions/get/list', 'video.action.ajax.get_video_list')
                         ->add(new DateRangeStandardizationMiddleware($container))
                         ->add(new GetVideoListValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.get_list');
     }
