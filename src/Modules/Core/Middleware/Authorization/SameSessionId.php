@@ -3,11 +3,11 @@
 namespace App\Modules\Core\Middleware\Authorization;
 
 use App\Libs\Json;
+use App\Libs\Enums\UserActivity;
+use App\Libs\Enums\Config\MandatoryFields;
 use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use App\Libs\Enums\UserActivity;
-use App\Libs\Enums\Config\MandatoryFields;
 use \Exception;
 
 class SameSessionId extends AbstractModule
@@ -34,7 +34,13 @@ class SameSessionId extends AbstractModule
         $this->logger->write(new Exception('User session id has changed since login.', 403));
 
         if ($request->getParam('ajax')) {
-            return Json::build($response, [ 'authorization' => 'User authorization failed' ], 403);
+            return Json::build(
+                $response,
+                [
+                    'authorization' => 'Multiple logins detected to this account. Please contact admin.'
+                ],
+                403
+            );
         }
 
         return $response->withRedirect($this->router->pathFor('user.action.signout'));

@@ -35,11 +35,10 @@ class Index extends AbstractModule
                 );
             }
             else {
-                $user_activity_ar = $this->entity_user_activity->get_last_x_by_user_and_type(
-                    1,
-                    $this->session_user->get_user()->id,
-                    UserActivity::PLAYLIST
+                $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type(
+                    1, $this->session_user->get_user()->id, UserActivity::PLAYLIST
                 );
+                $user_activity_ar = array_shift($user_activities_ar);
             }
 
             if (

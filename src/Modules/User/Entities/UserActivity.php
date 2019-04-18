@@ -16,7 +16,7 @@ class UserActivity extends AbstractModule
      * @param int $x
      * @param int $user_id
      * @param int $type_id
-     * @return UserActivityAR[]|UserActivityAR
+     * @return UserActivityAR[]
      */
     public function get_last_x_by_user_and_type($x, $user_id, $type_id)
     {
@@ -28,13 +28,13 @@ class UserActivity extends AbstractModule
             throw new Exception("No activities found", 400);
         }
 
-        return $x === 1 ? array_shift($user_activities_ar) : $user_activities_ar;
+        return $user_activities_ar;
     }
 
     /**
      * @param int $user_id
      * @param int $type_id
-     * @return UserActivityAR[]|UserActivityAR
+     * @return UserActivityAR[]
      */
     public function get_by_user_and_type_since($user_id, $start_date, ...$type_ids)
     {
