@@ -10,4 +10,5 @@ class UserActivity
     const CLIP_MEDIA = 25;
     const PLAYLIST = 3;
     const EPISODE = 4;
+    const LOGIN = 5;
 }

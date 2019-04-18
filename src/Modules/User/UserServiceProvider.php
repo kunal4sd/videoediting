@@ -8,7 +8,6 @@ use App\Modules\User\Actions\Authenticate;
 use App\Modules\User\Entities\User;
 use App\Modules\User\Entities\UserActivity;
 use App\Modules\User\Middleware\Validation\SignIn as SignInValidationMiddleware;
-use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Authorization\UnknownUser as UnknownUserAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Persistant as PersistantMiddleware;

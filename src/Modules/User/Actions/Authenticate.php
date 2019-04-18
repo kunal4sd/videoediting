@@ -5,6 +5,7 @@ namespace App\Modules\User\Actions;
 use App\Libs\Enums\UserActivity;
 use App\Libs\Json;
 use App\Modules\Abstracts\AbstractModule;
+use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use Slim\Http\Response;
 use Slim\Http\Request;
 use \Exception;
@@ -22,6 +23,17 @@ class Authenticate extends AbstractModule
                 $request->getParam('password')
             );
             $this->session_user->init_from_entity($user_ar);
+            $this->entity_user_activity->save(
+                new UserActivityAR([
+                    'user_id' => $this->session_user->get_user()->id,
+                    'publication_id' => 0,
+                    'article_id' => 0,
+                    'issue_date' => '0000-00-00',
+                    'activity_id' => UserActivity::LOGIN,
+                    'created' => date("Y-m-d H:i:s"),
+                    'description' => session_id()
+                ])
+            );
             $result['redirect_to'] = $this->router->pathFor('video.view.index');
             $code = 302;
         }
@@ -42,13 +54,13 @@ class Authenticate extends AbstractModule
                 $result[] = $e->getMessage();
             }
         }
-        $this->delete_previous_sessions_files();
 
         if ($request->getParam('ajax')) {
             return Json::build($response, $result, $code);
         }
 
         if ($code < 400) {
+            $this->delete_previous_sessions_files();
             return $response->withRedirect(
                 $this->router->pathFor('video.view.index')
             );
