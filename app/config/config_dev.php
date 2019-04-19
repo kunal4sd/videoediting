@@ -33,3 +33,9 @@ $config['db'] = [
         ]
     ]
 ];
+
+// for development, you would normally want cache disabled (false), and debug true
+$config['view']['twig'] = [
+    'cache' => BASE_PATH . '/app/cache/twig',
+    'debug' => false
+];

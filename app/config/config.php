@@ -17,7 +17,6 @@ $config = [
     'view' => [
         'templates_path' => BASE_PATH . '/app/templates',
         'twig' => [
-            // 'cache' => BASE_PATH . '/app/cache/twig',
             'cache' => false,
             'debug' => true
         ]
