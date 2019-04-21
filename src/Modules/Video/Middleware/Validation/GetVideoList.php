@@ -14,7 +14,8 @@ class GetVideoList extends AbstractModule
     {
 
         $validation = $this->validator->validate($request, [
-            'date_range' => v::notEmpty()->stringType(),
+            'start_date' => v::notEmpty()->stringType(),
+            'end_date' => v::notEmpty()->stringType(),
             'publication' => v::oneOf(v::stringType(), v::nullType()),
             'status' => v::oneOf(v::stringType(), v::nullType()),
             'ajax' => v::trueVal()
@@ -23,30 +24,21 @@ class GetVideoList extends AbstractModule
             return $this->validation_failed($validation->get_errors(), $response);
         }
 
-        $date_range = $request->getParam('date_range');
-        $range_details = explode(' - ', $date_range);
-        if (count($range_details) !== 2) {
-            return $this->validation_failed(
-                [
-                    'date_range' => ['unrecognized format']
-                ],
-                $response
-            );
+        $date_validation = [];
+        $start_date = $request->getParam('start_date');
+        $end_date = $request->getParam('end_date');
+        if ($start_date !== date("Y-m-d H:i:s", strtotime($start_date))) {
+            $date_validation['start_date'] = ['unrecognized format'];
+        }
+        if ($end_date !== date("Y-m-d H:i:s", strtotime($end_date))) {
+            $date_validation['end_date'] = ['unrecognized format'];
+        }
+        if (strtotime($start_date) > strtotime($end_date)) {
+            $date_validation['start_date'] = ['must have a value before end date'];
+            $date_validation['end_date'] = ['must have a value after start date'];
         }
 
-        $start_date = $range_details[0];
-        $end_date = $range_details[1];
-        if (
-            $start_date !== date("Y-m-d H:i:s", strtotime($start_date))
-            || $end_date !== date("Y-m-d H:i:s", strtotime($end_date))
-        ) {
-            return $this->validation_failed(
-                [
-                    'date_range' => ['unrecognized format']
-                ],
-                $response
-            );
-        }
+        if (count($date_validation)) return $this->validation_failed($date_validation, $response);
 
         return $next($request, $response);
     }

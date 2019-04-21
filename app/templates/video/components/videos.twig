@@ -7,17 +7,30 @@
             <form id="video-get-playlist" action="{{ base_url() }}{{ path_for('video.action.get_playlist') }}" method="post" novalidate>
                 {{ csrf.fields | raw }}
                 <div class="row form-group">
-                    <div class="col-sm-12">
+                    <div class="col-sm-6">
                         <input
                             type="text"
-                            name="date_range"
-                            class="form-control{{ flash.errors_date_range ? ' is-invalid' : ''}}"
-                            placeholder="Date range"
-                            value="{{ form.date_range ? form.date_range : '' }}"
+                            name="start_date"
+                            class="form-control{{ flash.errors_start_date ? ' is-invalid' : ''}}"
+                            placeholder="From"
+                            value="{{ form.start_date ? form.start_date : '' }}"
                             autocomplete="off"
                         >
-                        {% if flash.errors_date_range %}
-                            <div class="invalid-feedback">{{ flash.errors_date_range | first }}</div>
+                        {% if flash.errors_start_date %}
+                            <div class="invalid-feedback">{{ flash.errors_start_date | first }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                        <input
+                            type="text"
+                            name="end_date"
+                            class="form-control{{ flash.errors_end_date ? ' is-invalid' : ''}}"
+                            placeholder="To"
+                            value="{{ form.end_date ? form.end_date : '' }}"
+                            autocomplete="off"
+                        >
+                        {% if flash.errors_end_date %}
+                            <div class="invalid-feedback">{{ flash.errors_end_date | first }}</div>
                         {% endif %}
                     </div>
                 </div>
