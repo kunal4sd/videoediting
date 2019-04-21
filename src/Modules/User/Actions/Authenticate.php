@@ -55,12 +55,14 @@ class Authenticate extends AbstractModule
             }
         }
 
+        if ($code < 400) {
+            $this->delete_previous_sessions_files();
+        }
         if ($request->getParam('ajax')) {
             return Json::build($response, $result, $code);
         }
 
         if ($code < 400) {
-            $this->delete_previous_sessions_files();
             return $response->withRedirect(
                 $this->router->pathFor('video.view.index')
             );
@@ -125,30 +127,36 @@ class Authenticate extends AbstractModule
                                 $data['end_date'],
                                 $data['batch_size']
                             );
-                        if (
-                            $playlist_master_file->get_hash()
-                            && !isset($latest_hashes[$playlist_master_file->get_hash()])
-                        ) {
 
-                            foreach($playlist_master_file->get_files() as $playlist_file) {
+                        foreach($playlist_master_file->get_files() as $playlist_file) {
 
-                                if (isset($latest_hashes[$playlist_file->get_hash()])) continue;
-
+                            $playlist_file->delete_perfect_cut_files();
+                            if (!isset($latest_hashes[$playlist_file->get_hash()])) {
                                 $poster_file = $playlist_file->get_poster();
                                 $this->entity_playlist->delete_file_by_path($playlist_file);
                                 if ($poster_file) {
                                     $this->entity_playlist->delete_file_by_path($poster_file);
                                 }
                             }
+                        }
+
+                        if (
+                            $playlist_master_file->get_hash()
+                            && !isset($latest_hashes[$playlist_master_file->get_hash()])
+                        ) {
                             $this->entity_playlist->delete_file_by_path($playlist_master_file);
                         }
+
                     }
-                    elseif (isset($data['hash']) && !isset($latest_hashes[$data['hash']])) {
+                    else {
                         $playlist_file = $this->entity_playlist->get_playlist_with_hash($data['hash']);
-                        $this->entity_playlist->delete_file_by_path($playlist_file);
-                        $poster_file = $playlist_file->get_poster();
-                        if ($poster_file) {
-                            $this->entity_playlist->delete_file_by_path($poster_file);
+                        $playlist_file->delete_perfect_cut_files();
+                        if (isset($data['hash']) && !isset($latest_hashes[$data['hash']])) {
+                            $this->entity_playlist->delete_file_by_path($playlist_file);
+                            $poster_file = $playlist_file->get_poster();
+                            if ($poster_file) {
+                                $this->entity_playlist->delete_file_by_path($poster_file);
+                            }
                         }
                     }
                 } catch (Exception $e) {
