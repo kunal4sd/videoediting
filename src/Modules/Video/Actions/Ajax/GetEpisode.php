@@ -33,10 +33,22 @@ class GetEpisode extends AbstractModule
                 $files = $playlist_file->get_files();
                 $from = $request->getParam('from');
                 $to = $request->getParam('to');
-                list($from_index, $to_index) = $playlist_file->get_range_indexes($from, $to);
+                list($indexes, $time_cuts) = $playlist_file->get_range_indexes($from, $to);
                 $new_files = array_values(
-                    array_slice($files, $from_index, ( $to_index - $from_index + 1 ))
+                    array_slice($files, $indexes['from'], ( $indexes['to'] - $indexes['from'] + 1 ))
                 );
+
+                $multiple_files = count($new_files) > 1;
+                $first = array_shift($new_files)->build_perfect_cut(
+                    $time_cuts['from'], $multiple_files ? false : $time_cuts['to']
+                );
+                array_unshift($new_files, $first);
+
+                if ($multiple_files) {
+                    $last = array_pop($new_files)->build_perfect_cut(false, $time_cuts['to']);
+                    array_push($new_files, $last);
+                }
+
                 $new_playlist_file = $this->entity_playlist->get_playlist_with_files($new_files);
                 $this->entity_user_activity->save(new UserActivityAR(
                     [

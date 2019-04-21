@@ -7,9 +7,9 @@ use App\Libs\Enums\Videos;
 use App\Modules\Abstracts\AbstractFile;
 use App\Modules\Interfaces\LengthInterface;
 use App\Modules\Interfaces\DiscontinuityBoolInterface;
-use Pimple\Container;
+use App\Modules\Interfaces\PerfectCutInterface;
 
-class RawVideoFile extends AbstractFile implements LengthInterface, DiscontinuityBoolInterface
+class RawVideoFile extends AbstractFile implements LengthInterface, DiscontinuityBoolInterface, PerfectCutInterface
 {
 
     /**
@@ -59,6 +59,12 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
         return $this;
     }
 
+    public function set_name($location)
+    {
+        $this->name = basename($location, '.'.Videos::RAW_VIDEO_FORMAT);
+        return $this;
+    }
+
     public function get_discontinuity()
     {
         return $this->discontinuity;
@@ -68,6 +74,11 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
     {
         $this->discontinuity = (bool) $discontinuity;
         return $this;
+    }
+
+    public function is_perfect_cut()
+    {
+        return strpos($this->get_path(), Videos::CUT_VIDEO_PATH) !== false;
     }
 
     public function build_broadcast_time()
@@ -103,7 +114,7 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
         $result = '0000-00-00 00:00:00';
         if ($this->get_path()) {
             preg_match(
-                '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})\.ts/Uis',
+                '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})/Uis',
                 $this->get_path(),
                 $matches
             );
@@ -129,7 +140,7 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
         if ($this->get_path()) {
 
             preg_match(
-                '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})\.ts/Uis',
+                '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})/Uis',
                 $this->get_path(),
                 $matches
             );
@@ -160,14 +171,49 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
     public function build_publication_id()
     {
         $publication_id = false;
-        if ($this->get_url()) {
-            $file_details = explode("videos/", $this->get_url());
-            if (count($file_details) === 2) {
-                $path_details = explode('/', array_pop($file_details));
-                $publication_id = array_shift($path_details);
-            }
+        if ($this->get_path()) {
+            $file_details = explode(".", basename($this->get_path(), '.'.Videos::RAW_VIDEO_FORMAT));
+            $publication_id = array_shift($file_details);
         }
 
         return $publication_id;
+    }
+
+    public function build_perfect_cut($from_cut, $to_cut)
+    {
+        $name = $this->set_name($this->get_path())->get_name();
+        if ($from_cut !== false) {
+            $name .= '-f';
+        }
+        if ($to_cut !== false) {
+            $name .= '-t';
+        }
+
+        $file_path = sprintf(
+            '%s/%s/%s.%s', PUBLIC_PATH, Videos::CUT_VIDEO_PATH, $name, Videos::RAW_VIDEO_FORMAT
+        );
+        $path = dirname($file_path);
+
+        if (!file_exists($path)) {
+            mkdir($path, 0777, true);
+        }
+
+        $this->cut_content($file_path, $from_cut, $to_cut);
+        $this->set_locations($file_path);
+        $this->build_length();
+
+        return $this;
+    }
+
+    private function cut_content($output_path, $from, $to)
+    {
+        $cmd = sprintf(
+            "ffmpeg -y -i %s %s %s -c copy %s",
+            $this->get_path(),
+            $from !== false ? '-ss '.round($from, 2) : '',
+            $to !== false ? '-to '.round($to, 2) : '',
+            $output_path
+        );
+        shell_exec($cmd);
     }
 }

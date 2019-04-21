@@ -206,11 +206,15 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
         $to_index = -1;
         $time_passed = 0;
         foreach($this->get_files() as $index => $file) {
+            $from_diff = $from - $time_passed;
             $time_passed += $file->get_length();
+            $to_diff = $file->get_length() - $time_passed + $to;
             if ($from_index === -1 && $time_passed >= $from) {
+                $from_cut = $from_diff;
                 $from_index = $index;
             }
             if ($to_index === -1 && $time_passed >= $to) {
+                $to_cut = $to_diff;
                 $to_index = $index;
             }
             if ($from_index > -1 && $to_index > -1) break;
@@ -219,7 +223,10 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
         if ($from_index === -1) $from_index = $index;
         if ($to_index === -1) $to_index = $index;
 
-        return [$from_index, $to_index];
+        return [
+            [ 'from' => $from_index, 'to' => $to_index ],
+            [ 'from' => $from_cut, 'to' => $to_cut ]
+        ];
     }
 
     protected function build_content()
@@ -256,5 +263,27 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
             $result[] = $header->get_row();
         }
         return $result;
+    }
+
+    public function delete_perfect_cut_files()
+    {
+        $files = $this->get_files();
+        $first = array_shift($files);
+        $last = array_pop($files);
+
+        if (
+            $first instanceof RawVideoFile
+            && $first->is_perfect_cut()
+            && file_exists($first->get_path())
+        ) {
+            unlink($first->get_path());
+        }
+        if (
+            $last instanceof RawVideoFile
+            && $last->is_perfect_cut()
+            && file_exists($last->get_path())
+        ) {
+            unlink($last->get_path());
+        }
     }
 }
