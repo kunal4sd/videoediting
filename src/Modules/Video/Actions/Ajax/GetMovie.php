@@ -29,7 +29,6 @@ class GetMovie extends AbstractModule
         try {
 
             $episodes = $request->getParam('episodes');
-            $raw_video_paths = [];
             $this->playlist_file = new PlaylistFile($this->container);
 
             $publication_id = false;
@@ -44,7 +43,6 @@ class GetMovie extends AbstractModule
                 if ( ($hash = AbstractPlaylist::build_hash_from_path($url)) !== false ) {
 
                     $playlist_file = $this->entity_playlist->get_playlist_with_hash($hash);
-
                     if ( $first && $publication_id === false ) {
                         $publication_id = $playlist_file->get_first_file()->build_publication_id();
                     }
