@@ -4,7 +4,6 @@ namespace App\Modules\Article\Actions\Ajax;
 
 use App\Libs\Json;
 use App\Modules\Abstracts\AbstractModule;
-use App\Modules\Video\Entities\Files\PlaylistFile;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
@@ -23,7 +22,7 @@ class DeleteArticle extends AbstractModule
         }
         catch(Exception $e) {
             $this->logger->write($e);
-            $result['message'] = 'Error encountered when trying to delete';
+            $result['message'] = 'Error encountered while trying to delete article';
             $code = $e->getCode();
         }
 

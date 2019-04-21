@@ -7,7 +7,6 @@ use App\Modules\Abstracts\AbstractFile;
 use App\Modules\Interfaces\DiscontinuityInterface;
 use App\Modules\Interfaces\FileDetailsInterface;
 use App\Modules\Interfaces\FilesInterface;
-use App\Modules\Interfaces\FooterInterface;
 use App\Modules\Interfaces\HeadersInterface;
 use App\Modules\Interfaces\SaveInterface;
 use App\Modules\Parameters\PlaylistParameter;

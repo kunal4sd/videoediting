@@ -52,8 +52,6 @@ class PlaylistMasterDisk extends AbstractModule
 
             $sfile_mtime = date('Y/m/d H:i:s', filemtime($start_file));
             $efile_mtime = date('Y/m/d H:i:s', filemtime($end_file));
-            $sfile_mtime_day = date('d', filemtime($start_file));
-            $efile_mtime_day = date('d', filemtime($end_file));
 
             $files = [];
             foreach ($this->get_paths_in_range($start_file, $end_file) as $path) {
@@ -72,7 +70,6 @@ class PlaylistMasterDisk extends AbstractModule
             $files = array_unique($files);
             sort($files);
 
-            $prev_file = false;
             $files_duration = $this->get_files_duration($files);
             foreach($files as $key => &$raw_file) {
                 $file = (new RawVideoFile())
@@ -81,7 +78,6 @@ class PlaylistMasterDisk extends AbstractModule
                     ->set_length($files_duration[$key])
                     ->set_discontinuity(true);
                 $raw_file = $file;
-                $prev_file = $file;
             }
             $files = array_filter($files);
 
