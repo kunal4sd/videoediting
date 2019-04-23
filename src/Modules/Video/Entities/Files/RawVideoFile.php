@@ -210,8 +210,8 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
         $cmd = sprintf(
             "ffmpeg -y -i %s %s %s -c copy %s",
             $this->get_path(),
-            $from !== false ? '-ss '.round($from, 2) : '',
-            $to !== false ? '-to '.round($to, 2) : '',
+            $from !== false ? '-ss '. round(floor($from), 2) : '',
+            $to !== false ? '-to '.round((floor($to) + 0.59), 2) : '',
             $output_path
         );
         shell_exec($cmd);
