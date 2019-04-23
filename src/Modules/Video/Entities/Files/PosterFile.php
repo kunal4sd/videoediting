@@ -65,10 +65,7 @@ class PosterFile extends AbstractFile implements SourceInterface, SaveInterface
                 chmod( $this->get_path(), 0777 );
             }
             else {
-                throw new Exception(
-                    sprintf('Poster file could not be saved in %s', $this->get_path()),
-                    500
-                );
+                $this->set_locations();
             }
         }
 
