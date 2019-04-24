@@ -1,4 +1,4 @@
-//g++ -o duration_multiple duration_multiple.cpp `pkg-config --cflags --libs libavformat libavutil jsoncpp`
+//g++ -o ../bin/duration_multiple duration_multiple.cpp `pkg-config --cflags --libs libavformat libavutil jsoncpp`
 
 #define __STDC_CONSTANT_MACROS
 #include <iostream>
@@ -62,9 +62,12 @@ int main(int argc, char* argv[])
 			// mins %= 60;
 			// sprintf(dur, "%02d:%02d:%02d.%02d", hours, mins, secs, (100 * us) / AV_TIME_BASE);
 			sprintf(dur, "%d.%02d", secs, (100 * us) / AV_TIME_BASE);
+			jfile["duration"] = dur;
+		}
+		else {
+			jfile["duration"] = 0.00;
 		}
 
-		jfile["duration"] = dur;
 		root.append(jfile);
 	}
 
