@@ -65,7 +65,7 @@ class PosterFile extends AbstractFile implements SourceInterface, SaveInterface
                 chmod( $this->get_path(), 0777 );
             }
             else {
-                $this->set_locations();
+                $this->set_locations(false);
             }
         }
 
