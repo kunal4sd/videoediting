@@ -71,11 +71,11 @@ class PlaylistMasterDisk extends AbstractModule
             sort($files);
 
             $files_duration = $this->get_files_duration($files);
-            foreach($files as $key => &$raw_file) {
+            foreach($files as &$raw_file) {
                 $file = (new RawVideoFile())
                     ->set_locations($raw_file)
                     ->set_name($raw_file)
-                    ->set_length($files_duration[$key])
+                    ->set_length($files_duration[$raw_file])
                     ->set_discontinuity(true);
                 $raw_file = $file;
             }
@@ -108,7 +108,7 @@ class PlaylistMasterDisk extends AbstractModule
 
     private function get_files_duration(array $files)
     {
-        $durations = json_decode(
+        $output = json_decode(
             shell_exec(
                 sprintf(
                     "%s/duration_multiple %s",
@@ -118,8 +118,15 @@ class PlaylistMasterDisk extends AbstractModule
             ),
             true
         );
+        $filenames = array_map(function($row) {
+            return $row['filename'];
+        }, $output);
+        $durations = array_map(function($row) {
+            return $row['duration'];
+        }, $output);
+        $result = array_combine($filenames, $durations);
 
-        return array_map(function($file) { return $file['duration']; }, $durations);
+        return $result;
     }
 
     private function get_segment_count(array $files, $batch_size)

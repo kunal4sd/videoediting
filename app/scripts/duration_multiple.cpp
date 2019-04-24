@@ -1,4 +1,4 @@
-//g++ -o duration -lavutil -lavformat duration.cpp
+//g++ -o duration_multiple duration_multiple.cpp `pkg-config --cflags --libs libavformat libavutil jsoncpp`
 
 #define __STDC_CONSTANT_MACROS
 #include <iostream>
@@ -34,11 +34,21 @@ int main(int argc, char* argv[])
 	{
 		char* file = argv[i];
 		AVFormatContext* formatContext = NULL;
+		Json::Value jfile;
 
+		jfile["filename"] = file;
 
 		// Open video file
-		avformat_open_input(&formatContext, file, NULL, NULL);
-		avformat_find_stream_info(formatContext, NULL);
+		if (avformat_open_input(&formatContext, file, NULL, NULL) < 0) {
+			jfile["duration"] = 0.00;
+			root.append(jfile);
+			continue;
+		}
+		if (avformat_find_stream_info(formatContext, NULL) < 0) {
+			jfile["duration"] = 0.00;
+			root.append(jfile);
+			continue;
+		}
 
 		//av_log(NULL, AV_LOG_INFO, "  Duration: ");
 		if (formatContext->duration != AV_NOPTS_VALUE) {
@@ -54,8 +64,6 @@ int main(int argc, char* argv[])
 			sprintf(dur, "%d.%02d", secs, (100 * us) / AV_TIME_BASE);
 		}
 
-		Json::Value jfile;
-		jfile["filename"] = file;
 		jfile["duration"] = dur;
 		root.append(jfile);
 	}
