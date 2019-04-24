@@ -40,12 +40,12 @@ int main(int argc, char* argv[])
 
 		// Open video file
 		if (avformat_open_input(&formatContext, file, NULL, NULL) < 0) {
-			jfile["duration"] = 0.00;
+			jfile["duration"] = 0.01;
 			root.append(jfile);
 			continue;
 		}
 		if (avformat_find_stream_info(formatContext, NULL) < 0) {
-			jfile["duration"] = 0.00;
+			jfile["duration"] = 0.01;
 			root.append(jfile);
 			continue;
 		}
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 			jfile["duration"] = dur;
 		}
 		else {
-			jfile["duration"] = 0.00;
+			jfile["duration"] = 0.01;
 		}
 
 		root.append(jfile);
