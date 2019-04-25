@@ -42,7 +42,7 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
                 ),
                 true
             );
-            $this->set_length(time_to_seconds($output[0]['duration']));
+            $this->set_length($output[0]['duration']);
         }
 
         return $this;

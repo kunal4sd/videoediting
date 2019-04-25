@@ -2,45 +2,43 @@
 
 #define __STDC_CONSTANT_MACROS
 #include <iostream>
-#include <future>
-#include <vector>
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/writer.h>
-#include <cstdio>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <array>
-#include <regex>
+
+#ifdef __cplusplus
+extern "C" {
+	#endif
+	#include <libavutil/avutil.h>
+	#include <libavformat/avformat.h>
+	#ifdef __cplusplus
+}
+#endif
 
 using namespace std;
 
-Json::Value get_length(char* file)
+Json::Value get_details(char* file)
 {
 
+	AVFormatContext* formatContext = NULL;
 	Json::Value jfile;
 	char dur[10];
-	char buffer[512];
-	char cmd[256];
-	std::string result;
-	smatch m;
-	regex re("time=([0-9:.]+)+");
 
 	jfile["filename"] = file;
-	sprintf(cmd, "ffmpeg -i %s -acodec copy -vn -f null - 2>&1", file);
-	FILE *pipe = popen(cmd, "r");
-
-	if (!pipe) {
-			throw std::runtime_error("popen() failed!");
+	if (
+		avformat_open_input(&formatContext, file, NULL, NULL) >= 0
+		&& avformat_find_stream_info(formatContext, NULL) >= 0
+		&& formatContext->duration != AV_NOPTS_VALUE
+	) {
+		int secs, us;
+		int64_t duration = formatContext->duration + 5000;
+		secs  = duration / AV_TIME_BASE;
+		us    = duration % AV_TIME_BASE;
+		sprintf(dur, "%d.%02d", secs, (100 * us) / AV_TIME_BASE);
+		jfile["duration"] = dur;
 	}
-	while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-			result += buffer;
+	else {
+		jfile["duration"] = 0.01;
 	}
-	pclose(pipe);
-
-	string sp(result);
-	regex_search(sp, m, re);
-	jfile["duration"] = m.str(1);
 
 	return jfile;
 }
@@ -48,20 +46,17 @@ Json::Value get_length(char* file)
 int main(int argc, char* argv[])
 {
 	if(argc < 2) {
-		std::cout << "usage: " << argv[0] << " video_file(s)\n";
+		cout << "usage: " << argv[0] << " video_file(s)\n";
 		return 0;
 	}
 
+	av_log_set_level(AV_LOG_INFO);
+	av_register_all();
+
 	Json::Value root;
-	std::vector<std::future<Json::Value>> futures;
-
-	for(int i = 1; i < argc; i++)
-	{
-		futures.push_back(std::async(std::launch::async, get_length, argv[i]));
-	}
-
-	for(auto &e : futures) {
-		root.append(e.get());
+	for(int i = 1; i < argc; i++) {
+		char* file = argv[i];
+		root.append(get_details(file));
 	}
 
 	Json::StyledWriter sw;

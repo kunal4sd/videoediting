@@ -125,7 +125,7 @@ class PlaylistMasterDisk extends AbstractModule
                 return $row['filename'];
             }, $output);
             $durations = array_map(function($row) {
-                return time_to_seconds($row['duration']);
+                return $row['duration'];
             }, $output);
             $result = array_merge($result, array_combine($filenames, $durations));
         }
