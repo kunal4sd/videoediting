@@ -99,6 +99,20 @@ function seconds_to_time($sec)
     return sprintf('%s:%s:%s', $hours, $minutes, $seconds);
 }
 
+function time_to_seconds($time)
+{
+    if( strlen($time) === 0 ) return 0;
+
+    $details = explode(':', $time);
+    if( count($details) !== 3 ) return 0;
+
+    $hours = floatval( array_shift($details) );
+    $minutes = floatval( array_shift($details) );
+    $seconds = floatval( array_shift($details) );
+
+    return $hours * 3600 + $minutes * 60 + $seconds;
+}
+
 /**
  * Return the objects from $source_objs that have the value of $source_field
  * found in any of $target_objs' $target_field values

@@ -108,23 +108,27 @@ class PlaylistMasterDisk extends AbstractModule
 
     private function get_files_duration(array $files)
     {
-        $output = json_decode(
-            shell_exec(
-                sprintf(
-                    "%s/duration_multiple %s",
-                    BIN_PATH,
-                    implode(' ', $files)
-                )
-            ),
-            true
-        );
-        $filenames = array_map(function($row) {
-            return $row['filename'];
-        }, $output);
-        $durations = array_map(function($row) {
-            return $row['duration'];
-        }, $output);
-        $result = array_combine($filenames, $durations);
+        $result = [];
+        $chunks = array_chunk($files, 8);
+        foreach($chunks as $chunk) {
+            $output = json_decode(
+                shell_exec(
+                    sprintf(
+                        "%s/duration_multiple %s",
+                        BIN_PATH,
+                        implode(' ', $chunk)
+                    )
+                ),
+                true
+            );
+            $filenames = array_map(function($row) {
+                return $row['filename'];
+            }, $output);
+            $durations = array_map(function($row) {
+                return time_to_seconds($row['duration']);
+            }, $output);
+            $result = array_merge($result, array_combine($filenames, $durations));
+        }
 
         return $result;
     }

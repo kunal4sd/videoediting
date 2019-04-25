@@ -2,78 +2,70 @@
 
 #define __STDC_CONSTANT_MACROS
 #include <iostream>
+#include <future>
+#include <vector>
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/writer.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-#include <libavutil/avutil.h>
-#include <libavformat/avformat.h>
-#ifdef __cplusplus
-}
-#endif
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <array>
+#include <regex>
 
 using namespace std;
 
+Json::Value get_length(char* file)
+{
+
+	Json::Value jfile;
+	char dur[10];
+	char buffer[512];
+	char cmd[256];
+	std::string result;
+	smatch m;
+	regex re("time=([0-9:.]+)+");
+
+	jfile["filename"] = file;
+	sprintf(cmd, "ffmpeg -i %s -acodec copy -vn -f null - 2>&1", file);
+	FILE *pipe = popen(cmd, "r");
+
+	if (!pipe) {
+			throw std::runtime_error("popen() failed!");
+	}
+	while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+			result += buffer;
+	}
+	pclose(pipe);
+
+	string sp(result);
+	regex_search(sp, m, re);
+	jfile["duration"] = m.str(1);
+
+	return jfile;
+}
+
 int main(int argc, char* argv[])
 {
-    if(argc < 2)
-    {
+	if(argc < 2) {
 		std::cout << "usage: " << argv[0] << " video_file(s)\n";
 		return 0;
-    }
-
-	// Lower log level since av_log() prints at AV_LOG_ERROR by default
-	av_log_set_level(AV_LOG_INFO);
-	av_register_all();
-	char dur[10];
+	}
 
 	Json::Value root;
+	std::vector<std::future<Json::Value>> futures;
+
 	for(int i = 1; i < argc; i++)
 	{
-		char* file = argv[i];
-		AVFormatContext* formatContext = NULL;
-		Json::Value jfile;
+		futures.push_back(std::async(std::launch::async, get_length, argv[i]));
+	}
 
-		jfile["filename"] = file;
-
-		// Open video file
-		if (avformat_open_input(&formatContext, file, NULL, NULL) < 0) {
-			jfile["duration"] = 0.01;
-			root.append(jfile);
-			continue;
-		}
-		if (avformat_find_stream_info(formatContext, NULL) < 0) {
-			jfile["duration"] = 0.01;
-			root.append(jfile);
-			continue;
-		}
-
-		//av_log(NULL, AV_LOG_INFO, "  Duration: ");
-		if (formatContext->duration != AV_NOPTS_VALUE) {
-			int hours, mins, secs, us;
-			int64_t duration = formatContext->duration + 5000;
-			secs  = duration / AV_TIME_BASE;
-			us    = duration % AV_TIME_BASE;
-			// mins  = secs / 60;
-			// secs %= 60;
-			// hours = mins / 60;
-			// mins %= 60;
-			// sprintf(dur, "%02d:%02d:%02d.%02d", hours, mins, secs, (100 * us) / AV_TIME_BASE);
-			sprintf(dur, "%d.%02d", secs, (100 * us) / AV_TIME_BASE);
-			jfile["duration"] = dur;
-		}
-		else {
-			jfile["duration"] = 0.01;
-		}
-
-		root.append(jfile);
+	for(auto &e : futures) {
+		root.append(e.get());
 	}
 
 	Json::StyledWriter sw;
-
 	cout << sw.write(root);
 
-    return 0;
+	return 0;
 }

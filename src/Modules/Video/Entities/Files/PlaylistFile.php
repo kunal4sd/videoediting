@@ -155,13 +155,7 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
                             (new RawVideoFile())
                                 ->set_locations($next_row)
                                 ->set_name($file)
-                                ->set_length(
-                                    round(
-                                        trim(substr(trim($row), strlen($file_details_row) + 1)),
-                                        4,
-                                        PHP_ROUND_HALF_UP
-                                    )
-                                )
+                                ->set_length(trim(substr(trim($row), strlen($file_details_row) + 1)))
                                 ->set_discontinuity($is_discontinuity)
                         );
                         $is_discontinuity = false;
