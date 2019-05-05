@@ -113,6 +113,14 @@ function time_to_seconds($time)
     return $hours * 3600 + $minutes * 60 + $seconds;
 }
 
+function choose_time_to_seconds($time1 = false, $time2 = false)
+{
+    $time_1 = time_to_seconds($time1);
+    $time_2 = time_to_seconds($time2);
+
+    return $time_1 > $time_2 ? $time_1 : $time_2;
+}
+
 /**
  * Return the objects from $source_objs that have the value of $source_field
  * found in any of $target_objs' $target_field values

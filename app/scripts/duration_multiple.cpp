@@ -1,46 +1,42 @@
 //g++ -o ../bin/duration_multiple duration_multiple.cpp `pkg-config --cflags --libs libavformat libavutil jsoncpp`
 
-#define __STDC_CONSTANT_MACROS
-#include <iostream>
+#include <future>
+#include <vector>
+#include <string>
+#include <algorithm>
 #include <jsoncpp/json/json.h>
 #include <jsoncpp/json/writer.h>
 
-#ifdef __cplusplus
-extern "C" {
-	#endif
-	#include <libavutil/avutil.h>
-	#include <libavformat/avformat.h>
-	#ifdef __cplusplus
-}
-#endif
-
 using namespace std;
 
-Json::Value get_details(char* file)
+string get_details(char* file)
 {
 
-	AVFormatContext* formatContext = NULL;
-	Json::Value jfile;
-	char dur[10];
+	char buffer[512];
+	char cmd[512];
+	string result;
 
-	jfile["filename"] = file;
-	if (
-		avformat_open_input(&formatContext, file, NULL, NULL) >= 0
-		&& avformat_find_stream_info(formatContext, NULL) >= 0
-		&& formatContext->duration != AV_NOPTS_VALUE
-	) {
-		int secs, us;
-		int64_t duration = formatContext->duration + 5000;
-		secs  = duration / AV_TIME_BASE;
-		us    = duration % AV_TIME_BASE;
-		sprintf(dur, "%d.%02d", secs, (100 * us) / AV_TIME_BASE);
-		jfile["duration"] = dur;
-	}
-	else {
-		jfile["duration"] = 0.01;
-	}
+	sprintf(
+		cmd,
+		"ffmpeg -i %s -vn -acodec copy -f null - 2>&1 \
+		| grep -E 'time=|Duration: ' \
+		| sed -nr 's/.*([0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{2}).*/\\1/p' \
+		| echo '{\"filename\":\"%s\"' $(awk '{ if(NR==1) print \",\\\"duration\\\":\\\"\"$1\"\\\"\"; else if(NR==2) print \",\\\"time\\\":\\\"\"$1\"\\\"\"; }') '}'",
+		file,
+		file
+	);
+	FILE *pipe = popen(cmd, "r");
 
-	return jfile;
+	if(!pipe) {
+		return result;
+	}
+	while(fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+		result += buffer;
+	}
+	pclose(pipe);
+	result.erase(remove_if(result.begin(), result.end(), ::isspace), result.end());
+
+	return result;
 }
 
 int main(int argc, char* argv[])
@@ -50,16 +46,26 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	av_log_set_level(AV_LOG_INFO);
-	av_register_all();
-
-	Json::Value root;
-	for(int i = 1; i < argc; i++) {
-		char* file = argv[i];
-		root.append(get_details(file));
+	if(argc > 33) {
+		cout << "call exceeds the maximum allowed number of files (32)\n";
+		return 0;
 	}
 
+	Json::Value tmp;
+	Json::Value root;
+	Json::Reader reader;
 	Json::StyledWriter sw;
+	vector<future<string>> futures;
+
+	for (int i = 1; i < argc; i++) {
+		futures.push_back(async(launch::async, get_details, argv[i]));
+	}
+
+	for (auto &e : futures) {
+		reader.parse( e.get().c_str(), tmp);
+		root.append(tmp);
+	}
+
 	cout << sw.write(root);
 
 	return 0;
