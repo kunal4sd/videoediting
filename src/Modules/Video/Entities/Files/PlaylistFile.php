@@ -201,8 +201,8 @@ class PlaylistFile extends AbstractPlaylist implements FooterInterface, PosterIn
         $time_passed = 0;
         foreach($this->get_files() as $index => $file) {
             $from_diff = $from - $time_passed;
+            $to_diff = $to - $time_passed;
             $time_passed += $file->get_length();
-            $to_diff = $file->get_length() - $time_passed + $to;
             if ($from_index === -1 && $time_passed >= $from) {
                 $from_cut = $from_diff;
                 $from_index = $index;
