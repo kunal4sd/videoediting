@@ -11,11 +11,11 @@ $config = [
     'monolog' => [
         'enabled' => true,
         'min_level' => 100,
-        'path' => BASE_PATH . '/app/logs',
+        'path' => APP_PATH . '/logs',
         'filename' => sprintf('%s.csv', date("Y_m_d"))
     ],
     'view' => [
-        'templates_path' => BASE_PATH . '/app/templates',
+        'templates_path' => APP_PATH . '/templates',
         'twig' => [
             'cache' => false,
             'debug' => true
@@ -23,7 +23,25 @@ $config = [
     ],
     'user' => [
         'sessions' => [
-            'max' => 5
+            'max' => 4
+        ]
+    ],
+    'cron' => [
+        'main' => [
+            'php_binary' => '/usr/bin/php',
+            'log_path' => APP_PATH . '/logs',
+            'log_filename' => sprintf('cron_%s.log', date("Y_m_d")),
+            'default_schedule' => '30 * * * *'
+        ],
+        'jobs' => [
+            'video_streams_alert' => [
+                'schedule' => '* * * * *',
+                'mail_config' => [],
+                'mailing_list' => []
+            ],
+            'delete_old_tmp_files' => [
+                'schedule' => '*/2 * * * *'
+            ]
         ]
     ]
 ];
