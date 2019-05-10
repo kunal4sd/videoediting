@@ -83,7 +83,7 @@ function human_filesize($bytes, $decimals = 2)
         . ( @$sz[$factor] !== 'B' ? 'B' : '' );
 }
 
-function seconds_to_time($sec)
+function seconds_to_time($sec, $with_micro = true)
 {
     if( !is_float( $sec ) ) $sec = floatval( $sec );
 
@@ -91,12 +91,14 @@ function seconds_to_time($sec)
     $minutes = floor(($sec - ($hours * 3600)) / 60);
     $seconds = $sec - ($hours * 3600) - ($minutes * 60);
 
-    if ( $hours < 10 ) $hours   = "0" . $hours;
-    if ( $minutes < 10 ) $minutes = "0" . $minutes;
-    $seconds = number_format( $seconds, 2, '.', '' );
-    if ( $seconds < 10 ) $seconds = "0" . $seconds;
+    if ($with_micro) {
+        $result = sprintf('%02d:%02d:%05.2f', $hours, $minutes, $seconds);
+    }
+    else {
+        $result = sprintf('%02d:%02d:%02d', $hours, $minutes, intval($seconds));
+    }
 
-    return sprintf('%s:%s:%s', $hours, $minutes, $seconds);
+    return $result;
 }
 
 function time_to_seconds($time)
@@ -196,4 +198,18 @@ function get_file_details_from_path($path)
     }
 
     return array_fill(0, 5, false);
+}
+
+function get_seconds_since_file($file_name, $max_limit = null)
+{
+    if (!$file_name) return $max_limit;
+
+    $file_details = explode('.', $file_name);
+    $file_name =  $file_details[1];
+    $file_date = str_replace(array('-','_'), array(' ','-'), $file_name);
+
+    $to_time = strtotime($file_date);
+    $from_time = strtotime(date("Y-m-d H:i:s"));
+
+    return $from_time - $to_time;
 }
