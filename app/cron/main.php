@@ -61,7 +61,9 @@ try {
         $cron->setResolver($resolver);
         $report = $cron->run();
 
-        while ($cron->isRunning()) { }
+        while($cron->isRunning()) {
+            sleep(1);
+        }
 
         $jobs = $resolver->resolve();
         foreach($jobs as $job) {
