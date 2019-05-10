@@ -1,5 +1,6 @@
 app/cache/**/*.php
 app/logs/*.csv
+app/logs/*.log
 app/config/*stag*
 app/config/*prod*
 vendor/
