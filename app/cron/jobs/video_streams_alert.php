@@ -20,7 +20,7 @@ $container = new Container();
 $container->config = new Config();
 Db::build($container);
 $publications_ar = (new Publication($container))->get_all_active_tv_and_radio_media();
-$publications_details_ar = (new PublicationDetails($container))->get_all_recording247_media();
+$publications_details_ar = (new PublicationDetails($container))->get_all_recording247();
 $publications_active = intersect_objects_by_fields(
     $publications_ar,
     'id',
