@@ -56,14 +56,26 @@ $config = [
  * Or if it's better to drop this part altogether, and manually set env, do so.
  */
 
-// check for staging env
-if (strpos(dirname(__FILE__), '/staging/') !== false) {
-    $config['core']['env'] = 'staging';
-}
+// script is run from cli
+if (php_sapi_name() === 'cli') {
 
-// check for prod env
-elseif (!in_array(HOST, array('localhost', '192.168.33.4'), true)) {
-    $config['core']['env'] = 'prod';
+    // no staging available at this point
+    // just check for production env if running from cli
+    if (isset($_SERVER['LOGNAME']) && $_SERVER['LOGNAME'] !== 'vagrant') {
+        $config['core']['env'] = 'prod';
+    }
+}
+else {
+
+    // check for staging env
+    if (strpos(dirname(__FILE__), '/staging/') !== false) {
+        $config['core']['env'] = 'staging';
+    }
+
+    // check for prod env
+    elseif (!in_array(HOST, array('localhost', '192.168.33.4'), true)) {
+        $config['core']['env'] = 'prod';
+    }
 }
 
 /**
