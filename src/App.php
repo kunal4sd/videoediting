@@ -38,7 +38,7 @@ class App
     private function build_app()
     {
         $this->slim = new Slim();
-        $container =& $this->slim->getContainer();
+        $container = $this->slim->getContainer();
         $container->settings->replace($this->config->slim);
         $container->config = $this->config;
 
