@@ -8,8 +8,8 @@ Options +FollowSymLinks
 Options -MultiViews
 
 # 10 hours lifetime of cookies and sessions
-php_value session.cookie_lifetime 36000
-php_value session.gc_maxlifetime 36000
+# php_value session.cookie_lifetime 36000
+# php_value session.gc_maxlifetime 36000
 
 DirectoryIndex index.php
 <IfModule mod_rewrite.c>
