@@ -36,7 +36,7 @@ if(isset($_POST['fdate'])){
 			"publication_id"=> $_POST['channel'] , 
 			"from_time"=> $_POST['fdate'] , 
 			"to_time"=> $_POST['tdate'], 				
-			"duration"=> $_POST['duration'], 				
+			"duration"=> $_POST['fduration'], 				
 			
 		);	
 	setcookie($cookie_name, serialize($getData));	

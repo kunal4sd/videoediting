@@ -13406,7 +13406,7 @@ var WebVideoEditor = function(t) {
 			var fdate  = $('#fdate').val();
 			var tdate  = $('#tdate').val();
 			var channel_id = $("#channel").chosen().val()
-			var durationS = $("#duration").chosen().val()
+			var durationS = $("#fduration").chosen().val()
 			
 			
 			//alert(channel_id+' Duration='+durationS);
@@ -13414,7 +13414,7 @@ var WebVideoEditor = function(t) {
 				var callFun = 'content_list3';
 				$('#input-loading').text('loading...');
 				$('#submitBTN').attr("disabled", "disabled");
-				$.getJSON( "http://edit.mediaobserver-me.com/file_listing.php?length="+durationS+"&stime="+fdate+"&etime="+tdate+"&id="+channel_id, function( data ) {
+				$.getJSON( "https://edit.mediaobserver-me.com/file_listing.php?length="+durationS+"&stime="+fdate+"&etime="+tdate+"&id="+channel_id, function( data ) {
 				  var items = [];
 				  var idnu = 0
 				  $.each( data, function( key, val ) {

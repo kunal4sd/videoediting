@@ -358,7 +358,7 @@ class BaseControllerClass
 							     );  
 				$data = !empty( $_POST['data'] ) ? $_POST['data'] : array();
                 $controller = new RenderControllerClass( $this->config );
-                $output = $controller->render2( $outputTitle, $options, $data ,$_POST['pid']  );
+                $output = $controller->render3( $outputTitle, $options, $data ,$_POST['pid']  );
 					
 					
                 break;

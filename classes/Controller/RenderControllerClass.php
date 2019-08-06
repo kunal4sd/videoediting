@@ -1,4 +1,5 @@
 <?php
+//include('public_functions.php');
 
 namespace App\Controller;
 
@@ -230,11 +231,13 @@ class RenderControllerClass extends BaseControllerClass
 			$ago = 'ago';
 		}
 
-		$timezone = '+0300';
-		if('2018-03-30 00:00:00' > $start_date)
-		{
-			$timezone = '+0200';
-		}
+		
+		 date_default_timezone_set('Asia/Amman');
+		//$tz= date('m-d-Y h:i:s') ;
+		//$tz = new \DateTimeZone('Asia/Amman');
+		$date = \Datetime::createFromFormat('Y-m-d H:i:s', $start_date);
+		$offset = intval($date->getOffset() / 3600);
+		$timezone = sprintf('+%02d00', $offset);
 
 		for($i=0; $i <= 30; $i++) {
 			$file = shell_exec("date '+$path/$id/%Y/%m/%d/$id.%Y_%m_%d-%H:%M:%S.ts' --date=\"$start_date $timezone + $i seconds $ago\"");
@@ -245,6 +248,138 @@ class RenderControllerClass extends BaseControllerClass
 		}
 		return false;
 	}
+	
+	
+	/* Start Render 3 */
+	public function render3 ( $title, $opts, $data , $quid ){
+		GLOBAL $db2;
+		GLOBAL $getData;
+		$path = '/storage/recordings';
+		
+		if ($_COOKIE['uid'] == 171){
+			$output_path = '/var/www/edit.mediaobserver-me.com/public/tmp/vidsaver/';
+		} else {
+			$output_path = '/var/www/edit.mediaobserver-me.com/public/userfiles/output/testOutput/';
+		}
+		
+
+			$data = json_decode( $_POST['data'] );
+
+			foreach ($data as $i => $row) {
+				if ( !isset($row)) {
+					unset($data[$i]);
+				}
+			}
+			$data = array_values($data);
+		
+			
+			$fnamez = explode('.',$data[0][2]);
+			$issue_date = str_replace(array('-','_') , array(' ','-'), $fnamez[1]) ;
+			$article_data = Array (
+				   "publication_id" => $getData['publication_id'],
+				   "issue_date" => $issue_date,
+				   "section_id" => 0,
+				   "headline" => $title,
+				   "type_id" => 0,
+				   "modified" =>  $db2->now(),
+				   "created" => $db2->now(),
+				   "created_by" => $_COOKIE['uid'],
+				   "duration" => 0,
+				   "broadcast_time" => 0,
+				   "file_path"=>'',
+				   
+			);	
+						
+			 $dbid = $db2->insert ('article', $article_data);
+			$outputFileName = $output_path.$dbid.'.mp4';
+		
+		$dataz = Array ("user_id" => $_COOKIE['uid'],
+		   "publication_id" => $getData['publication_id'],
+		   "article_id" => $dbid ,
+		   "issue_date" =>$issue_date,
+		   "activity_id" => 2,
+		   "created" => $db2->now(),
+		);
+
+		$xid = $db2->insert ('user_activity', $dataz);		
+		$files_ar = array();
+		$get_first_video = true;
+		foreach($data as $tmp){
+			
+			$file_name = explode('.',$tmp[2]);
+			$fdate = str_replace( array('-','_') , array(' ','-'), $file_name[1]);
+			
+			$from_time 	= $this->dateOp($fdate, $tmp[0],'+'); 
+			$to_date 	= $this->dateOp($fdate, $tmp[1],'+'); 
+			
+			$id = $file_name[0];
+			$start_file = $this->get_best_file($id, $from_time, $path, 'ago');
+			$end_file = $this->get_best_file($id, $to_date, $path);
+			$sfile_mtime = date('Y/m/d H:i:s', filemtime($start_file));
+			$efile_mtime = date('Y/m/d H:i:s', filemtime($end_file));
+			$sdir = date('Y/m/d', filemtime($start_file));
+			
+			$find_command = "find $path/$id/$sdir -type f -newermt '$sfile_mtime' ! -newermt '$efile_mtime' | sort -n | cut -f2";
+			
+			$files_string = shell_exec($find_command);
+			$files = explode("\n", trim($files_string));
+			if ($get_first_video){
+				$first_video_name = basename($files[0]);
+				$brodcast = $files[0];
+				$tmp3 = explode('-',$brodcast);
+				$brodcast = substr($tmp3[1],0,-3);
+				$get_first_video = false;
+			}
+			foreach($files as $ffile){
+				array_push($files_ar, $ffile);
+			}
+		}
+		
+		
+		$files_ar  = array_unique($files_ar );
+
+
+		$filename = tempnam("/tmp", "edit_");
+
+		$text = "";
+		foreach($files_ar as $key => $value)
+		{
+			$text .= "file '".$value."'\n";
+		}
+		;
+		$fh = fopen($filename, "wb") or die("Could not open log file.");
+		fwrite($fh, $text) or die("Could not write file!");
+		fclose($fh);
+		
+		
+		//$files_str = implode('|',$files_ar);
+		 
+		//$ffmpeg_str = 'ffmpeg -i  "concat:'.$files_str.'" -c copy '.$outputFileName."\n\r";
+		$ffmpeg_str = 'ffmpeg -f concat -safe 0 -i '.$filename.'  -c copy '.$outputFileName."\n\r";
+		
+		//echo $ffmpeg_str;
+		//die();
+		$output =  shell_exec($ffmpeg_str) ;
+
+		
+		$duration = exec('ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 '.$outputFileName);
+		$duration =  (int)$duration;
+
+		$first_video_name = explode('.',$first_video_name);
+		$new_issue_date = str_replace(array('-','_') , array(' ','-'), $first_video_name[1] ) ;
+		
+		$db2->where ('id', $dbid);
+		$db2->update ('article', Array ('duration' => $duration,'broadcast_time'=>$brodcast,'issue_date'=>$new_issue_date))	;
+
+        $output['success'] = true;
+		
+		
+		
+		return $output;
+		
+	}
+	/* End Render 3 */
+	
 	public function render2 ( $title, $opts, $data , $quid ){
 		GLOBAL $db2;
 		GLOBAL $getData;
@@ -335,6 +470,8 @@ class RenderControllerClass extends BaseControllerClass
 		$files_str = implode('|',$files_ar);
 		 
 		$ffmpeg_str = 'ffmpeg -i  "concat:'.$files_str.'" -c copy '.$outputFileName."\n\r";
+		//echo $ffmpeg_str;
+		//die();
 		$output =  shell_exec($ffmpeg_str) ;
 
 		

@@ -34,7 +34,7 @@ if(!@$dont_check_login){
 */	
 			
 $db = new MysqliDb (Array (
-                'host' => '212.35.72.18',
+                'host' => 'moo.hopto.org',
                 'username' => 'app_user', 
                 'password' => 'UFGBsfrhjuj42',
                 'db'=> 'media_media',

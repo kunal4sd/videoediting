@@ -63,7 +63,7 @@ $userOptions = array(
                 Import media
             </button -->
 			
-			<form  action="index.php?tab_id=<?php echo (isset($_GET['tab_id']))? $_GET['tab_id'] : uniqid();?>" method="post" >
+			<form  action="index.php?tab_id=<?php echo (isset($_GET['tab_id']))? $_GET['tab_id'] : uniqid();?>" autocomplete="off" method="post" >
 				
 				<select required placeholder="channel"  id="channel" name="channel" class="form-control form-control-sm option-control channelSelect" style=" width:335px; margin-bottom:5px; padding-bottom:5px;">
 					<option value="0">-- Select -- </option>
@@ -78,7 +78,7 @@ $userOptions = array(
 				
 				<input type="text" id="fdate" required value="<?php echo @$getData['from_time'];?>"  name="fdate" placeholder="From Date" class="form-control form-control-sm option-control datetimepicker1" style="float:left; width: 150px; margin-right:10px;"> 
 				<input type="text" id="tdate" required value="<?php echo @$getData['to_time'];?>"  name="tdate" placeholder="To	 Date" class="form-control form-control-sm option-control datetimepicker1" style="float:left; width: 150px; margin-right:10px;"> 
-				<select required placeholder="duration"  id="duration" name="duration" class="form-control form-control-sm option-control channelSelect" style=" width:335px; margin-bottom:5px; padding-bottom:5px;">
+				<select required placeholder="duration"  id="fduration" name="fduration" class="form-control form-control-sm option-control channelSelect" style=" width:335px; margin-bottom:5px; padding-bottom:5px;">
 					<option value="600" <?php if (@$getData['duration'] == 600){ echo 'selected';}?> >10 Min</option>
 					<option value="1200" <?php if (@$getData['duration'] == 1200){ echo 'selected';}?>>20 Min</option>
 					<option value="1800" <?php if (@$getData['duration'] == 1800){ echo 'selected';}?>>30 Min</option>
@@ -110,7 +110,7 @@ $userOptions = array(
 		    //var src2 = 'http://edit.mediaobserver-me.com/tmp/playlist/3266.2018_02_27-11:23:16.m3u8'
 			
 			var channel_id = $("#channel").chosen().val()
-			var durationS = $("#duration").chosen().val()
+			var durationS = $("#fduration").chosen().val()
 			
 			function moveSTo(rt=true){
 				var  mplayer=videojs("preview-player");

@@ -1,6 +1,27 @@
 <?php
 include('/var/www/edit.mediaobserver-me.com/config/db.php');
 
+/*
+$nq = "select k.*
+		from customer c 
+		inner join customer_mediatype cm on cm.customer_id = c.id
+		inner join customer_keyword ck on ck.customer_id = c.id 
+		inner join keyword k on k.id = ck.keyword_id
+
+		where
+		c.expiry_date >= now() 
+		and ( 
+		FIND_IN_SET('3',cm.publication_types) > 0 or FIND_IN_SET('4',cm.publication_types) > 0 
+		) and k.active =1
+	";
+	$res = $db->rawQuery($nq);
+
+	foreach($res as $tmp){
+		$db2->insert('keyword_videos',$tmp);
+	}
+	
+die();
+*/
 function dbAction($arr, $action, $table){
 	GLOBAL $db2;
 

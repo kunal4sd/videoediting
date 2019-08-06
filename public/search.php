@@ -4,7 +4,7 @@ $q = $_POST['data']['q'];
 include(dirname(__DIR__) .'/config/MysqliDb.php');
 
 $db = new MysqliDb (Array (
-                'host' => '212.35.72.18',
+                'host' => 'moo.hopto.org',
                 'username' => 'app_user', 
                 'password' => 'UFGBsfrhjuj42',
                 'db'=> 'media_media',

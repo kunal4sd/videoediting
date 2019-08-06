@@ -72,7 +72,7 @@ if($end_file === false) {
 if(!$error_message){
 	$sfile_mtime = date('Y/m/d H:i:s', filemtime($start_file));	
 	$efile_mtime = date('Y/m/d H:i:s', filemtime($end_file));
-
+	//echo $sfile_mtime;
 	$sdir = date('Y/m/d', filemtime($start_file));
 
 	//echo "\t$start_file mtime: $sfile_mtime\n";

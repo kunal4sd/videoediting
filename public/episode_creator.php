@@ -32,10 +32,9 @@ function create_playlist($filename, $playlist) {
 
 function dateOp($fdate,$duration, $op){
 	
-		$duration = (int)$duration;		
-		$dateinsec=strtotime($fdate);
-		return date('Y-m-d H:i:s',strtotime($op.$duration.' seconds',strtotime($fdate)));
-		
+	$duration = (int)$duration;		
+	$dateinsec=strtotime($fdate);
+	return date('Y-m-d H:i:s',strtotime($op.$duration.' seconds',strtotime($fdate)));
 }
 
 	
@@ -50,7 +49,6 @@ $file_name = explode('.',$fname);
 $fdate = str_replace( array('-','_') , array(' ','-'), $file_name[1]);
 
 $from_time 	= dateOp($fdate, $start_time,'+'); 
-
 $to_date 	= dateOp($fdate, $end_time,'+'); 
 
 
@@ -67,7 +65,6 @@ $find_command = "find $path/$id/ -type f -newermt '$sfile_mtime' ! -newermt '$ef
 $files_string = shell_exec($find_command);
 $files = explode("\n", trim($files_string));
 */
-
 
 if ($start_file === false) {
 	$error_message = "No sfile with $start_time!";

@@ -8,11 +8,11 @@ function get_best_file($id, $start_date, $increment = null) {
 		$ago = 'ago';
 	}
 	
-	$timezone = '+0300';
-	if('2018-03-30 00:00:00' > $start_date)
-	{
-		$timezone = '+0200';
-	}
+	$tz = new DateTimeZone('Asia/Amman');
+	$date = Datetime::createFromFormat('Y-m-d H:i:s', $start_date, $tz);
+	$offset = intval($date->getOffset() / 3600);
+	$timezone = sprintf('+%02d00', $offset);
+
 	
 	//echo "Timezone value is : $timezone"." d = " . $d . "&d3=".$d30;
 	//die();
