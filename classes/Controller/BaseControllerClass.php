@@ -7,7 +7,7 @@ use Flintstone\Formatter\JsonFormatter;
 
 /**
  * BaseControllerClass
- * 
+ *
  * @author Andchir <andycoderw@gmail.com>
  */
 class BaseControllerClass
@@ -126,7 +126,7 @@ class BaseControllerClass
         $action =  !empty( $_GET['action'] )
             ? trim( $_GET['action'] )
             : (!empty( $_POST['action'] ) ? trim( $_POST['action'] ) : $default);
-			
+
 		return $action;
     }
 
@@ -136,7 +136,7 @@ class BaseControllerClass
      */
     public function handleRequest()
     {
-		
+
         $action = self::getRequestAction();
         $output = array();
         $forcePrintOutput = true;
@@ -163,9 +163,9 @@ class BaseControllerClass
 
                 break;
             case 'content_list':
-				/*Rami get videos menu 
-				type = input 
-				or output 
+				/*Rami get videos menu
+				type = input
+				or output
 				*/
 
                 $type = !empty( $_GET['type'] ) ? trim( $_GET['type'] ) : '';
@@ -177,7 +177,7 @@ class BaseControllerClass
 				}
 
                 break;
-			
+
 			case 'content_list4':
 			{
                 $type = !empty( $_GET['type'] ) ? trim( $_GET['type'] ) : '';
@@ -189,75 +189,75 @@ class BaseControllerClass
 				}
 
                 break;
-				
-			}			
+
+			}
             case 'content_list2':
-				/*Rami get videos menu 
-				type = input 
-				or output 
+				/*Rami get videos menu
+				type = input
+				or output
 				*/
-				
+
                 $type = !empty( $_GET['type'] ) ? trim( $_GET['type'] ) : '';
                 $controller = new ContentControllerClass( $this->config );
 				if ($type=='input'){
 					$output = $controller->getMediaList( $type , $_COOKIE['user']['id'] );
-				} 
+				}
 				$q=0;
 				$narr = array();
-				
+
 				foreach($output['data'] as $tmp){
 					$narr[$q]['title'] = $tmp['id'];
 					$narr[$q]['artist'] = $tmp['title'];
-					$narr[$q]['m4v'] = 'http://edit.mediaobserver-me.com/'.$tmp['url'];
+					$narr[$q]['m4v'] = 'https://edit.mediaobserver-me.com/'.$tmp['url'];
 					$narr[$q]['free'] = 'Boolean';
-					
+
 					$q++;
-					
+
 				}
-				
+
 				echo json_encode( $narr)  ;
-				
+
 				die();
                 break;
-				
+
             case 'get_media_info':
 				/*Rami get videos info*/
 				$controller = new ContentControllerClass( $this->config );
 				$output = $controller->getVideoInfo( $_GET['vid'] );
 
-                break;	
+                break;
 
-				
+
             case 'update_video_info':
 				/*Rami get videos info*/
-				
+
 				$controller = new ContentControllerClass( $this->config );
 				if( is_array($_POST['kwz']) ){ //check old system
 					$kwz = ( isset( $_POST['kwz']) )? $_POST['kwz'] : array();
 				} else {
 					if( isset( $_POST['kwz']) ){  // check with new system
 						$kwz = explode(',',$_POST['kwz'] );
-					} else { 
-						$kwz = array(); 
+					} else {
+						$kwz = array();
 					}
 				}
-				
+
 				$output = @$controller->updateVInfo( $_POST['vid'], $_POST['title'],$_POST['atext'], $kwz );
 
-                break;	
-				
+                break;
+
             case 'get_media_keywords':
 				/*Rami get videos info*/
 				$controller = new ContentControllerClass( $this->config );
 				$output = $controller->getVideoKeywords( $_GET['vid'] );
 
-                break;					
-				
+                break;
+
             case 'search_list':
-			
+
                 $type = !empty( $_GET['type'] ) ? trim( $_GET['type'] ) : '';
                 $controller = new ContentControllerClass( $this->config );
-				$options = array( 
+				$options = array(
 								'channels'=>@$_REQUEST['channels'],
 								'sta'=> $_REQUEST['sta'],
 								'fdate'=>$_REQUEST['fdate'],
@@ -265,23 +265,23 @@ class BaseControllerClass
 								);
                 $output = $controller->getSearchList( $options );
 
-                break;				
+                break;
             case 'delete':
-				
+
                 $itemId = !empty( $_POST['itemId'] ) ? trim( $_POST['itemId'] ) : 0;
                 $type = !empty( $_POST['type'] ) ? trim( $_POST['type'] ) : '';
 				$inPage = $_POST['inPage'];
-				
+
                 $controller = new ContentControllerClass( $this->config );
                 $output = $controller->deleteItem( $itemId, $type );
 				$output['redirect'] = ($inPage) ? 'user' : '' ;
-				
+
                 break;
             case 'select_media':
 
                 $itemId = !empty( $_GET['itemId'] ) ? trim( $_GET['itemId'] ) : 0;
                 $type = !empty( $_GET['type'] ) ? trim( $_GET['type'] ) : '';
-				
+
                 $controller = new ContentControllerClass( $this->config );
                 $output = $controller->getItemData( $itemId, $type );
 
@@ -290,12 +290,12 @@ class BaseControllerClass
             case 'select_media3':
                 $itemId = !empty( $_GET['itemId'] ) ? trim( $_GET['itemId'] ) : 0;
                 $type = !empty( $_GET['type'] ) ? trim( $_GET['type'] ) : '';
-				
+
                 $controller = new ContentControllerClass( $this->config );
                 $output = $controller->getItemData2( $itemId, $type );
 
                 break;
-				
+
             case 'update_media':
 				//$keyIds = $db2->rawQueryOne("select group_concat(k.id) as kIds from article_keyword ak inner join keyword k on k.id= ak.keyword_id where ak.article_id=".$itemId);
                 $itemId = !empty( $_POST['itemId'] ) ? trim( $_POST['itemId'] ) : 0;
@@ -331,61 +331,61 @@ class BaseControllerClass
 				$multivalue = $_GET['multivalue'] ;
 				$status = $_GET['stat'] ;
                 $controller = new ContentControllerClass( $this->config );
-				$output = $controller->changeStatus( $status ,$multivalue );				
+				$output = $controller->changeStatus( $status ,$multivalue );
                 break;
 
-				
+
 			case 'grid':
-				$forcePrintOutput = false;	
+				$forcePrintOutput = false;
 				$controller = new gridControllerClass( $this->config );
 				$output = $controller->getGridView(  );
                 break;
-				
+
             case 'render2':
-				
+
 				//$data = json_decode( $_POST['data'] );
 				if ($_COOKIE['uid'] == 171){
 					$_POST['title'] = $_POST['title'] . '- Vid Saver';
 				}
 				$outputTitle = !empty( $_POST['title'] ) ? trim( $_POST['title'] ) : 'X';
-                $options = Array ( 
+                $options = Array (
 								   'title' => 'fname',
 								   'text' => 'MediaObserver ME',
 								   'quality' => 'medium',
 								   'size' => '480p',
 								   'format' => 'mp4',
 								   'aspect' => '16:9'
-							     );  
+							     );
 				$data = !empty( $_POST['data'] ) ? $_POST['data'] : array();
                 $controller = new RenderControllerClass( $this->config );
                 $output = $controller->render3( $outputTitle, $options, $data ,$_POST['pid']  );
-					
-					
+
+
                 break;
-				
+
             case 'render':
-			
+
 				/*
 					when render the output video
 					- save to db
 					- get id then save the out video with the db id
 				*/
-				
+
                 //$outputTitle = 'video title';
 				$outputTitle = !empty( $_POST['title'] ) ? trim( $_POST['title'] ) : 'X';
                 //$options = !empty( $_POST['options'] ) && is_array( $_POST['options'] ) ? $_POST['options'] : array();
-                $options = Array ( 
+                $options = Array (
 								   'title' => 'fname',
 								   'text' => 'MediaObserver ME',
 								   'quality' => 'medium',
 								   'size' => '480p',
 								   'format' => 'mp4',
 								   'aspect' => '16:9'
-							     ); 
+							     );
 				$data = !empty( $_POST['data'] ) ? $_POST['data'] : array();
 				//print_r($data );
 				//[{"id":"1493910131_590b427369ad9","time":[204117,241009]}]
-				
+
                 $controller = new RenderControllerClass( $this->config );
                 $output = $controller->render( $outputTitle, $options, $data ,$_POST['pid']  );
 
@@ -411,10 +411,10 @@ class BaseControllerClass
                 break;
             case 'queue_status':
 				/*Rami when click on the video open dailog*/
-				
+
                 $controller = new QueueControllerClass( $this->config );
                 list( $pendingCount, $processingCount, $percent, $userStatus ) = $controller->getUserQueueStatus($_GET['pid']);
-				
+
 				$output = array(
                     'success' => true,
                     'status' => $userStatus,
@@ -430,7 +430,7 @@ class BaseControllerClass
                     'processingCount' => 0,
                     'percent' => 0
                 );
-				*/				
+				*/
 
                 break;
             case 'processing_stop':
@@ -465,24 +465,24 @@ class BaseControllerClass
 			case 'get_publication_info':
 				$pub_id = isset($_GET['pub_id'])? $_GET['pub_id'] : 0 ;
 				$controller = new PublicationControllerClass( $this->config );
-                $output = $controller->getPublicationInfo($pub_id);				
+                $output = $controller->getPublicationInfo($pub_id);
 				break;
 			case 'save_publication_info':
-				
+
 				$controller = new PublicationControllerClass( $this->config );
-                $output = $controller->savePublicationInfo($_POST['data']);	
+                $output = $controller->savePublicationInfo($_POST['data']);
 				break;
 			case 'get_publication_list' :
-				
+
 				$pub_arr['id'] = isset($_GET['pub_id'])? $_GET['pub_id'] : 0 ;
-				$pub_arr['type'] = isset( $_GET['pub_type'] ) ? $_GET['pub_type'] : 0 ; 
+				$pub_arr['type'] = isset( $_GET['pub_type'] ) ? $_GET['pub_type'] : 0 ;
 
 				$pub_arr['lang'] = isset($_GET['pubLang'])? $_GET['pubLang'] : 0 ;
-				$pub_arr['country'] = isset($_GET['pubCountry'])? $_GET['pubCountry'] : 0 ;				
+				$pub_arr['country'] = isset($_GET['pubCountry'])? $_GET['pubCountry'] : 0 ;
 				$pub_arr['flag24'] = isset($_GET['flag24'])? $_GET['flag24'] : 1 ;
-				
+
 				$controller = new PublicationControllerClass( $this->config );
-				
+
                 $output = $controller->getPublications($pub_arr);
 				break;
 			case 'publications':
@@ -492,8 +492,8 @@ class BaseControllerClass
                 $output = $controller->getPublicationsView();
 
                 break;
-				
-				
+
+
 			case 'publicationsReport':
 
                 $forcePrintOutput = false;
@@ -501,7 +501,7 @@ class BaseControllerClass
                 $output = $controller->getPublicationsReport2();
 
                 break;
-				
+
             case 'delete_user':
 
                 $forcePrintOutput = false;
@@ -633,7 +633,7 @@ class BaseControllerClass
      */
     public function getVideoProperties( $filePath )
     {
-	
+
         $output = array();
         $content = shell_exec( $this->config['ffprobe_path'] . ' -i "' . $filePath . '" 2>&1' );
 
@@ -654,8 +654,8 @@ class BaseControllerClass
             $output['duration_ms'] += $secs * 1000;
             $output['duration_ms'] += $ms;
         }
-	
-		
+
+
         return $output;
     }
 
@@ -878,11 +878,11 @@ class BaseControllerClass
         unset($_COOKIE['uid']);
 		unset($_COOKIE['uname']);
 		unset($_COOKIE['type']);
-		
+
 		setcookie('uid', null, -1, '/');
 		setcookie('uname', null, -1, '/');
 		setcookie('type', null, -1, '/');
-		
+
         self::redirectTo( str_replace( '?action=logout', '', $_SERVER['REQUEST_URI'] ) );
     }
 
@@ -1124,7 +1124,7 @@ class BaseControllerClass
      */
     public function cleanTempUserDir( $userId = 0 )
     {
-     
+
         $output = false;
         $tmpDirPath =  '/var/www/edit.mediaobserver-me.com/public/tmp/'.$_COOKIE['uid'];
         if( is_dir( $tmpDirPath ) ){
@@ -1200,5 +1200,5 @@ class BaseControllerClass
 
         return $output;
     }
-    
+
 }

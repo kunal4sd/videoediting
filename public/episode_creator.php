@@ -13,7 +13,7 @@ function create_playlist($filename, $playlist) {
 	$fh = fopen($filename, 'w') or die('Could not open file "' . $filename . '" $!');
 
 	fwrite($fh, "#EXTM3U\n");
-	fwrite($fh, "#EXT-X-VERSION:3\n"); 
+	fwrite($fh, "#EXT-X-VERSION:3\n");
 	fwrite($fh, "#EXT-X-MEDIA-SEQUENCE:0\n");
 	fwrite($fh, "#EXT-X-ALLOW-CACHE:NO\n");
 	fwrite($fh, "#EXT-X-TARGETDURATION:5\n");
@@ -21,7 +21,7 @@ function create_playlist($filename, $playlist) {
 	foreach($playlist as $file) {
 		fwrite($fh, "#EXTINF:-1\n");
 		$file = preg_replace('/[^[:print:]]/', '', $file);
-		$file = preg_replace('/\/storage\/recordings/', 'http://edit.mediaobserver-me.com/videos', $file);
+		$file = preg_replace('/\/storage\/recordings/', 'https://edit.mediaobserver-me.com/videos', $file);
 		fwrite($fh, $file . "\n");
 	}
 
@@ -31,13 +31,13 @@ function create_playlist($filename, $playlist) {
 }
 
 function dateOp($fdate,$duration, $op){
-	
-	$duration = (int)$duration;		
+
+	$duration = (int)$duration;
 	$dateinsec=strtotime($fdate);
 	return date('Y-m-d H:i:s',strtotime($op.$duration.' seconds',strtotime($fdate)));
 }
 
-	
+
 
 $fname =$_GET['file'];// $argv[1];
 $start_time = $_GET['stime'];//$argv[2];
@@ -48,8 +48,8 @@ $file_name = explode('.',$fname);
 
 $fdate = str_replace( array('-','_') , array(' ','-'), $file_name[1]);
 
-$from_time 	= dateOp($fdate, $start_time,'+'); 
-$to_date 	= dateOp($fdate, $end_time,'+'); 
+$from_time 	= dateOp($fdate, $start_time,'+');
+$to_date 	= dateOp($fdate, $end_time,'+');
 
 
 
@@ -124,6 +124,6 @@ while($chunks = array_splice($files, 0, $segment_count)) {
 
 
 
-echo json_encode($playlists);	
+echo json_encode($playlists);
 
 

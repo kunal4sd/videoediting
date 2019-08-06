@@ -12932,7 +12932,7 @@ function() {
 }.call(this);
 var WebVideoEditor = function(t) {
     "use strict";
-	
+
     var e, i, n, s, o, r, a = this,
         l = {
             requestHandler: "index.php",
@@ -12966,7 +12966,7 @@ var WebVideoEditor = function(t) {
 					value: 1e3 * this.currentTime
 				}), $("#wve-editor-player-time-current").text(a.secondsToTime(this.currentTime)))
 			}), this.buttonsInit()
-			//this.updateUserResult("output"), this.buttonsInit()			
+			//this.updateUserResult("output"), this.buttonsInit()
 		} else {
 			s = $("#wve-timeline"), o = $("#wve-timeline-range"), $("body").tooltip({
 				selector: '[data-toggle="tooltip"],.toggle-tooltip',
@@ -12984,9 +12984,9 @@ var WebVideoEditor = function(t) {
 					$('button[data-action="play_main"]').prop('disabled', false);
 				}
 				//if ($('#autoPlay').is(':checked')) {
-					i.play(); 
+					i.play();
 				//}
-				
+
 				e && (this.readyState || a.alert("The video format is not supported by your browser."))
 			}).on("play pause", a.onMainVideoPlayChange.bind(a)).on("timeupdate", {
 				playing: !0
@@ -13111,9 +13111,9 @@ var WebVideoEditor = function(t) {
                     a.takeEpisode();
                     break;
                 case "render":
-					
+
                     a.checkProcessStatus(function() {
-						
+
 						a.renderProject2()
                     });
                     break;
@@ -13129,34 +13129,34 @@ var WebVideoEditor = function(t) {
                     a.showUserProfile()
 					break;
 				case "updateUserResult":
-					//$("#dtable").find("tr:not(:first)").remove();;	
+					//$("#dtable").find("tr:not(:first)").remove();;
 					a.updateUserResult('output');
 					break;
-				case "approveVideos":		
+				case "approveVideos":
 					a.publishVideos('approve');
 					break;
-				case "penddingVideos":		
+				case "penddingVideos":
 					a.publishVideos('pending');
 					break;
-				case "liveVideos":		
+				case "liveVideos":
 					a.publishVideos('live');
 					break;
 
-				case "searchPublication":		
+				case "searchPublication":
 					a.searchPublication();
-					break;					
+					break;
 
                 case "managePublication":
-					
+
 					a.managePublicationInfo( $(this).attr('data-id') );
 					//a.mediaRename(r, o[1]);
                     break;
-					
+
             }
         })
-		
+
     }, this.publishVideos = function(s) {
-			
+
 	    var multivalue='';
 		$('.selected').each(function(){
 			var publish= $(this).find('td span:eq(1)').text();
@@ -13164,14 +13164,14 @@ var WebVideoEditor = function(t) {
 			var end_pos = publish.indexOf(')');
 			var text_to_get = publish.substring(start_pos,end_pos)
 			multivalue += text_to_get+",";
-			
+
 		});
-		
+
 		if (multivalue == ''){
 			alert('Please select videos');
 		    return false;
 		}
-		
+
 		$.ajax({
 			url: a.options.baseUrl + a.options.requestHandler,
 			method: "GET",
@@ -13183,28 +13183,28 @@ var WebVideoEditor = function(t) {
 			dataType: "json",
 			cache: !1
 		}).done(function(i) {
-				
+
 			var ids = i.items;
 			var array = ids.split(",");
-			
+
 			$.each(array,function(h){
 			  a.updatDataTableRow( array[h] , i.clas, i.sta);
 			});
-			
+
 			if(typeof i.livecount != 'undefined'){
-				alert("("+i.livecount + ') Videos Goes Live'); 
+				alert("("+i.livecount + ') Videos Goes Live');
 			}
 			 //a.updateUserResult('output');
-			
-		})	
-		
-    }, this.searchPublication = function() {	
+
+		})
+
+    }, this.searchPublication = function() {
 		var id = $('#channel').val();
 		var type = $('#pubType').val();
 		var lang = $('#pubLang').val();
 		var country = $('#pubCountry').val();
-		var flag = $('#flag24').is(":checked");	
-		
+		var flag = $('#flag24').is(":checked");
+
 		var e = $("#wve-publication_output");
 
 		$.ajax({
@@ -13213,10 +13213,10 @@ var WebVideoEditor = function(t) {
 			beforeSend: function() { e.html('Loading...'); },
 			data: {
 				action: "get_publication_list",
-				pub_type :type,	
-				pubLang :lang,	
-				pubCountry :country,	
-				flag24 :flag,					
+				pub_type :type,
+				pubLang :lang,
+				pubCountry :country,
+				flag24 :flag,
 				pub_id :id
 			},
 			dataType: "json",
@@ -13224,31 +13224,31 @@ var WebVideoEditor = function(t) {
 		}).done(function(i) {
 			if (i.success) {
 			   if( $.fn.DataTable.isDataTable('#dtable') ){
-				
+
 					$("#dtable").DataTable().destroy()
-			   }				
+			   }
 				e.html('');
 				var n = _.template($("#publication_output").html()),
 					s = _.template($("#listEmptyTemplate_output").html());
-				
+
 				i.data && i.data.length > 0 ? i.data.forEach(function(t, i) {
 					t.index = i, e.append(n(t))
 				}) : e.append(s())
-			 
-			 
+
+
 			   $('#dtable').DataTable( {
 				  destroy: true,
 				  "cache": false,
 				  "pageLength": 5,
 				  "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]]
 				});
-				
+
 			}
 		})
-		
-			
+
+
     }, this.managePublicationInfo = function(pid) {
-		
+
 		$.ajax({
             url: a.options.baseUrl + a.options.requestHandler,
             method: "GET",
@@ -13267,11 +13267,11 @@ var WebVideoEditor = function(t) {
 				var iname, ivalz, checked;
 				var jsonStr = {};
 				var jsonObj = [];
-				
-				
+
+
 				jsonStr['note'] = $('textarea#note').val() ;
 				$("input").each(function(){
-					iname = $(this).attr('name'); 
+					iname = $(this).attr('name');
 					if(typeof iname != 'undefined') {
 						ivalz = '';
 						if( $(this).attr('type') == 'radio'   ) {// if input is radio
@@ -13281,11 +13281,11 @@ var WebVideoEditor = function(t) {
 							}
 						} else { // if input is text
 							ivalz = $('input[name="'+iname+'"]').val()
-							jsonStr[iname] = ivalz ;							
+							jsonStr[iname] = ivalz ;
 						}
 					}
 				});
-				
+
 				jsonObj.push(jsonStr);
 				$.ajax({
 						url: a.options.baseUrl + a.options.requestHandler,
@@ -13297,63 +13297,63 @@ var WebVideoEditor = function(t) {
 						dataType: "json",
 						cache: !1
 					}).done(function(i) {
-						
-					})		
+
+					})
             })
-			
+
         })
-	
+
 	var n = _.template($("#ModifyPublicationModalTemplate").html());
 		  $(document.body).append(n({
                 content:'rami'
             }));
            $("#modifyPublicationModal").modal("show")
 
-			
-    }, this.updatDataTableRow = function(i, s, t) {	
+
+    }, this.updatDataTableRow = function(i, s, t) {
 
 		var elm= $('#'+i+' td:eq(0) span:eq(0)');
 		elm.attr('class',  function(i, c){  return c.replace(/(^|\s)badge-\S+/g, '');  });
 		elm.addClass('badge-'+s);
 		elm.text(t);
-			
+
     }, this.updatDataTableInfo = function(id, title, keywords) {
-			
+
 		var elm= $('#'+id+' td:eq(0) span:eq(1)');
 		elm.attr('title', keywords);
 		elm.text(title +' ('+id+')');
-		
-			
+
+
     }, this.deleteDataTableRow = function(id) {
 			$("#dtable").DataTable().row('#'+id).remove().draw( false );
     }, this.updateUserResult = function(t) {
 
 	    if( $.fn.DataTable.isDataTable('#dtable') ){
-			
+
 			$("#dtable").DataTable().destroy()
 	    }
-		
+
         t = t || "input";
-		
+
 		$('#publishBtn').css("display", "block");
 		var channels = $('#channel').val();
 		var sta = $('#status').val();
 		var fdate = $('#date').val();
 		var tdate = $('#date1').val();
-		
+
         var e = $("#wve-list_" + t);
 		var pid = getParameterByName('tab_id');
-		
+
         e.empty(), $.ajax({
             url: a.options.baseUrl + a.options.requestHandler,
             method: "GET",
 			beforeSend: function() { e.html('Loading...'); },
-			
+
             data: {
                 action: "search_list",
 				channels :channels,
-				sta :sta,				
-				fdate :fdate,				
+				sta :sta,
+				fdate :fdate,
 				tdate :tdate
             },
             dataType: "json",
@@ -13374,46 +13374,46 @@ var WebVideoEditor = function(t) {
 					  "pageLength": 5,
 					   "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]]
 					});
-					
-				
+
+
 			$('#dtable').on('click', 'td', function () {
 				$(this).closest('tr').toggleClass('selected');
-			});			   
+			});
 				   $('#dtable').DataTable().column( 4 ).visible( false );
 				}
-			   				
+
             }
         })
-		
+
     },this.removeAllList = function(t) {
-		 
+
 		while(vArray.length > 0) {
 			vArray.pop();
-		}		
-		
+		}
+
 		$("#wve-episode-container").html('');
-		
+
 	},this.updateMediaList = function(t) {
         t = t || "input";
-		
+
 		var e = $("#wve-list_" + t);
 		if(t == "input"){
 			var fdate  = $('#fdate').val();
 			var tdate  = $('#tdate').val();
 			var channel_id = $("#channel").chosen().val()
 			var durationS = $("#duration").chosen().val()
-			
-			
+
+
 			//alert(channel_id+' Duration='+durationS);
 			if ( (channel_id != 0) &&  (typeof tdate != 'undefined') && (typeof fdate != 'undefined') ){
 				var callFun = 'content_list3';
 				$('#input-loading').text('loading...');
 				$('#submitBTN').attr("disabled", "disabled");
-				$.getJSON( "http://edit.mediaobserver-me.com/file_listing.php?length="+durationS+"&stime="+fdate+"&etime="+tdate+"&id="+channel_id, function( data ) {
+				$.getJSON( "https://edit.mediaobserver-me.com/file_listing.php?length="+durationS+"&stime="+fdate+"&etime="+tdate+"&id="+channel_id, function( data ) {
 				  var items = [];
 				  var idnu = 0
 				  $.each( data, function( key, val ) {
-					  
+
 					  if(key == 'error' ){
 						  a.alert(val, "Error", "danger")
 						  $('#submitBTN').removeAttr("disabled");
@@ -13426,31 +13426,31 @@ var WebVideoEditor = function(t) {
 					val =  val.replace('public/', '');
 					*/
 					val = val.substring(val.indexOf('playlist//') + 10);
-					
+
 					val = '<li onclick="plist(\''+val+'\', \''+idnu+'\')"  id="id'+idnu+'" class=" list-group-item list-group-item-action show-on-hover-parent" style="width:495px !important; font-weight:bold;"><div><span class="jp-free-media"><span  style="cursor:hand;">'+changeDateFormat(val)+'</span></div></li>';
-					
+
 					$('#input-loading').remove();
 					$('#submitBTN').removeAttr("disabled");
-					
+
 					var n = _.template($("#listItemTemplate_input" ).html()),
 						s = _.template($("#listEmptyTemplate_input").html());
 					 e.append(val)
 					 idnu++;
-					
-					
+
+
 				  });
-				 
-				 
+
+
 				}).fail(function() {
 					$('#input-loading').text('Something error');
 					$('#submitBTN').removeAttr("disabled");
-				  });	
-			}			
+				  });
+			}
 		} else {
-			
+
 			var callFun = 'content_list4';
-		
-			
+
+
 			var pid = getParameterByName('tab_id');
 			e.empty(), $.ajax({
 				url: a.options.baseUrl + a.options.requestHandler,
@@ -13496,37 +13496,37 @@ var WebVideoEditor = function(t) {
 				} else {
 					t.success ? ("input" == n && (e = null, i.pause(), i.src = "", $("#wve-editor-player-time-current").parent().hide()), a.updateUserStat(), a.updateMediaList(n)) : t.msg && a.alert(t.msg, "Error", "danger")
 				}
-                
+
             })
-			
+
         })
     }, this.mediaRename = function(t, e) {
-		
+
         this.getMediaData(t, e, function(i) {
 			var inPage = getParameterByName('action');
-			
+
 			var n = _.template($("#mediaRenameModalTemplate").html());
-			
+
             $(document.body).append(n({
                 content: i.data.keywords
             }));
 			//alert(i.data.toSource());
-			
+
             var s = $("#mediaRenameModal"),
                 o = $('input[type="text"]', s);
 				r = $('select', s);
-				
+
 
             s.on("shown.bs.modal", function(t) {
                 o.get(0).focus();
                 var e = o.val();
                 o.val("").val(e)
-				
+
             }).modal("show").on("hidden.bs.modal", function(t) {
                 s.remove()
             }).find(".js-button-submit").on("click", function(i) {
                 i.preventDefault();
-				
+
                 var n = o.val();
 				var k = r.val();
                 $.ajax({
@@ -13542,7 +13542,7 @@ var WebVideoEditor = function(t) {
                     dataType: "json",
                     cache: !1
                 }).done(function(t) {
-					
+
 					if (t.redirect == 'user'){
 						t.success ? ( s.modal("hide") , a.alert(t.msg, "Keywords saved successfully") ): t.msg && a.alert(t.msg, "Error", "danger")
 					} else {
@@ -13552,7 +13552,7 @@ var WebVideoEditor = function(t) {
             })
         })
     }, this.getMediaData = function(t, e, i) {
-		
+
 		var pid = getParameterByName('tab_id');
         $.ajax({
             url: a.options.baseUrl + a.options.requestHandler,
@@ -13569,7 +13569,7 @@ var WebVideoEditor = function(t) {
             t.success ? "function" == typeof i && i(t) : t.msg && a.alert(t.msg, "Error", "danger")
         })
     }, this.playMedia = function(t, e, i) {
-		
+
 		var vTitle = "";
         if ("episode" != t || r[i]) {
 
@@ -13580,7 +13580,7 @@ var WebVideoEditor = function(t) {
 				src: s,
 				vid : e,
 			}));
-			
+
             var l = $("#videoPreviewModal"),
                 h = $(".js-button-play", l),
 				r = $(".changeInfo", l),
@@ -13638,7 +13638,7 @@ var WebVideoEditor = function(t) {
 					dataType: "json",
 					cache: !1
 				}).done(function(t) {
-					if ( $( "#fdate" ).length ) { // if in index 
+					if ( $( "#fdate" ).length ) { // if in index
 						a.updateMediaList("output")
 					} else { // if in list
 						//Rami After save info
@@ -13648,23 +13648,23 @@ var WebVideoEditor = function(t) {
 							var arabic = /[\u0600-\u06FF]/;
 							if( !(arabic.test(value) || value.includes('::') || !value ) ){
 								keysArr.push(value)
-							} 
-						  
+							}
+
 						});
 						keysArr = $.unique(keysArr)
-						
+
 						a.updatDataTableInfo(vid,title, keysArr.join(',') );
 						//$('#dtable #'+vid+' td:eq(0)').html(title +'('+vid+')' );
 					}
-					
+
 					//alert('Saved');
 					//u.pause(), l.remove()
-				})				
-				
+				})
+
             }), l.modal("show").on("hidden.bs.modal", function(t) {
                 u.pause(), l.remove()
             })
-			
+
         }
     }, this.playVideoSelected = function() {
         if (e && e.url) {
@@ -13749,22 +13749,22 @@ var WebVideoEditor = function(t) {
         })
     }, this.renderProject2 = function() {
 		//alert('xxxx'+vArray);
-		
+
         if (vArray.length == 0) return void this.alert("Your project is empty.", "Error", "danger");
-		
-       
+
+
 		var t = _.template($("#renderModalTemplate").html());
         $(document.body).append(t({
             title: "Create movie",
             type: "render"
         }));
         var i, n, s, o = $("#renderModal");
-		
+
         o.modal("show").on("hidden.bs.modal", function(t) {
             o.remove()
         }).find(".js-button-submit").on("click", function(t) {
-			
-			
+
+
             t.preventDefault(), o.find(".js-button-submit").prop("disabled", !0), i = $('input[name="title"]', o).val(), n = a.serializeForm($("form", o)), s = a.getProjectData(), o.find('.modal-body').html('Loading...');
             var e = $(this);
 			var pid = getParameterByName('tab_id');
@@ -13783,13 +13783,13 @@ var WebVideoEditor = function(t) {
 					dataType: "json",
 					cache: !1
 				}).done(function(t) {
-					
+
 					e.prop("disabled", !1), t.success ? (o.modal("hide"),a.updateMediaList("output"), a.removeAllList()) : t.msg && a.alert(t.msg, "Error", "danger")
-					
-				//	a.clearTimers(), a.updateUserStat(),  a.updateMediaList("output"), e.remove() 
+
+				//	a.clearTimers(), a.updateUserStat(),  a.updateMediaList("output"), e.remove()
 				})
         })
-		
+
     }, this.renderProject = function() {
         if (!e || !e.url) return void this.alert("Your project is empty.", "Error", "danger");
         var t = _.template($("#renderModalTemplate").html());
@@ -13911,7 +13911,7 @@ var WebVideoEditor = function(t) {
             })
         }
     }, this.showProgress = function() {
-		
+
         $(".wve-preloader").length > 0 && $(".wve-preloader").remove();
         var t = '<div class="wve-preloader" id="wve-preloader">';
         t += '<div class="wve-preloader-inner">', t += '<div class="wve-preloader-caption">Processing...</div>', t += '<div class="wve-preloader-progress">', t += '<div class="progress">', t += '<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>', t += "</div>", t += '<div class="mt-3 text-center">', t += ' <button class="btn btn-danger js-button-stop">Stop</button>', t += ' <button class="btn btn-secondary js-button-close">Close</button>', t += "<div>", t += "<div></div></div>", $(document.body).append(t);
@@ -13951,7 +13951,7 @@ var WebVideoEditor = function(t) {
 			/*Rami after finish converting*/
 			var nu_of_episods = $('#wve-episode-container .episode-item').length;
 
-							
+
             n.status && "not_logged_in" == n.status && (a.clearTimers(), window.location.reload()), void 0 !== n.percent && (e.find(".progress-bar").css("width", n.percent + "%").toggleClass("progress-bar-empty", n.percent < 7).text(n.percent + "%"), void 0 !== n.status ? (t = a.capitalizeFirstLetter(n.status) + "...", "pending" == n.status && (t += " Queue: " + (n.pendingCount + n.processingCount)), i.text(t)) : i.text("Please wait..."), n.percent >= 100 || !n.status ? (a.clearTimers(), setTimeout(function() {
                // a.hidePreloader(), a.updateUserStat(), a.updateMediaList("input"), a.updateMediaList("output")
 			    a.hidePreloader(), a.updateUserStat(), a.updateMediaList("output")

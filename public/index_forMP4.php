@@ -29,17 +29,17 @@ $_COOKIE['user'] = array('id'=>$_COOKIE['uid'], 'role'=>'admin');
 $tab_id = ( isset($_REQUEST['tab_id']) ) ? $_REQUEST['tab_id'] : '';
 $cookie_name = 'getData'.$tab_id ;
 if( isset($_REQUEST['fdate'])){
-	
+
 	unset($_COOKIE[$cookie_name]);
 	$_POST['day2'] = (isset($_REQUEST['day2']) )? true : false ;
 	$getData = array(
-			"publication_id"=> @$_REQUEST['channel'] , 
-			"from_time"=> @$_REQUEST['fdate'] , 
-			"day2"=> @$_REQUEST['day2'], 				
-		);	
-		
-	setcookie($cookie_name, serialize($getData));	
-	
+			"publication_id"=> @$_REQUEST['channel'] ,
+			"from_time"=> @$_REQUEST['fdate'] ,
+			"day2"=> @$_REQUEST['day2'],
+		);
+
+	setcookie($cookie_name, serialize($getData));
+
 } else {
 	$getData = ( isset($_COOKIE[$cookie_name]) )? unserialize($_COOKIE[$cookie_name]) : 0;
 }
@@ -87,20 +87,20 @@ $keywords_list = $db->rawQuery("select distinct(k.id), k.* from keyword k inner 
     <link rel="stylesheet" href="<?php echo $config['base_url']; ?>lib/jquery-ui/themes/smoothness/jquery-ui.min.css">
     <link rel="stylesheet" href="<?php echo $config['base_url']; ?>assets/css/icomoon/style.css">
     <link rel="stylesheet" href="<?php echo $config['base_url']; ?>assets/css/styles.css">
-	<link rel="stylesheet" href="<?php echo $config['base_url']; ?>assets/js/dataTables/dataTables.bootstrap.css" rel="stylesheet">	
+	<link rel="stylesheet" href="<?php echo $config['base_url']; ?>assets/js/dataTables/dataTables.bootstrap.css" rel="stylesheet">
 	<link rel="stylesheet" href="<?php echo $config['base_url']; ?>assets/css/bootstrap-datetimepicker.min.css" />
 	<link rel="stylesheet" href="<?php echo $config['base_url']; ?>assets/css/jquery-ui-timepicker-addon.css" />
-	
+
 	<link href="<?php echo $config['base_url']; ?>assets/css/chosen.min.css" rel="stylesheet" />
-	
+
     <?php if( $config['environment'] == 'dev' ): ?>
         <script src="<?php echo $config['base_url']; ?>lib/jquery/dist/jquery.min.js"></script>
         <script src="<?php echo $config['base_url']; ?>lib/jquery-ui/jquery-ui.min.js"></script>
         <script src="<?php echo $config['base_url']; ?>lib/tether/dist/js/tether.min.js"></script>
         <script src="<?php echo $config['base_url']; ?>lib/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="<?php echo $config['base_url']; ?>lib/underscore/underscore-min.js"></script>
-		
-		
+
+
 
         <script src="<?php echo $config['base_url']; ?>assets/js/webvideoedit2.js"></script>
     <?php else: ?>
@@ -108,9 +108,9 @@ $keywords_list = $db->rawQuery("select distinct(k.id), k.* from keyword k inner 
 		<script src="<?php echo $config['base_url']; ?>assets/js/bootstrap-datetimepicker.min.js"></script>
     <?php endif; ?>
 		<script src="<?php echo $config['base_url']; ?>assets/js/chosen.jquery.js"></script>
-		<script src="<?php echo $config['base_url']; ?>assets/js/dataTables/jquery.dataTables.js"></script>	
+		<script src="<?php echo $config['base_url']; ?>assets/js/dataTables/jquery.dataTables.js"></script>
 		<script src="<?php echo $config['base_url']; ?>assets/js/jquery-ui-timepicker-addon.js"></script>
-		
+
 
 	<link href="<?php echo $config['base_url']; ?>jPlayer/jPlayer-2.9.2/dist/skin/blue.monday/css/jplayer.blue.monday.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="<?php echo $config['base_url']; ?>jPlayer/jPlayer-2.9.2/dist/jplayer/jquery.jplayer.js"></script>
@@ -123,9 +123,9 @@ $(document).ready(function(){
           $('.datetimepicker1').datepicker({
 			    dateFormat: "yy-mm-dd"
 			});
-		
-		
-		
+
+
+
 	var myPlaylist = new jPlayerPlaylist({
 		jPlayer: "#jquery_jplayer_N",
 		cssSelectorAncestor: "#jp_container_N"
@@ -146,7 +146,7 @@ $(document).ready(function(){
 		size: {
 			 width: "100%",
 			 height: "480px"
-		}		
+		}
 	});
 
 	$('#mvTxt').timepicker({
@@ -157,57 +157,57 @@ $(document).ready(function(){
 			gotoFun()
 		},
         //gotoCurrent: true,
-        orientation: "bottom" // add this		
+        orientation: "bottom" // add this
 	});
-	
-	var $jp = $('#jquery_jplayer_N');	   
+
+	var $jp = $('#jquery_jplayer_N');
 	$( "#mvBtn" ).click(function() {
 		var time = $jp.data("jPlayer").status.currentTime + 1;
-        $jp.jPlayer( "play", time); 
+        $jp.jPlayer( "play", time);
 		$jp.jPlayer("pause")
 	});
 
 	$( "#mvBtn2" ).click(function() {
 	   var time = $jp.data("jPlayer").status.currentTime - 1;
-       $jp.jPlayer( "play", time); 
+       $jp.jPlayer( "play", time);
 	   $jp.jPlayer("pause")
 	});
 	$( "#mvBtn21" ).click(function() {
 		var time = $jp.data("jPlayer").status.currentTime - 10;
-        $jp.jPlayer( "play", time); 
+        $jp.jPlayer( "play", time);
 		$jp.jPlayer("pause")
 	});
 
 	$( "#mvBtn22" ).click(function() {
 	   var time = $jp.data("jPlayer").status.currentTime + 10;
-       $jp.jPlayer( "play", time); 
+       $jp.jPlayer( "play", time);
 	   $jp.jPlayer("pause")
 	});
 	$( "#mvBtG" ).click(function() {
 		gotoFun()
-	});	
-		
+	});
+
 	function gotoFun(){
 		time= $('#mvTxt').val()
-		
+
 	    time = time.split(/:/);
 		var smsm = parseInt(time[0]) * 60 + parseInt(time[1]);
-		$jp.jPlayer( "play", parseInt(smsm) ); 		
-		$jp.jPlayer("pause")		 
+		$jp.jPlayer( "play", parseInt(smsm) );
+		$jp.jPlayer("pause")
 	}
-	
+
 	var webVideoEditor = new WebVideoEditor({
 		baseUrl: '<?php echo $config['base_url']; ?>'
 	});
-	
-		
+
+
 	setInterval(function(){
 		if ( $( "#mvTxt" ).is(":focus") || $("#mvTxt").datepicker( "widget" ).is(":visible")) {
-		} else {	
+		} else {
 			$('#mvTxt').val( $('.jp-current-time').text()  )
 		}
 	}, 300);
-	
+
 	$( "#jquery_jplayer_N" ).click(function() {
 	  if($("#jquery_jplayer_N").data().jPlayer.status.paused === false){
 		 $("#jquery_jplayer_N").data().jPlayer.pause();
@@ -218,30 +218,30 @@ $(document).ready(function(){
 	});
 
 	$(".channelSelect").chosen({disable_search_threshold: 10});
-	
+
 	<?php if ( @$_POST['channel'] ){ ?>
-		
-		url = "http://edit.mediaobserver-me.com/index.php?action=content_list2&tab_id=5a2807b3da695&type=input&_=1512653189172&channel=<?php echo $_POST['channel'];?>&fdate=<?php echo $_POST['fdate']?>&day2=0";
+
+		url = "https://edit.mediaobserver-me.com/index.php?action=content_list2&tab_id=5a2807b3da695&type=input&_=1512653189172&channel=<?php echo $_POST['channel'];?>&fdate=<?php echo $_POST['fdate']?>&day2=0";
 
 		$.ajax({
 			url: url ,
 			success: function(data){
 				jsonList = data;
-				
+
 			},
 			async: false
 		});
 		myPlaylist.option("enableRemoveControls", false);
 		myPlaylist.option("autoPlay", true);
-		
+
 		myPlaylist.setPlaylist(jQuery.parseJSON(jsonList))
 
-	<?php }?> 
+	<?php }?>
 });
 //]]>
 </script>
-	
-  
+
+
 <style>
 
 	.table.dataTable{
@@ -255,11 +255,11 @@ $(document).ready(function(){
 		height:30px !important;
 	    background: gray;
 	}
-	
+
 	.jp-playlist-current{
 		font-weight:bold;
 	}
-	
+
 </style>
 </head>
 <body>

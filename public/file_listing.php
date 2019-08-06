@@ -26,7 +26,7 @@ function create_playlist($filename, $playlist) {
 	foreach($playlist as $file) {
 		fwrite($fh, "#EXTINF:-1\n");
 		$file = preg_replace('/[^[:print:]]/', '', $file);
-		$file = preg_replace('/\/storage\/recordings/', 'http://edit.mediaobserver-me.com/videos', $file);
+		$file = preg_replace('/\/storage\/recordings/', 'https://edit.mediaobserver-me.com/videos', $file);
 		fwrite($fh, $file . "\n");
 	}
 
@@ -70,7 +70,7 @@ if($end_file === false) {
 }
 
 if(!$error_message){
-	$sfile_mtime = date('Y/m/d H:i:s', filemtime($start_file));	
+	$sfile_mtime = date('Y/m/d H:i:s', filemtime($start_file));
 	$efile_mtime = date('Y/m/d H:i:s', filemtime($end_file));
 	//echo $sfile_mtime;
 	$sdir = date('Y/m/d', filemtime($start_file));
@@ -118,7 +118,7 @@ if(sizeof($playlists) == 0){
 	$error_arr = array('error'=>$error_message);
 	echo json_encode($error_arr);
 } else {
-	echo json_encode($playlists);	
+	echo json_encode($playlists);
 }
 
 

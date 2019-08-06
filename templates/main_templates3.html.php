@@ -232,19 +232,19 @@
                 <span class="icon-cross"></span>
             </button>
         </div -->
-		
+
 			<a class="icon-download2 btn btn-sm btn-icon btn-secondary toggle-tooltip" href="<%- vurl %>/<%- id %>.mp4" target="_blank" />
-				
+
 			</a>
-		
-		               
+
+
                 </a>
         <span class="btn btn-link" data-toggle="action" data-action="select-media_input" data-id="<%- id %>" title="<%- datetime %>, <%- duration_time %>, <%- width %>x<%- height %>, <%- file_size %>">
         <span class="badge badge-warning">
             <%- ext %>
         </span>
         &nbsp;
-        <%- title %> 
+        <%- title %>
     </span>
     </li>
 </script>
@@ -253,7 +253,7 @@
 <script type="text/template" id="publication_output">
     <tr id=<%- id %>>
         <td>
-           <%- id %>  
+           <%- id %>
         </td>
         <td>
             <%- name_en %> (   <% if(type_id == 3){ %> TV <% } else { %>Radio<% } %> )
@@ -262,8 +262,8 @@
             <%- country %>
         </td>
         <td>
-            <%- language %> 
-        </td>		
+            <%- language %>
+        </td>
 
         <td>
 
@@ -272,7 +272,7 @@
                 <button type="button" class="btn btn-sm btn-icon btn-outline-primary toggle-tooltip" data-toggle="action" data-id="<%- id %>" data-action="managePublication" title="Manage">
                     <span class="icon-pencil"></span>
                 </button>
-             
+
 
             </div>
 
@@ -282,9 +282,9 @@
 
 <script type="text/template" id="listItemTemplate2_output">
     <tr id=<%- id %>>
-        <td><!-- <%- ext %> --> 
+        <td><!-- <%- ext %> -->
             <span class="badge badge-<%- labelColor %>">
-                <%- labelText %> 
+                <%- labelText %>
             </span>
             &nbsp;
            <span class="toggle-tooltip" title="<%- keywords %>"> <%- title %>  </span>
@@ -297,7 +297,7 @@
         </td>
         <td>
             <%- channel %>
-        </td>		
+        </td>
         <td>
             <%- duration_time %>
         </td>
@@ -331,9 +331,9 @@
 <script type="text/template" id="listItemTemplate_output">
 	<?php if ($_COOKIE['uid'] != 171){?>
     <tr id=<%- id %>>
-        <td><!-- <%- ext %> --> 
+        <td><!-- <%- ext %> -->
             <span class="badge badge-<%- labelColor %>">
-                <%- labelText %> 
+                <%- labelText %>
             </span>
             &nbsp;
            <span class="toggle-tooltip" title="<%- keywords %>"> <%- title %>  </span>
@@ -369,9 +369,9 @@
     </tr>
 	<?php } else {?>
     <tr id=<%- id %>>
-        <td><!-- <%- ext %> --> 
+        <td><!-- <%- ext %> -->
             <span class="badge badge-<%- labelColor %>">
-                <%- labelText %> 
+                <%- labelText %>
             </span>
             &nbsp;
            <span class="toggle-tooltip" title="<%- keywords %>"> <%- title %>  </span>
@@ -388,7 +388,7 @@
             </div>
 
         </td>
-    </tr>	
+    </tr>
 	<?php }?>
 </script>
 
@@ -440,13 +440,13 @@
                 </div>
                 <div class="modal-body">
 					<table>
-						
+
 						<tr>
 							<td>Stream Link </td><td><input type="text" value="<%- stream_link %>" name="stream_link" /></td>
 						</tr>
 						<tr>
 							<td>Frequency </td><td><input type="text" value="<%- frequency %>" name="frequency" /></td>
-						</tr>						
+						</tr>
 						<tr>
 							<td>Frequency Modulation </td><td><input type="text" value="<%- frequency_modulation %>" name="frequency_modulation" /></td>
 						</tr>
@@ -461,20 +461,20 @@
 						</tr>
 						<tr>
 							<td>Note</td><td><textarea id="note" name="note" ><%- note %></textarea></td>
-						</tr>						
+						</tr>
 						<tr>
-							<td>Polarity</td><td> 
-							<input type="radio" value="V" name="polarity" <% if(polarity == 'V' ){ %>checked="true"<% } %> /><b>V</b>  
+							<td>Polarity</td><td>
+							<input type="radio" value="V" name="polarity" <% if(polarity == 'V' ){ %>checked="true"<% } %> /><b>V</b>
 							<input type="radio" value="H" name="polarity" <% if(polarity == 'H' ){ %>checked="true"<% } %>  /><b>H</b></td>
 						</tr>
 						<tr>
-							<td>Radio Sattlite Channel</td><td> 
-								<input type="radio" value="Y" name="radio_sattlite_channel" <% if(radio_sattlite_channel == 'Y' ){ %>checked="true"<% } %> /><b>Yes</b>  
+							<td>Radio Sattlite Channel</td><td>
+								<input type="radio" value="Y" name="radio_sattlite_channel" <% if(radio_sattlite_channel == 'Y' ){ %>checked="true"<% } %> /><b>Yes</b>
 								<input type="radio" value="N" name="radio_sattlite_channel" <% if(radio_sattlite_channel == 'N' ){ %>checked="true"<% } %> /><b>No</b></td>
 						</tr>
 						<tr>
-							<td>24 / 7 Recording </td><td> 
-								<input type="radio" value="Y" name="recording247" <% if(recording247 == 'Y' ){ %>checked="true"<% } %> /><b>Yes</b>  
+							<td>24 / 7 Recording </td><td>
+								<input type="radio" value="Y" name="recording247" <% if(recording247 == 'Y' ){ %>checked="true"<% } %> /><b>Yes</b>
 								<input type="radio" value="N" name="recording247" <% if(recording247 == 'N' ){ %>checked="true"<% } %> /><b>No</b></td>
 						</tr>
 						<input type="hidden" value="<%- publication_id %>" name="publication_id" />
@@ -576,7 +576,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-				
+
                 <div class="modal-body">
 					<div style="float:left; width:500px;">
 						<video src="<%- src %>" width="400" id="video-active" height="300"></video>
@@ -602,32 +602,32 @@
 						<hr />
 						Text
 						<textarea id="vtext" name="vtext" style="width:100%" dir="RTL"></textarea>
-						<hr />						
+						<hr />
 						Keywords Manager<br />
-										
-					
+
+
 							<input type="hidden" name="hdkeys" id="hdkeys" value="" />
 							<input name="keyword" type="text" id="keyword" placeholder="Select keywords" style="width:100%"  />
 					<br />
-						
+
 						<br />
 						<div class="modal-footer">
 						     <input type="hidden" value="<%- vid %>" name="vid" id="vid" />
 							<button type="button" class="btn btn-primary changeInfo" data-dismiss="modal" >Save Info</button>
 						</div>
-				
+
 						<!-- div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						</div -->
 					</div>
 				<script>
-				
+
 		$.get( "/menu_json.php?getById="+<%- vid %>, function( data ) {
 			  d= data;
-			  
+
 			  $("#hdkeys").val(d);
 				$("#keyword").select2({
-					
+
 					tokenSeparators: [",", " "],
 					multiple: true,
 					closeOnSelect: true,
@@ -637,20 +637,20 @@
 						url: '/menu_json.php?getBy=keywords',
 						dataType: 'json',
 						data: function (term, page) {
-							
+
 							return {
 								searchTerm: term
 							};
 						},
 						results: function (data, page) {
-							
+
 							return { results: data };
 						}
 					},
 					initSelection: function (element, callback) {
-						
+
 						var x = document.getElementById("hdkeys").value;
-						
+
 						$.ajax('/menu_json.php?getBy=keywords&id=' + x, {
 							type: 'GET',
 							dataType: 'json'
@@ -658,11 +658,11 @@
 							callback(data);
 						});
 					}
-				}).select2('val', []);		
-		});		
-				
+				}).select2('val', []);
+		});
+
 					  $("#video-active").on(
-						"timeupdate", 
+						"timeupdate",
 						function(event){
 						  onTrackedVideoFrame(this.currentTime, this.duration);
 					});
@@ -674,29 +674,29 @@
 						seconds = (seconds >= 10) ? seconds : "0" + seconds;
 						return minutes + ":" + seconds;
 					  }
-  
+
 					function onTrackedVideoFrame(currentTime, duration){
-						
-					
-						$("#current").text(formatTime(currentTime)); 
+
+
+						$("#current").text(formatTime(currentTime));
 						$("#duration").text(formatTime(duration))
 					}
-						
-					$.getJSON( 'http://edit.mediaobserver-me.com/?action=get_media_info&vid='+<%- vid %>, function( data ) {
+
+					$.getJSON( 'https://edit.mediaobserver-me.com/?action=get_media_info&vid='+<%- vid %>, function( data ) {
 						$('#vtitle').val( data.headline );
 						$('#vtext').val( data.text );
 					});
 					var idz =''
-				
-				   
 
-					
-					
+
+
+
+
 				</script>
-					
-					
+
+
                 </div>
-               
+
             </div>
         </div>
     </div>
@@ -719,7 +719,7 @@
                     <button type="button" class="btn btn-primary js-button-submit">Add Keywords</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
-			
+
 
             </div>
         </div>
@@ -755,18 +755,18 @@
 					var tmp = '<%- content %>';
 					var words = tmp.split(' , ');
 					if(words[0] != 'No Keywords'){
-						for(i = 0; i < words.length; i++) { 
+						for(i = 0; i < words.length; i++) {
 							$(".chosen-select option").filter(function() {	return this.text == words[i]; }).attr('selected', true);
 						};
 					}
 					//$(".chosen-select option").filter(function() {	return this.text == 'Bateel'; }).attr('selected', true);
 					//$(".chosen-select option").filter(function() {	return this.text == 'Arab Bank'; }).attr('selected', true);
-					
+
 					//$(".chosen-select").find("option[text=Bateel]").attr("selected","selected");
 					//$(".chosen-select option:contains('Bateel'):first").attr("selected","selected");
 					//$(".chosen-select option:contains('Arab Bank'):first").attr("selected","selected");
-					
-					$(".chosen-select").chosen({width: "95%", search_contains: true}); 
+
+					$(".chosen-select").chosen({width: "95%", search_contains: true});
 				</script>
 
             </div>
