@@ -111,8 +111,8 @@ $keywords_list = $db->rawQuery( "select * from keyword where active =1");
 
 		<script src="<?php echo $config['base_url']; ?>assets/js/jquery-ui.min.js"></script>
 
-	    <link href="http://office.mediaobserver-me.com:882/assets/css/select2.css" rel="stylesheet" />
-		<script src="http://office.mediaobserver-me.com:882/assets/js/select2.js"></script>
+	    <link href="https://office.mediaobserver-me.com:882/assets/css/select2.css" rel="stylesheet" />
+		<script src="https://office.mediaobserver-me.com:882/assets/js/select2.js"></script>
 
 
 
