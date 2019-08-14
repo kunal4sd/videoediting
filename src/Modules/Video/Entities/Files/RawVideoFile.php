@@ -22,8 +22,14 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
      */
     private $discontinuity;
 
-    public function __construct()
+    /**
+     * @var bool
+     */
+    private $is_radio;
+
+    public function __construct(bool $is_radio = false)
     {
+        $this->set_is_radio($is_radio);
         $this->set_type(Files::RAW_VIDEO);
     }
 
@@ -32,17 +38,34 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
         $path = $this->get_path();
         if (strlen($path) && file_exists($path)) {
 
-            $output = json_decode(
-                shell_exec(
-                    sprintf(
-                        "%s/duration_multiple %s",
-                        BIN_PATH,
-                        $this->get_path()
+            if ($this->is_radio) {
+                $output = json_decode(
+                    shell_exec(
+                        sprintf(
+                            "%s/duration_multiple %s",
+                            BIN_PATH,
+                            $this->get_path()
+                        )
+                    ),
+                    true
+                );
+                $this->set_length(choose_time_to_seconds($output[0]['duration'], $output[0]['time']));
+            }
+            else {
+                $this->set_length(
+                    round(
+                        shell_exec(
+                            sprintf(
+                                "%s/duration %s",
+                                BIN_PATH,
+                                $this->get_path()
+                            )
+                        ),
+                        4,
+                        PHP_ROUND_HALF_UP
                     )
-                ),
-                true
-            );
-            $this->set_length(choose_time_to_seconds($output[0]['duration'], $output[0]['time']));
+                );
+            }
         }
 
         return $this;
@@ -73,6 +96,17 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
     public function set_discontinuity($discontinuity)
     {
         $this->discontinuity = (bool) $discontinuity;
+        return $this;
+    }
+
+    public function get_is_radio()
+    {
+        return $this->is_radio;
+    }
+
+    public function set_is_radio(bool $is_radio)
+    {
+        $this->is_radio = $is_radio;
         return $this;
     }
 

@@ -70,13 +70,24 @@ class PlaylistMasterDisk extends AbstractModule
             $files = array_unique($files);
             sort($files);
 
-            $files_duration = $this->get_files_duration($files);
+            $file_details = get_file_details_from_path($files[0]);
+            $publication_id = array_shift($file_details);
+            $publication_ar = $this->container->entity_publication->get_by_id($publication_id);
+            $is_radio = $this->container->entity_publication->is_radio($publication_ar);
+            if ($is_radio) {
+                $files_duration = $this->get_files_duration($files);
+            }
             foreach($files as &$raw_file) {
                 $file = (new RawVideoFile())
                     ->set_locations($raw_file)
                     ->set_name($raw_file)
-                    ->set_length($files_duration[$raw_file])
                     ->set_discontinuity(true);
+                if ($is_radio) {
+                    $file->set_length($files_duration[$raw_file]);
+                }
+                else {
+                    $file->build_length();
+                }
                 $raw_file = $file;
             }
             $files = array_filter($files);

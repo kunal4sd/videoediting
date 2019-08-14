@@ -5,6 +5,7 @@ namespace App\Modules\Article\Entities;
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\AbstractModule;
+use App\Modules\Article\Entities\ActiveRecords\PublicationAR;
 use App\Modules\Article\Entities\Repository\Database\PublicationDB;
 use \Exception;
 
@@ -58,6 +59,16 @@ class Publication extends AbstractModule
         }
 
         return $publications;
+    }
+
+    public function is_radio(PublicationAR $publication_ar): bool
+    {
+        return (int) $publication_ar->type_id === 4;
+    }
+
+    public function is_tv(PublicationAR $publication_ar): bool
+    {
+        return (int) $publication_ar->type_id === 3;
     }
 
 }
