@@ -79,19 +79,17 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
                 $this->set_length(choose_time_to_seconds($output[0]['duration'], $output[0]['time']));
             }
             else {
-                $this->set_length(
-                    round(
-                        shell_exec(
-                            sprintf(
-                                "%s/duration %s",
-                                BIN_PATH,
-                                $this->get_path()
-                            )
-                        ),
-                        4,
-                        PHP_ROUND_HALF_UP
-                    )
+                $output = json_decode(
+                    shell_exec(
+                        sprintf(
+                            "%s/duration %s",
+                            BIN_PATH,
+                            $this->get_path()
+                        )
+                    ),
+                    true
                 );
+                $this->set_length(round($output[0]['duration_s'], 4, PHP_ROUND_HALF_UP));
             }
         }
 
