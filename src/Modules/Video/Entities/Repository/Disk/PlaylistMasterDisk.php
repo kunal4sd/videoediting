@@ -74,7 +74,16 @@ class PlaylistMasterDisk extends AbstractModule
             $publication_id = array_shift($file_details);
             $publication_ar = $this->container->entity_publication->get_by_id($publication_id);
             $is_radio = $this->container->entity_publication->is_radio($publication_ar);
+            $start_execution = microtime(true);
             $files_duration = get_video_files_duration($files, $is_radio);
+            $this->container->logger->write(new Exception(
+                sprintf(
+                    'Calculating duration of %s files took %.2f seconds, while generating playlist',
+                    count($files),
+                    round(microtime(true) - $start_execution, 2, PHP_ROUND_HALF_UP)
+                ),
+                200
+            ));
             foreach($files as &$raw_file) {
                 $file = (new RawVideoFile())
                     ->set_locations($raw_file)
