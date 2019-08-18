@@ -23,6 +23,7 @@ class PlaylistMasterDisk extends AbstractModule
     public function create_master_playlist($id, $start_date, $end_date, $batch_size, $force = false)
     {
 
+	$start = microtime(true);
         $force = $force === true || $force === 'true';
         if (!$force) {
 
@@ -74,13 +75,18 @@ class PlaylistMasterDisk extends AbstractModule
             $publication_id = array_shift($file_details);
             $publication_ar = $this->container->entity_publication->get_by_id($publication_id);
             $is_radio = $this->container->entity_publication->is_radio($publication_ar);
+            array_walk($files, function(&$file, $key) {
+                $file = url_to_path($file);
+            });
             $start_execution = microtime(true);
             $files_duration = get_video_files_duration($files, $is_radio);
+	    $after_files_execution = microtime(true);
             $this->container->logger->write(new Exception(
                 sprintf(
-                    'Calculating duration of %s files took %.2f seconds, while generating playlist',
+                    'Calculating duration of %s files took %.2f seconds, while generating playlist since %.2f seconds ago.',
                     count($files),
-                    round(microtime(true) - $start_execution, 2, PHP_ROUND_HALF_UP)
+                    ($after_files_execution - $start_execution),
+		    ($after_files_execution - $start)
                 ),
                 200
             ));
@@ -115,6 +121,13 @@ class PlaylistMasterDisk extends AbstractModule
                     ->save();
             }
         }
+            $this->container->logger->write(new Exception(
+                sprintf(
+                    'Generating playlist took a total of %.2f seconds',
+                    (microtime(true) - $start)
+                ),
+                200
+            ));
 
         return $playlist_master_file;
     }

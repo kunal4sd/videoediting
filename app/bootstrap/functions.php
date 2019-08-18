@@ -222,15 +222,15 @@ function get_video_files_duration(array $files, bool $is_radio = false): array
         $chunks = array_chunk($files, 8);
         foreach($chunks as $chunk) {
             $output = json_decode(
-                shell_exec(
+		shell_exec(
                     sprintf(
                         "%s/duration_multiple %s",
                         BIN_PATH,
                         implode(' ', $chunk)
                     )
                 ),
-                true
-            );
+		true
+	    );
             $filenames = array_map(function($row) {
                 return $row['filename'];
             }, $output);
@@ -243,16 +243,15 @@ function get_video_files_duration(array $files, bool $is_radio = false): array
         }
     }
     else {
-        $output = json_decode(
-            shell_exec(
-                sprintf(
-                    "%s/duration %s",
-                    BIN_PATH,
-                    implode(' ', $files)
-                )
-            ),
-            true
+        $output = shell_exec(
+            sprintf(
+                '%s/duration %s',
+                BIN_PATH,
+                implode(' ', $files)
+            )
         );
+	$output = json_decode($output, true);
+
         $filenames = array_map(function($row) {
             return $row['filename'];
         }, $output);
