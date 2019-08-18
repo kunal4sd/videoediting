@@ -74,20 +74,13 @@ class PlaylistMasterDisk extends AbstractModule
             $publication_id = array_shift($file_details);
             $publication_ar = $this->container->entity_publication->get_by_id($publication_id);
             $is_radio = $this->container->entity_publication->is_radio($publication_ar);
-            if ($is_radio) {
-                $files_duration = $this->get_files_duration($files);
-            }
+            $files_duration = $this->get_files_duration($files, $is_radio);
             foreach($files as &$raw_file) {
                 $file = (new RawVideoFile())
                     ->set_locations($raw_file)
                     ->set_name($raw_file)
+                    ->set_length($files_duration[$raw_file])
                     ->set_discontinuity(true);
-                if ($is_radio) {
-                    $file->set_length($files_duration[$raw_file]);
-                }
-                else {
-                    $file->build_length();
-                }
                 $raw_file = $file;
             }
             $files = array_filter($files);
@@ -117,17 +110,39 @@ class PlaylistMasterDisk extends AbstractModule
         return $playlist_master_file;
     }
 
-    private function get_files_duration(array $files)
+    private function get_files_duration(array $files, $is_radio)
     {
         $result = [];
-        $chunks = array_chunk($files, 8);
-        foreach($chunks as $chunk) {
+
+        if ($is_radio) {
+            $chunks = array_chunk($files, 8);
+            foreach($chunks as $chunk) {
+                $output = json_decode(
+                    shell_exec(
+                        sprintf(
+                            "%s/duration_multiple %s",
+                            BIN_PATH,
+                            implode(' ', $chunk)
+                        )
+                    ),
+                    true
+                );
+                $filenames = array_map(function($row) {
+                    return $row['filename'];
+                }, $output);
+                $durations = array_map(function($row) {
+                    return choose_time_to_seconds($row['duration'], $row['time']);
+                }, $output);
+                $result = array_merge($result, array_combine($filenames, $durations));
+            }
+        }
+        else {
             $output = json_decode(
                 shell_exec(
                     sprintf(
-                        "%s/duration_multiple %s",
+                        "%s/duration %s",
                         BIN_PATH,
-                        implode(' ', $chunk)
+                        implode(' ', $files)
                     )
                 ),
                 true
@@ -136,7 +151,7 @@ class PlaylistMasterDisk extends AbstractModule
                 return $row['filename'];
             }, $output);
             $durations = array_map(function($row) {
-                return choose_time_to_seconds($row['duration'], $row['time']);
+                return round($row['duration'], 4, PHP_ROUND_HALF_UP);
             }, $output);
             $result = array_merge($result, array_combine($filenames, $durations));
         }
