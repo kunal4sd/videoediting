@@ -37,35 +37,9 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
     {
         $path = $this->get_path();
         if (strlen($path) && file_exists($path)) {
-
-            if ($this->is_radio) {
-                $output = json_decode(
-                    shell_exec(
-                        sprintf(
-                            "%s/duration_multiple %s",
-                            BIN_PATH,
-                            $this->get_path()
-                        )
-                    ),
-                    true
-                );
-                $this->set_length(choose_time_to_seconds($output[0]['duration'], $output[0]['time']));
-            }
-            else {
-                $output = json_decode(
-                    shell_exec(
-                        sprintf(
-                            "%s/duration %s",
-                            BIN_PATH,
-                            $this->get_path()
-                        )
-                    ),
-                    true
-                );
-                $this->set_length(round($output[0]['duration'], 4, PHP_ROUND_HALF_UP));
-            }
+            $output = get_video_files_duration([$path], $this->is_radio);
+            $this->set_length($output[$path]);
         }
-
         return $this;
     }
 

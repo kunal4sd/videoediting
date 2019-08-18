@@ -74,7 +74,7 @@ class PlaylistMasterDisk extends AbstractModule
             $publication_id = array_shift($file_details);
             $publication_ar = $this->container->entity_publication->get_by_id($publication_id);
             $is_radio = $this->container->entity_publication->is_radio($publication_ar);
-            $files_duration = $this->get_files_duration($files, $is_radio);
+            $files_duration = get_video_files_duration($files, $is_radio);
             foreach($files as &$raw_file) {
                 $file = (new RawVideoFile())
                     ->set_locations($raw_file)
@@ -108,55 +108,6 @@ class PlaylistMasterDisk extends AbstractModule
         }
 
         return $playlist_master_file;
-    }
-
-    private function get_files_duration(array $files, $is_radio)
-    {
-        $result = [];
-
-        if ($is_radio) {
-            $chunks = array_chunk($files, 8);
-            foreach($chunks as $chunk) {
-                $output = json_decode(
-                    shell_exec(
-                        sprintf(
-                            "%s/duration_multiple %s",
-                            BIN_PATH,
-                            implode(' ', $chunk)
-                        )
-                    ),
-                    true
-                );
-                $filenames = array_map(function($row) {
-                    return $row['filename'];
-                }, $output);
-                $durations = array_map(function($row) {
-                    return choose_time_to_seconds($row['duration'], $row['time']);
-                }, $output);
-                $result = array_merge($result, array_combine($filenames, $durations));
-            }
-        }
-        else {
-            $output = json_decode(
-                shell_exec(
-                    sprintf(
-                        "%s/duration %s",
-                        BIN_PATH,
-                        implode(' ', $files)
-                    )
-                ),
-                true
-            );
-            $filenames = array_map(function($row) {
-                return $row['filename'];
-            }, $output);
-            $durations = array_map(function($row) {
-                return round($row['duration'], 4, PHP_ROUND_HALF_UP);
-            }, $output);
-            $result = array_merge($result, array_combine($filenames, $durations));
-        }
-
-        return $result;
     }
 
     private function get_segment_count(array $files, $batch_size)

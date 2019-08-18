@@ -213,3 +213,54 @@ function get_seconds_since_file($file_name, $max_limit = null)
 
     return $from_time - $to_time;
 }
+
+function get_video_files_duration(array $files, bool $is_radio = false): array
+{
+    $result = [];
+
+    if ($is_radio) {
+        $chunks = array_chunk($files, 8);
+        foreach($chunks as $chunk) {
+            $output = json_decode(
+                shell_exec(
+                    sprintf(
+                        "%s/duration_multiple %s",
+                        BIN_PATH,
+                        implode(' ', $chunk)
+                    )
+                ),
+                true
+            );
+            $filenames = array_map(function($row) {
+                return $row['filename'];
+            }, $output);
+            $durations = array_map(function($row) {
+                return round(
+                    choose_time_to_seconds($row['duration'], $row['time']), 4, PHP_ROUND_HALF_UP
+                );
+            }, $output);
+            $result = array_merge($result, array_combine($filenames, $durations));
+        }
+    }
+    else {
+        $output = json_decode(
+            shell_exec(
+                sprintf(
+                    "%s/duration %s",
+                    BIN_PATH,
+                    implode(' ', $files)
+                )
+            ),
+            true
+        );
+        $filenames = array_map(function($row) {
+            return $row['filename'];
+        }, $output);
+        $durations = array_map(function($row) {
+            return round($row['duration'], 4, PHP_ROUND_HALF_UP);
+        }, $output);
+        $result = array_combine($filenames, $durations);
+    }
+
+    return $result;
+}
