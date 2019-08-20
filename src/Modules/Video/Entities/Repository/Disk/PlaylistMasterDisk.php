@@ -43,8 +43,8 @@ class PlaylistMasterDisk extends AbstractModule
         if (!$is_radio) {
             $start_date_unix = strtotime($start_date);
             $end_date_unix = strtotime($end_date);
-            $scan_start_date = date("Y-m-d H:i:s", $start_date_unix - Videos::EXTENDED_SCANNING_PERIOD);
-            $scan_end_date = date("Y-m-d H:i:s", $end_date_unix + Videos::EXTENDED_SCANNING_PERIOD);
+            $scan_start_date = date("Y-m-d H:i:s", $start_date_unix - Videos::STANDARD_SCANNING_PERIOD);
+            $scan_end_date = date("Y-m-d H:i:s", $end_date_unix + Videos::STANDARD_SCANNING_PERIOD);
 
             $raw_files_ar = $this->container->entity_raw_video->get_for_interval_by_publication(
                 $scan_start_date, $scan_end_date, $id, true
@@ -53,7 +53,7 @@ class PlaylistMasterDisk extends AbstractModule
             $idx_to_eliminate = [];
             foreach ($raw_files_ar as $idx => $raw_file_ar) {
                 if (strtotime($raw_file_ar->broadcast_time) < $start_date_unix) {
-                    $ids_to_eliminate[$idx] = null;
+                    $idx_to_eliminate[$idx] = null;
                 }
                 else {
                     unset($idx_to_eliminate[$idx - 1]);
@@ -61,18 +61,18 @@ class PlaylistMasterDisk extends AbstractModule
                 }
             }
 
+            $min_idx = $idx;
             $length = count($raw_files_ar);
-            for ($idx = $length - 1; $idx > 0; $idx--) {
+            for ($idx = $length - 1; $idx > $min_idx; $idx--) {
                 $raw_file_ar = $raw_files_ar[$idx];
-                if (strtotime($raw_file_ar->broadcast_time) > $start_date_unix) {
-                    $ids_to_eliminate[$idx] = null;
+                if (strtotime($raw_file_ar->broadcast_time) > $end_date_unix) {
+                    $idx_to_eliminate[$idx] = null;
                 }
                 else {
-                    unset($idx_to_eliminate[$idx + 1]);
                     break;
                 }
             }
-            $raw_files_ar = array_filter($raw_files_ar + $idx_to_eliminate);
+            $raw_files_ar = array_filter($idx_to_eliminate + $raw_files_ar);
 
             $files = [];
             foreach($raw_files_ar as $raw_file_ar) {
