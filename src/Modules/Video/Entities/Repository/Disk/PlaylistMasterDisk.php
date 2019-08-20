@@ -72,7 +72,8 @@ class PlaylistMasterDisk extends AbstractModule
                     break;
                 }
             }
-            $raw_files_ar = array_filter(array_merge($raw_files_ar, $idx_to_eliminate));
+            $raw_files_ar = array_filter($raw_files_ar + $idx_to_eliminate);
+
             $files = [];
             foreach($raw_files_ar as $raw_file_ar) {
                 $file = (new RawVideoFile())
