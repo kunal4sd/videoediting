@@ -6,6 +6,7 @@ use App\Modules\Video\Views\Index;
 use App\Modules\Video\Views\Listing;
 use App\Modules\Video\Entities\Movie;
 use App\Modules\Video\Entities\Playlist;
+use App\Modules\Video\Entities\RawVideo;
 use App\Modules\Video\Entities\RemoteFile;
 use App\Modules\Video\Actions\DownloadMovie;
 use App\Modules\Video\Actions\Ajax\GetMovie;
@@ -144,6 +145,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['entity_remote_file'] = function ($container) {
             return new RemoteFile($container);
+        };
+        $container['entity_raw_video'] = function ($container) {
+            return new RawVideo($container);
         };
     }
 }

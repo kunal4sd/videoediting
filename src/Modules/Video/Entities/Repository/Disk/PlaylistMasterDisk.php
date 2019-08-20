@@ -23,7 +23,7 @@ class PlaylistMasterDisk extends AbstractModule
     public function create_master_playlist($id, $start_date, $end_date, $batch_size, $force = false)
     {
 
-	$start = microtime(true);
+        $start = microtime(true);
         $force = $force === true || $force === 'true';
         if (!$force) {
 
@@ -37,97 +37,142 @@ class PlaylistMasterDisk extends AbstractModule
             if (!empty($playlist_master_file->get_files())) return $playlist_master_file;
         }
 
+        $publication_ar = $this->container->entity_publication->get_by_id($id);
+        $is_radio = $this->container->entity_publication->is_radio($publication_ar);
         $playlist_master_file = new PlaylistMasterFile($this->container);
-        list($start_file, $end_file) = $this->get_edges($id, $start_date, $end_date);
-        if ($start_file && $end_file) {
+        if (!$is_radio) {
+            $start_date_unix = strtotime($start_date);
+            $end_date_unix = strtotime($end_date);
+            $scan_start_date = date("Y-m-d H:i:s", $start_date_unix - Videos::EXTENDED_SCANNING_PERIOD);
+            $scan_end_date = date("Y-m-d H:i:s", $end_date_unix + Videos::EXTENDED_SCANNING_PERIOD);
 
-            if (!is_dir(Videos::PLAYLIST_PATH)) {
-                if (!mkdir(Videos::PLAYLIST_PATH, 0777, true)) {
-                    throw new Exception('Could not create the playlist path', 500);
+            $raw_files_ar = $this->container->entity_raw_video->get_for_interval_by_publication(
+                $scan_start_date, $scan_end_date, $id, true
+            );
+
+            $idx_to_eliminate = [];
+            foreach ($raw_files_ar as $idx => $raw_file_ar) {
+                if (strtotime($raw_file_ar->broadcast_time) < $start_date_unix) {
+                    $ids_to_eliminate[$idx] = null;
+                }
+                else {
+                    unset($idx_to_eliminate[$idx - 1]);
+                    break;
                 }
             }
 
-            if (!is_writable(Videos::PLAYLIST_PATH)) {
-                throw new Exception('Playlist directory is not writable', 500);
+            $length = count($raw_files_ar);
+            for ($idx = $length - 1; $idx > 0; $idx--) {
+                $raw_file_ar = $raw_files_ar[$idx];
+                if (strtotime($raw_file_ar->broadcast_time) > $start_date_unix) {
+                    $ids_to_eliminate[$idx] = null;
+                }
+                else {
+                    unset($idx_to_eliminate[$idx + 1]);
+                    break;
+                }
             }
-
-            $sfile_mtime = date('Y/m/d H:i:s', filemtime($start_file));
-            $efile_mtime = date('Y/m/d H:i:s', filemtime($end_file));
-
+            $raw_files_ar = array_filter(array_merge($raw_files_ar, $idx_to_eliminate));
             $files = [];
-            foreach ($this->get_paths_in_range($start_file, $end_file) as $path) {
-                $files_string = shell_exec(
-                    $this->build_find_files_command(
-                        $path,
-                        $sfile_mtime,
-                        $efile_mtime
-                    )
-                );
-                $files = array_merge($files, explode(PHP_EOL, trim($files_string)));
-            }
-            array_unshift($files, $start_file);
-            array_push($files, $end_file);
-            $files = array_filter($files);
-            $files = array_unique($files);
-            sort($files);
-
-            $file_details = get_file_details_from_path($files[0]);
-            $publication_id = array_shift($file_details);
-            $publication_ar = $this->container->entity_publication->get_by_id($publication_id);
-            $is_radio = $this->container->entity_publication->is_radio($publication_ar);
-            array_walk($files, function(&$file, $key) {
-                $file = url_to_path($file);
-            });
-            $start_execution = microtime(true);
-            $files_duration = get_video_files_duration($files, $is_radio);
-	    $after_files_execution = microtime(true);
-            $this->container->logger->write(new Exception(
-                sprintf(
-                    'Calculating duration of %s files took %.2f seconds, while generating playlist since %.2f seconds ago.',
-                    count($files),
-                    ($after_files_execution - $start_execution),
-		    ($after_files_execution - $start)
-                ),
-                200
-            ));
-            foreach($files as &$raw_file) {
+            foreach($raw_files_ar as $raw_file_ar) {
                 $file = (new RawVideoFile())
-                    ->set_locations($raw_file)
-                    ->set_name($raw_file)
-                    ->set_length($files_duration[$raw_file])
+                    ->set_locations($raw_file_ar->path)
+                    ->set_name($raw_file_ar->path)
+                    ->set_length($raw_file_ar->duration)
                     ->set_discontinuity(true);
-                $raw_file = $file;
+                $files[] = $file;
             }
             $files = array_filter($files);
+        }
+        else {
 
-            $files_copy = $files;
-            $playlist_disk = new PlaylistDisk($this->container);
-            $playlists = [];
-            foreach($this->get_segment_count($files_copy, $batch_size) as $segment_count) {
+            list($start_file, $end_file) = $this->get_edges($id, $start_date, $end_date);
+            if ($start_file && $end_file) {
 
-                $chunks = array_splice($files, 0, $segment_count);
-                $playlist_file = $playlist_disk->create_playlist($chunks, $force);
-
-                if (!is_null($playlist_file->get_hash())) {
-                    $playlists[] = $playlist_file;
+                if (!is_dir(Videos::PLAYLIST_PATH)) {
+                    if (!mkdir(Videos::PLAYLIST_PATH, 0777, true)) {
+                        throw new Exception('Could not create the playlist path', 500);
+                    }
                 }
-            }
 
-            if (!empty($playlists)) {
-                $playlist_master_file
-                    ->set_files($playlists)
-                    ->build_hash($id, $start_date, $end_date, $batch_size);
-                $playlist_master_file->set_locations($playlist_master_file->build_playlist_path())
-                    ->save();
+                if (!is_writable(Videos::PLAYLIST_PATH)) {
+                    throw new Exception('Playlist directory is not writable', 500);
+                }
+
+                $sfile_mtime = date('Y/m/d H:i:s', filemtime($start_file));
+                $efile_mtime = date('Y/m/d H:i:s', filemtime($end_file));
+
+                $files = [];
+                foreach ($this->get_paths_in_range($start_file, $end_file) as $path) {
+                    $files_string = shell_exec(
+                        $this->build_find_files_command(
+                            $path,
+                            $sfile_mtime,
+                            $efile_mtime
+                        )
+                    );
+                    $files = array_merge($files, explode(PHP_EOL, trim($files_string)));
+                }
+                array_unshift($files, $start_file);
+                array_push($files, $end_file);
+                $files = array_filter($files);
+                $files = array_unique($files);
+                sort($files);
+                array_walk($files, function(&$file, $key) {
+                    $file = url_to_path($file);
+                });
+                $start_execution = microtime(true);
+                $files_duration = get_video_files_duration($files, $is_radio);
+                $after_files_execution = microtime(true);
+                $this->container->logger->write(new Exception(
+                    sprintf(
+                        'Calculating duration of %s files took %.2f seconds, while generating playlist since %.2f seconds ago.',
+                        count($files),
+                        ($after_files_execution - $start_execution),
+                        ($after_files_execution - $start)
+                    ),
+                    200
+                ));
+                foreach($files as &$raw_file) {
+                    $file = (new RawVideoFile())
+                        ->set_locations($raw_file)
+                        ->set_name($raw_file)
+                        ->set_length($files_duration[$raw_file])
+                        ->set_discontinuity(true);
+                    $raw_file = $file;
+                }
+                $files = array_filter($files);
             }
         }
-            $this->container->logger->write(new Exception(
-                sprintf(
-                    'Generating playlist took a total of %.2f seconds',
-                    (microtime(true) - $start)
-                ),
-                200
-            ));
+
+        $files_copy = $files;
+        $playlist_disk = new PlaylistDisk($this->container);
+        $playlists = [];
+        foreach($this->get_segment_count($files_copy, $batch_size) as $segment_count) {
+
+            $chunks = array_splice($files, 0, $segment_count);
+            $playlist_file = $playlist_disk->create_playlist($chunks, $force);
+
+            if (!is_null($playlist_file->get_hash())) {
+                $playlists[] = $playlist_file;
+            }
+        }
+
+        if (!empty($playlists)) {
+            $playlist_master_file
+                ->set_files($playlists)
+                ->build_hash($id, $start_date, $end_date, $batch_size);
+            $playlist_master_file->set_locations($playlist_master_file->build_playlist_path())
+                ->save();
+        }
+
+        $this->container->logger->write(new Exception(
+            sprintf(
+                'Generating playlist took a total of %.2f seconds',
+                (microtime(true) - $start)
+            ),
+            200
+        ));
 
         return $playlist_master_file;
     }
@@ -243,7 +288,7 @@ class PlaylistMasterDisk extends AbstractModule
 
         $ago = 'ago';
         $start_with = 0;
-        foreach($scanning_periods as $scenario => $period) {
+        foreach ($scanning_periods as $scenario => $period) {
 
             if ($scenario === 'best') {
                 $ago = 'ago';
