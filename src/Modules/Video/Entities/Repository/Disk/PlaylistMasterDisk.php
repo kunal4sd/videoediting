@@ -190,7 +190,10 @@ class PlaylistMasterDisk extends AbstractModule
                                 if (strtotime($start_datetime) <= $end_date_unix) {
                                     $files[] = $raw_video_file;
                                 }
-                                else break;
+                                else {
+                                    fclose($handle);
+                                    break;
+                                }
                             }
                             $duration = 0.0;
                         }
