@@ -84,13 +84,10 @@ class PlaylistMasterDisk extends AbstractModule
 
         // select videos on the left (out)side of the interval
         foreach ($raw_videos_ar as $idx => $raw_file_ar) {
-            if (strtotime($raw_file_ar->broadcast_time) < $start_date_unix) {
+            if (strtotime($raw_file_ar->broadcast_time) + $raw_file_ar->duration < $start_date_unix) {
                 $idx_to_eliminate[$idx] = null;
             }
-            else {
-                unset($idx_to_eliminate[$idx - 1]);
-                break;
-            }
+            else break;
         }
 
         // select videos on the right (out)side of the interval
@@ -178,8 +175,21 @@ class PlaylistMasterDisk extends AbstractModule
                         }
                         elseif (strpos($line, '#') !== 0 && $duration > 0.0) {
                             $filename = $line;
+                            $details = get_file_details_from_path($filename);
+                            $sub_path = Datetime::createFromFormat(
+                                    'Y_m_d-H:i:s', $details[1]
+                                )->format('Y/m/d');
+
                             $raw_video_file = (new RawVideoFile())
-                                ->set_locations($filename)
+                                ->set_locations(
+                                    sprintf(
+                                        '%s/%s/%s/%s',
+                                        Videos::RAW_VIDEO_PATH,
+                                        $id,
+                                        $sub_path,
+                                        $filename
+                                    )
+                                )
                                 ->set_name($filename)
                                 ->set_length($duration)
                                 ->set_discontinuity(true);
@@ -235,7 +245,7 @@ class PlaylistMasterDisk extends AbstractModule
 
         do {
             yield sprintf(
-                '%s/%s/%s_%s.m3u8',
+                '%s/%s/%s.%s.m3u8',
                 Videos::RAW_VIDEO_PATH,
                 $id,
                 $id,
@@ -513,17 +523,14 @@ class PlaylistMasterDisk extends AbstractModule
 
     private function get_paths_in_range($from, $to)
     {
-        $this->container->logger->write(new Exception(print_r($from, true), 200));
-        $this->container->logger->write(new Exception(print_r($to, true), 200));
+
         $tz = new DateTimeZone('Asia/Amman');
         $from_details = get_file_details_from_path($from);
         $to_details = get_file_details_from_path($to);
         $from_name = $from_details[1];
         $to_pub_id = $to_details[0];
         $to_name = $to_details[1];
-        $this->container->logger->write(new Exception(print_r($to_pub_id, true), 200));
-        $this->container->logger->write(new Exception(print_r($from_name, true), 200));
-        $this->container->logger->write(new Exception(print_r($to_name, true), 200));
+
         $start_date = Datetime::createFromFormat('Y_m_d-H:i:s', $from_name, $tz);
         $end_date = Datetime::createFromFormat('Y_m_d-H:i:s', $to_name, $tz);
         $diff = strtotime($end_date->format('Y-m-d')) - strtotime($start_date->format('Y-m-d'));
