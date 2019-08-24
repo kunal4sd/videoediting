@@ -190,10 +190,7 @@ class PlaylistMasterDisk extends AbstractModule
                                 if (strtotime($start_datetime) <= $end_date_unix) {
                                     $files[] = $raw_video_file;
                                 }
-                                else {
-                                    fclose($handle);
-                                    break;
-                                }
+                                else break;
                             }
                             $duration = 0.0;
                         }
@@ -516,12 +513,17 @@ class PlaylistMasterDisk extends AbstractModule
 
     private function get_paths_in_range($from, $to)
     {
+        $this->container->logger->write(new Exception(print_r($from, true), 200));
+        $this->container->logger->write(new Exception(print_r($to, true), 200));
         $tz = new DateTimeZone('Asia/Amman');
         $from_details = get_file_details_from_path($from);
         $to_details = get_file_details_from_path($to);
-        $from_name = array_shift($from_details);
-        $to_pub_id = array_shift($to_details);
-        $to_name = array_shift($to_details);
+        $from_name = $from_details[1];
+        $to_pub_id = $to_details[0];
+        $to_name = $to_details[1];
+        $this->container->logger->write(new Exception(print_r($to_pub_id, true), 200));
+        $this->container->logger->write(new Exception(print_r($from_name, true), 200));
+        $this->container->logger->write(new Exception(print_r($to_name, true), 200));
         $start_date = Datetime::createFromFormat('Y_m_d-H:i:s', $from_name, $tz);
         $end_date = Datetime::createFromFormat('Y_m_d-H:i:s', $to_name, $tz);
         $diff = strtotime($end_date->format('Y-m-d')) - strtotime($start_date->format('Y-m-d'));

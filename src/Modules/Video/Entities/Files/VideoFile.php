@@ -77,7 +77,7 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
 
     public function set_length($length)
     {
-        $this->length = round((float) $length, 2, PHP_ROUND_HALF_UP);
+        $this->length = round((float) $length, 4, PHP_ROUND_HALF_UP);
         return $this;
     }
 
