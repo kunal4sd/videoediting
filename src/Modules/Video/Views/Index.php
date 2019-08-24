@@ -51,7 +51,7 @@ class Index extends AbstractModule
                     'start_date' => $data['start_date'],
                     'end_date' => $data['end_date'],
                     'batch' => $data['batch_size'],
-                    'use_cached' => true
+                    'method' => 'cached'
                 ];
                 $playlists = $this->entity_playlist->get_playlists_for_output(
                     $request->withQueryParams($form)

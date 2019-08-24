@@ -65,10 +65,27 @@
                         {% endif %}
                     </div>
                 </div>
+                <div class="row form-group ml-0 mt-4 mb-0 unselectable-text">
+                    <div class="col-sm-12 pl-0">
+                        <label>Playlist generation method:</label>
+                    </div>
+                </div>
                 <div class="row form-group ml-0 unselectable-text">
-                    <div class="col-sm-12 custom-control custom-checkbox">
-                        <input type="checkbox" name="use_cached" id="force_playlist" class="custom-control-input" checked>
-                        <label class="custom-control-label" for="force_playlist">Use cached playlists (if available)</label>
+                    <div class="col-sm-12 custom-control custom-radio">
+                        <input type="radio" name="method" value="cached" id="method_cached" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="method_cached">From cached playlists (if available)</label>
+                    </div>
+                    <div class="col-sm-12 custom-control custom-radio">
+                        <input type="radio" name="method" value="database" id="method_database" class="custom-control-input">
+                        <label class="custom-control-label" for="method_database">From database</label>
+                    </div>
+                    <div class="col-sm-12 custom-control custom-radio">
+                        <input type="radio" name="method" value="stream" id="method_stream" class="custom-control-input">
+                        <label class="custom-control-label" for="method_stream">From live stream's playlists</label>
+                    </div>
+                    <div class="col-sm-12 custom-control custom-radio">
+                        <input type="radio" name="method" value="raw" id="method_raw" class="custom-control-input">
+                        <label class="custom-control-label" for="method_raw">From raw video files</label>
                     </div>
                 </div>
                 <div class="row">

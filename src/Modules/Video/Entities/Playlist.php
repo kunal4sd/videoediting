@@ -27,7 +27,7 @@ class Playlist extends AbstractModule
             $request->getParam('start_date'),
             $request->getParam('end_date'),
             $request->getParam('batch'),
-            $request->getParam('use_cached') ? false : true
+            $request->getParam('method')
         );
 
         foreach($playlists_file as $playlist_file) {
@@ -66,7 +66,7 @@ class Playlist extends AbstractModule
     /**
      * @return PlaylistFile[]
      */
-    public function get_playlists($id, $start_date, $end_date, $batch_size, $force)
+    public function get_playlists($id, $start_date, $end_date, $batch_size, $method)
     {
         $playlist_master_file = (new PlaylistMasterDisk($this->container))
             ->create_master_playlist(
@@ -74,7 +74,7 @@ class Playlist extends AbstractModule
                 $start_date,
                 $end_date,
                 $batch_size,
-                $force
+                $method
             );
 
         return $playlist_master_file->get_files();

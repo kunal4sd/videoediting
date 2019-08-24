@@ -17,7 +17,7 @@ class GetPlaylist extends AbstractModule
             'start_date' => v::notEmpty()->stringType(),
             'end_date' => v::notEmpty()->stringType(),
             'publication' => v::notEmpty()->intVal(),
-            'force' => v::boolVal(),
+            'method' => v::notEmpty()->stringType(),
             'batch' => v::intVal(),
             'ajax' => v::trueVal()
         ]);

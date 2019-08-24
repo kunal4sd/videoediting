@@ -214,6 +214,11 @@ function get_seconds_since_file($file_name, $max_limit = null)
     return $from_time - $to_time;
 }
 
+/**
+ * @param string[] $files
+ * @param boolean $is_radio
+ * @return array
+ */
 function get_video_files_duration(array $files, bool $is_radio = false): array
 {
     $result = [];
