@@ -22,7 +22,7 @@ class Movie extends AbstractModule
         $result = [];
 
         foreach($articles_ar as $article_ar) {
-            $movie_file = new VideoFile();
+            $movie_file = new VideoFile(false);
             $movie_path = $movie_file->build_movie_path($article_ar);
             $movie_file->set_locations($movie_path)
                 ->build_length()
