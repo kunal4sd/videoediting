@@ -174,7 +174,7 @@ class PlaylistMasterDisk extends AbstractModule
                             $duration = str_replace('#EXTINF:', '', $line);
                         }
                         elseif (strpos($line, '#') !== 0 && $duration > 0.0) {
-                            $filename = $line;
+                            $filename = basename($line);
                             $details = get_file_details_from_path($filename);
                             $sub_path = Datetime::createFromFormat(
                                     'Y_m_d-H:i:s', $details[1]
