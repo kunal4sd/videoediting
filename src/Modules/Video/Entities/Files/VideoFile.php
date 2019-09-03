@@ -6,11 +6,8 @@ use App\Libs\Enums\Files;
 use App\Libs\Enums\Videos;
 use App\Modules\Abstracts\AbstractFile;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
-use App\Modules\Video\Entities\Files\ImageFile;
 use App\Modules\Interfaces\LengthInterface;
-use App\Modules\Interfaces\PosterInterface;
 use App\Modules\Interfaces\SizeInterface;
-use Pimple\Container;
 use \Exception;
 
 class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
@@ -106,14 +103,20 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
                 },
                 $playlist_file->get_files()
             );
-            $files_str = implode('|', $raw_video_paths);
+            $files_str = sprintf(
+                "file '%s'",
+                implode("'\nfile '", $raw_video_paths)
+            );
+            $tmp_filename = sprintf('%s.txt', $this->get_path());
+            file_put_contents($tmp_filename, $files_str);
 
             $cmd = sprintf(
-                "ffmpeg -i  \"concat:%s\" -c copy %s\n\r",
-                $files_str,
+                "ffmpeg -f concat -safe 0 -i %s -c copy %s\n",
+                $tmp_filename,
                 $this->get_path()
             );
             $output = shell_exec($cmd);
+            unlink($tmp_filename);
         }
 
         if (!file_exists($this->get_path())) {
