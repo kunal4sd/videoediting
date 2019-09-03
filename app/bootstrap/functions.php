@@ -236,15 +236,18 @@ function get_video_files_duration(array $files, bool $is_radio = false): array
                 ),
                 true
             );
-            $filenames = array_map(function($row) {
-                return $row['filename'];
-            }, $output);
-            $durations = array_map(function($row) {
-                return round(
-                    choose_time_to_seconds($row['duration'], $row['time']), 4, PHP_ROUND_HALF_UP
-                );
-            }, $output);
-            $result = array_merge($result, array_combine($filenames, $durations));
+
+            if (is_array($output)) {
+                $filenames = array_map(function($row) {
+                    return $row['filename'];
+                }, $output);
+                $durations = array_map(function($row) {
+                    return round(
+                        choose_time_to_seconds($row['duration'], $row['time']), 4, PHP_ROUND_HALF_UP
+                    );
+                }, $output);
+                $result = array_merge($result, array_combine($filenames, $durations));
+            }
         }
     }
     else {
@@ -257,13 +260,15 @@ function get_video_files_duration(array $files, bool $is_radio = false): array
         );
         $output = json_decode($output, true);
 
-        $filenames = array_map(function($row) {
-            return $row['filename'];
-        }, $output);
-        $durations = array_map(function($row) {
-            return round($row['duration'], 4, PHP_ROUND_HALF_UP);
-        }, $output);
-        $result = array_combine($filenames, $durations);
+        if (is_array($output)) {
+            $filenames = array_map(function($row) {
+                return $row['filename'];
+            }, $output);
+            $durations = array_map(function($row) {
+                return round($row['duration'], 4, PHP_ROUND_HALF_UP);
+            }, $output);
+            $result = array_combine($filenames, $durations);
+        }
     }
 
     return $result;
