@@ -15,7 +15,6 @@ class KnownUser extends AbstractModule
         if ($this->session_user->is_known()) {
             return $next($request, $response);
         }
-        $this->logger->write(new \Exception('Access forbidden for unknown user', 403));
 
         if ($request->getParam('ajax')) {
             return Json::build($response, [ 'authorization' => 'User authorization failed' ], 403);

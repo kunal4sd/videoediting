@@ -31,8 +31,6 @@ class SameSessionId extends AbstractModule
         }
         catch(Exception $e) {}
 
-        $this->logger->write(new Exception('User session id has changed since login.', 403));
-
         if ($request->getParam('ajax')) {
             return Json::build(
                 $response,

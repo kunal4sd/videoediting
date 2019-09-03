@@ -14,7 +14,6 @@ class UnknownUser extends AbstractModule
         if (!$this->session_user->is_known()) {
             return $next($request, $response);
         }
-        $this->logger->write(new \Exception('Access forbidden for known user', 403));
 
         return $response->withRedirect($this->router->pathFor('video.view.index'));
     }
