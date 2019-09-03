@@ -39,7 +39,7 @@ class Pdo extends Connection implements Runnable
                 return $this->run($query, $params);
             }
             else {
-                throw new Exception($e->getMessage(), 500);
+                throw new Exception($e->getMessage(), 200);
             }
         }
 
