@@ -21,8 +21,10 @@ $( function() {
                 data: global_functions.form_to_json(form),
                 complete: function (result) {
                     event_emitter.trigger('form.ajax.result.alert', [result, form]);
-                    global_functions.button_is_not_loading(button);
-                    is_loading = false;
+                    if (result.status >= 400) {
+                        global_functions.button_is_not_loading(button);
+                        is_loading = false;
+                    }
                 }
             });
         }
