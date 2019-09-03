@@ -214,7 +214,7 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
     private function cut_content($output_path, $from, $to)
     {
         $cmd = sprintf(
-            "ffmpeg -y -i %s %s %s -c copy %s",
+            "ffmpeg -hide_banner -loglevel panic -y -i %s %s %s -c copy %s",
             $this->get_path(),
             $from !== false ? '-ss ' . round(floor($from), 2) : '',
             $to !== false ? '-to ' . round((floor($to) + 0.99), 2) : '',

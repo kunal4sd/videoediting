@@ -111,7 +111,7 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
             file_put_contents($tmp_filename, $files_str);
 
             $cmd = sprintf(
-                "ffmpeg -f concat -safe 0 -i %s -c copy %s\n",
+                "ffmpeg -hide_banner -loglevel panic -f concat -safe 0 -i %s -c copy %s\n",
                 $tmp_filename,
                 $this->get_path()
             );
