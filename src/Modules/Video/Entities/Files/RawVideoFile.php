@@ -187,8 +187,15 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
 
     public function build_perfect_cut($from_cut, $to_cut)
     {
+
+        if ($from_cut === false && $to_cut === false) return $this;
+
         $name = $this->set_name($this->get_path())->get_name();
         if ($from_cut !== false) {
+
+            if ($this->get_length() - $from_cut < 0.5) {
+                $from_cut = max(0, $from_cut - 1);
+            }
             $name .= '-f';
         }
         if ($to_cut !== false) {
