@@ -8,6 +8,7 @@ use App\Modules\Abstracts\AbstractFile;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
 use App\Modules\Interfaces\LengthInterface;
 use App\Modules\Interfaces\SizeInterface;
+use Pimple\Container;
 use \Exception;
 
 class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
@@ -28,8 +29,14 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
      */
     private $is_radio;
 
-    public function __construct(bool $is_radio = true)
+    /**
+     * @var Container
+     */
+    private $container;
+
+    public function __construct(bool $is_radio = true, Container $container = null)
     {
+        $this->container = $container;
         $this->set_is_radio($is_radio);
         $this->set_type(Files::VIDEO);
     }
@@ -111,11 +118,21 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
             file_put_contents($tmp_filename, $files_str);
 
             $cmd = sprintf(
-                "ffmpeg -hide_banner -loglevel panic -f concat -safe 0 -i %s -c copy %s\n",
+                "ffmpeg -f concat -safe 0 -i %s -c copy %s",
                 $tmp_filename,
                 $this->get_path()
             );
+            $this->container->logger->write(new Exception(
+                $cmd,
+                200
+            ));
+
             $output = shell_exec($cmd);
+            $this->container->logger->write(new Exception(
+                $output,
+                200
+            ));
+
             unlink($tmp_filename);
         }
 

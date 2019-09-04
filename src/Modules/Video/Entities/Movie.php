@@ -4,7 +4,6 @@ namespace App\Modules\Video\Entities;
 
 use App\Modules\Abstracts\AbstractModule;
 use App\Modules\Video\Entities\Files\VideoFile;
-use App\Modules\Video\Entities\Files\PlaylistFile;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
 use \Exception;
 

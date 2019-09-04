@@ -99,7 +99,7 @@ class GetMovie extends AbstractModule
                 ]
             ));
 
-            $movie_file = new VideoFile();
+            $movie_file = new VideoFile(false, $this->container);
             $movie_path = $movie_file->build_movie_path($article_ar);
             $movie_file->set_locations($movie_path)
                 ->save($this->playlist_file)
