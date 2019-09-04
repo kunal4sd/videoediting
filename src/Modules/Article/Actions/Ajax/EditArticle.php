@@ -10,7 +10,6 @@ use App\Libs\Enums\Videos;
 use App\Libs\Enums\UserActivity;
 use App\Modules\Abstracts\AbstractModule;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
-use App\Modules\Video\Entities\Files\VideoFile;
 use App\Modules\Video\Entities\ActiveRecords\RemoteFileAR;
 use App\Modules\Article\Entities\ActiveRecords\IssueAR;
 use App\Modules\Article\Entities\ActiveRecords\ArticleOneAR;
@@ -134,7 +133,6 @@ class EditArticle extends AbstractModule
                     }
                     $this->entity_article_keyword->save_multiple_media($article_keywords_ar);
 
-                    $movie_file = (new VideoFile())->copy_media($article_ar, $article_ar_media);
                     $article_ar->publish_id = $article_ar_media->id;
                     $article_ar->status = Status::LIVE;
                     $this->entity_article->save($article_ar);
