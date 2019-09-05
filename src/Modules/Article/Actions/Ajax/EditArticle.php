@@ -14,6 +14,7 @@ use App\Modules\Video\Entities\ActiveRecords\RemoteFileAR;
 use App\Modules\Article\Entities\ActiveRecords\IssueAR;
 use App\Modules\Article\Entities\ActiveRecords\ArticleOneAR;
 use App\Modules\Article\Entities\ActiveRecords\ArticleKeywordAR;
+use App\Modules\Video\Entities\Files\VideoFile;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Exception;
@@ -132,6 +133,9 @@ class EditArticle extends AbstractModule
                         $article_keyword_ar->article_id = $article_ar_media->id;
                     }
                     $this->entity_article_keyword->save_multiple_media($article_keywords_ar);
+
+                    (new VideoFile($this->entity_publication->is_radio($publication_ar)))
+                        ->copy_media($article_ar, $article_ar_media);
 
                     $article_ar->publish_id = $article_ar_media->id;
                     $article_ar->status = Status::LIVE;
