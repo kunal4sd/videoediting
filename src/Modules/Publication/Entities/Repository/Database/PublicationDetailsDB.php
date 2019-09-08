@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\Article\Entities\Repository\Database;
+namespace App\Modules\Publication\Entities\Repository\Database;
 
 use App\Modules\Abstracts\AbstractDatabase;
-use App\Modules\Article\Entities\ActiveRecords\PublicationDetailsAR;
+use App\Modules\Publication\Entities\ActiveRecords\PublicationDetailsAR;
 
 class PublicationDetailsDB extends AbstractDatabase
 {

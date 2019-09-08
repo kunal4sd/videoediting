@@ -134,9 +134,6 @@ class VideoServiceProvider implements ServiceProviderInterface
 
     private function register_entities(Container $container)
     {
-        $container['entity_publication'] = function ($container) {
-            return new Publication($container);
-        };
         $container['entity_playlist'] = function ($container) {
             return new Playlist($container);
         };

@@ -2,12 +2,9 @@
 
 namespace App\Modules\Article;
 
-use App\Modules\Article\Entities\Issue;
 use App\Modules\Article\Entities\Article;
 use App\Modules\Article\Entities\Keyword;
 use App\Modules\Article\Entities\ArticleOne;
-use App\Modules\Article\Entities\Publication;
-use App\Modules\Article\Entities\PublicationDetails;
 use App\Modules\Article\Entities\ArticleKeyword;
 use App\Modules\Article\Actions\Ajax\GetKeyword;
 use App\Modules\Article\Actions\Ajax\EditArticle;
@@ -65,7 +62,7 @@ class ArticleServiceProvider implements ServiceProviderInterface
         $container->slim->post('/articles/actions/search/keyword', 'article.action.ajax.search_keyword')
                         ->add(new SearchKeywordValidationMiddleware($container))
                         ->add(new SameIpAuthorizationMiddleware($container))
-                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        // ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('article.action.search_keyword');
         $container->slim->post('/articles/actions/get/keyword', 'article.action.ajax.get_keyword_by_article_id')
@@ -87,17 +84,8 @@ class ArticleServiceProvider implements ServiceProviderInterface
         $container['entity_article_keyword'] = function ($container) {
             return new ArticleKeyword($container);
         };
-        $container['entity_publication'] = function ($container) {
-            return new Publication($container);
-        };
         $container['entity_article_one'] = function ($container) {
             return new ArticleOne($container);
-        };
-        $container['entity_issue'] = function ($container) {
-            return new Issue($container);
-        };
-        $container['entity_publication_details'] = function ($container) {
-            return new PublicationDetails($container);
         };
     }
 }

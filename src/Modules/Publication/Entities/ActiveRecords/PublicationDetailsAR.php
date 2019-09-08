@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Article\Entities\ActiveRecords;
+namespace App\Modules\Publication\Entities\ActiveRecords;
 
 use App\Modules\Abstracts\AbstractActiveRecord;
 

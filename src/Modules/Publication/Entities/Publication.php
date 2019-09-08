@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Modules\Article\Entities;
+namespace App\Modules\Publication\Entities;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\AbstractModule;
-use App\Modules\Article\Entities\ActiveRecords\PublicationAR;
-use App\Modules\Article\Entities\Repository\Database\PublicationDB;
+use App\Modules\Publication\Entities\ActiveRecords\PublicationAR;
+use App\Modules\Publication\Entities\Repository\Database\PublicationDB;
 use \Exception;
 
 class Publication extends AbstractModule
@@ -69,6 +69,25 @@ class Publication extends AbstractModule
     public function is_tv(PublicationAR $publication_ar): bool
     {
         return (int) $publication_ar->type_id === 3;
+    }
+
+    /**
+     * @param PublicationAR[] $publications_ar
+     * @return array: [$publication_ar->id => TV/Radio]
+     */
+    public function get_types(Array $publications_ar): array
+    {
+        $publications_type = [];
+        foreach($publications_ar as $idx => $publication_ar) {
+            if ($this->is_radio($publication_ar)) {
+                $publications_type[$publication_ar->id] = 'Radio';
+            }
+            else {
+                $publications_type[$publication_ar->id] = 'TV';
+            }
+        }
+
+        return $publications_type;
     }
 
 }

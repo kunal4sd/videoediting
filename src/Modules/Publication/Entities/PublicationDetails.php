@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Modules\Article\Entities;
+namespace App\Modules\Publication\Entities;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\AbstractModule;
-use App\Modules\Article\Entities\Repository\Database\PublicationDetailsDB;
+use App\Modules\Publication\Entities\Repository\Database\PublicationDetailsDB;
 use \Exception;
 
 class PublicationDetails extends AbstractModule

@@ -7,6 +7,7 @@ use App\Modules\Core\CoreServiceProvider;
 use App\Modules\User\UserServiceProvider;
 use App\Modules\Video\VideoServiceProvider;
 use App\Modules\Article\ArticleServiceProvider;
+use App\Modules\Publication\PublicationServiceProvider;
 use \Exception;
 use Pimple\Container;
 use Slim\App as Slim;
@@ -56,6 +57,7 @@ class App
             $container->register(new CoreServiceProvider());
             $container->register(new VideoServiceProvider());
             $container->register(new ArticleServiceProvider());
+            $container->register(new PublicationServiceProvider());
             $container->register(new UserServiceProvider());
         }
         catch(Exception $e) {

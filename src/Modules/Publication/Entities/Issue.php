@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Modules\Article\Entities;
+namespace App\Modules\Publication\Entities;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\AbstractModule;
-use App\Modules\Article\Entities\ActiveRecords\IssueAR;
-use App\Modules\Article\Entities\Repository\Database\IssueDB;
+use App\Modules\Publication\Entities\ActiveRecords\IssueAR;
+use App\Modules\Publication\Entities\Repository\Database\IssueDB;
 use \Exception;
 
 class Issue extends AbstractModule
