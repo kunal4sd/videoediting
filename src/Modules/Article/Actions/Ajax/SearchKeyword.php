@@ -27,8 +27,8 @@ class SearchKeyword extends AbstractModule
         }
         catch(Exception $e) {
             $this->logger->write($e);
-            $result['message'] = $e->getMessage();
-            $code = $e->getCode();
+            $result['message'] = sprintf('%s (%s)', $e->getMessage(), $e->getCode());
+            $code = 500;
         }
 
         return Json::build($response, $result, $code);
