@@ -17,31 +17,18 @@ class Pdo extends Connection implements Runnable
      */
     public function run($query, array $params = [])
     {
+
         if ($this->pdo === null) {
             $this->connect();
         }
+        $stmt = $this->pdo->prepare($query);
 
-        try {
-            $stmt = $this->pdo->prepare($query);
+        foreach($params as $name => $details) {
 
-            foreach($params as $name => $details) {
-
-                if (!is_array($details)) $details = [$details];
-                $stmt->bindValue(":{$name}", array_shift($details), array_shift($details));
-            }
-
-            $stmt->execute();
-        } catch(Exception $e) {
-
-            if ($e->getCode() === 'HY000') {
-                $this->pdo = null;
-
-                return $this->run($query, $params);
-            }
-            else {
-                throw new Exception($e->getMessage(), 200);
-            }
+            if (!is_array($details)) $details = [$details];
+            $stmt->bindValue(":{$name}", array_shift($details), array_shift($details));
         }
+        $stmt->execute();
 
         return $stmt;
     }
