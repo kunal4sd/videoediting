@@ -22,23 +22,21 @@ class RestartFfmpeg extends AbstractModule
         try {
             $publication_ar = $this->entity_publication->get_by_id($publication_id);
             if ((int) $publication_ar->id) {
-                $cmd = sprintf(
-                    "ps aux | grep ffmpeg | grep %s | awk '{print $2;}' | xargs kill -9",
+                $kill_cmd = sprintf(
+                    'ps aux | grep ffmpeg | grep %s | awk "{print $2;}" | xargs kill -9',
                     (int) $publication_ar->id
                 );
 
-                $this->logger->write(new Exception($cmd, 200));
                 foreach($servers as $server) {
-
-                    $result['message'] = shell_exec(
-                        sprintf(
-                            'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet %s@%s -p %s %s 2>&1',
-                            $server['user'],
-                            $server['host'],
-                            $server['port'],
-                            $cmd
-                        )
+                    $cmd = sprintf(
+                        "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet %s@%s -p %s '%s'",
+                        $server['user'],
+                        $server['host'],
+                        $server['port'],
+                        $kill_cmd
                     );
+                    $this->logger->write(new Exception($cmd, 200));
+                    $result['message'] = shell_exec($cmd);
                 }
             }
         }

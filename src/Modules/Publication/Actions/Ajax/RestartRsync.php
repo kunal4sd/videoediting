@@ -7,7 +7,6 @@ use App\Modules\Abstracts\AbstractModule;
 use App\Libs\Enums\Config\MandatoryFields;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use phpseclib\Net\SSH2;
 use \Exception;
 
 class RestartRsync extends AbstractModule
@@ -23,23 +22,21 @@ class RestartRsync extends AbstractModule
         try {
             $publication_ar = $this->entity_publication->get_by_id($publication_id);
             if ((int) $publication_ar->id) {
-                $cmd = sprintf(
-                    "ps aux | grep rsync | grep %s | awk '{print $2;}' | xargs kill -9",
+                $kill_cmd = sprintf(
+                    'ps aux | grep rsync | grep %s | awk "{print $2;}" | xargs kill -9',
                     (int) $publication_ar->id
                 );
 
-                $this->logger->write(new Exception($cmd, 200));
                 foreach($servers as $server) {
-
-                    $ssh = new SSH2($server['host'], $server['port']);
-                    if (!$ssh->login($server['user'])) {
-                        $result['message'] = 'Login Failed';
-                        $code = 500;
-                    }
-                    else{
-                        $result['message'] = $ssh->exec($cmd);
-                        $this->logger->write(new Exception("output: " . $result['message'], 200));
-                    }
+                    $cmd = sprintf(
+                        "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet %s@%s -p %s '%s'",
+                        $server['user'],
+                        $server['host'],
+                        $server['port'],
+                        $kill_cmd
+                    );
+                    $this->logger->write(new Exception($cmd, 200));
+                    $result['message'] = shell_exec($cmd);
                 }
             }
         }
