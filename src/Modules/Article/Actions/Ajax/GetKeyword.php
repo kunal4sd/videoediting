@@ -18,7 +18,11 @@ class GetKeyword extends AbstractModule
         $code = 200;
 
         try {
-            $keywords_ar = $this->entity_keyword->get_by_article_id($request->getParam('article_id'));
+            $article_id = $request->getParam('article_id');
+            $article_keywords_ar = $this->entity_article_keyword->get_by_article_id($article_id);
+            $keywords_ar = $this->entity_keyword->get_by_ids_media(array_map(
+                function($article_keyword_ar) { return $article_keyword_ar->keyword_id; }, $article_keywords_ar
+            ));
 
             foreach($keywords_ar as $keyword_ar) {
                 $result[] = [

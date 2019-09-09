@@ -30,30 +30,39 @@ class Keyword extends AbstractModule
     }
 
     /**
-     * @param int $article_id
+     * @param int[] $ids
      * @return KeywordAR[]
      */
-    public function get_by_article_id($article_id)
+    public function get_by_ids_media(array $ids): array
     {
-        return (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_article_id($article_id);
+        return (new KeywordDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->get_by_ids($ids);
     }
 
     /**
-     * @param int $article_id
-     * @return string[]
+     * @param int[] $ids
+     * @return KeywordAR[]
      */
-    public function get_keywords_name_en_by_article_id($article_id)
+    public function get_by_ids(array $ids): array
     {
+        return (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_ids($ids);
+    }
 
-        $result = [];
-        $keywords_ar = (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))
-            ->get_by_article_id($article_id);
+    /**
+     * @param int $id
+     * @return KeywordAR
+     */
+    public function get_by_id_media(int $id): KeywordAR
+    {
+        return (new KeywordDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->get_by_id($id);
+    }
 
-        foreach($keywords_ar as $keyword_ar) {
-            $result[] = $keyword_ar->name_en;
-        }
-
-        return $result;
+    /**
+     * @param int $id
+     * @return KeywordAR
+     */
+    public function get_by_id(int $id): KeywordAR
+    {
+        return (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_id($id);
     }
 
 }

@@ -88,38 +88,9 @@ class KeywordDB extends AbstractDatabase
 
     /**
      * @param int $id
-     * @return KeywordAR[]
-     */
-    public function get_by_article_id($id)
-    {
-        $result = [];
-
-        $data = $this->db->fetch_all(
-            "
-                SELECT
-                    keyword.*
-                FROM keyword
-                INNER JOIN article_keyword
-                    ON article_keyword.keyword_id = keyword.id
-                    AND article_keyword.article_id = :article_id
-            ",
-            [
-                'article_id' => $id
-            ]
-        );
-
-        foreach($data as $row) {
-            $result[] = new KeywordAR($row);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param int $id
      * @return KeywordAR
      */
-    public function get_by_id($id)
+    public function get_by_id(int $id): KeywordAR
     {
         $data = $this->db->fetch(
             "
@@ -135,6 +106,48 @@ class KeywordDB extends AbstractDatabase
         );
 
         return new KeywordAR($data);
+    }
+
+    /**
+     * @param int[] $id
+     * @return KeywordAR[]
+     */
+    public function get_by_ids(array $ids): array
+    {
+        $result = [];
+        if (empty($ids)) return $result;
+
+        $params = array_map(function($id) { return sprintf('id_%s', $id); }, $ids);
+        throw new \Exception(sprintf(
+            "
+                SELECT
+                    *
+                FROM keyword
+                WHERE 1
+                    AND id IN (:%s)
+            ",
+            implode(',:', $params)
+        ), 200);
+
+        $data = $this->db->fetch(
+            sprintf(
+                "
+                    SELECT
+                        *
+                    FROM keyword
+                    WHERE 1
+                        AND id IN (:%s)
+                ",
+                implode(',:', $params)
+            ),
+            array_combine($params, $ids)
+        );
+
+        foreach($data as $row) {
+            $result[] = new KeywordAR($row);
+        }
+
+        return $result;
     }
 
 }

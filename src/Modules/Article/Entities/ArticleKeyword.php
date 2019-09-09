@@ -5,13 +5,50 @@ namespace App\Modules\Article\Entities;
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\AbstractModule;
-use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
+use App\Modules\Article\Entities\ActiveRecords\ArticleKeywordAR;
 use App\Modules\Article\Entities\Repository\Database\ArticleDB;
 use App\Modules\Article\Entities\Repository\Database\ArticleKeywordDB;
 use \Exception;
 
 class ArticleKeyword extends AbstractModule
 {
+
+    /**
+     * @param int $article_id
+     * @return ArticleKeywordAR[]
+     */
+    public function get_by_article_id_media(int $article_id): array
+    {
+        return (new ArticleKeywordDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->get_by_article_id($article_id);
+    }
+
+    /**
+     * @param int $article_id
+     * @return ArticleKeywordAR[]
+     */
+    public function get_by_article_id(int $article_id): array
+    {
+        return (new ArticleKeywordDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->get_by_article_id($article_id);
+    }
+
+    /**
+     * @param int $id
+     * @return ArticleKeywordAR
+     */
+    public function get_by_id_media(int $id): ArticleKeywordAR
+    {
+        return (new ArticleKeywordDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->get_by_id($id);
+    }
+
+    /**
+     * @param int $id
+     * @return ArticleKeywordAR
+     */
+    public function get_by_id(int $id): ArticleKeywordAR
+    {
+        return (new ArticleKeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_id($id);
+    }
+
     /**
      * @param int
      * @return int

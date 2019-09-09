@@ -12,9 +12,36 @@ class ArticleKeywordDB extends AbstractDatabase
 
     /**
      * @param int $id
+     * @return ArticleKeywordAR[]
+     */
+    public function get_by_article_id(int $article_id): array
+    {
+        $result = [];
+        $data = $this->db->fetch(
+            "
+                SELECT
+                    *
+                FROM article_keyword
+                WHERE 1
+                    AND article_id = :article_id
+            ",
+            [
+                'article_id' => $article_id
+            ]
+        );
+
+        foreach($data as $row) {
+            $result[] = new ArticleKeywordAR($row);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param int $id
      * @return ArticleKeywordAR
      */
-    public function get_by_id($id)
+    public function get_by_id(int $id): ArticleKeywordAR
     {
         $data = $this->db->fetch(
             "
@@ -36,7 +63,7 @@ class ArticleKeywordDB extends AbstractDatabase
      * @param int $article_id
      * @return int nb of affected rows
      */
-    public function delete_by_article_id($article_id)
+    public function delete_by_article_id(int $article_id): int
     {
 
         return $this->db->row_count(
@@ -55,7 +82,7 @@ class ArticleKeywordDB extends AbstractDatabase
      * @param ArticleKeywordAR[]
      * @return int nb of insertedd rows
      */
-    public function save_multiple(array $article_keywords_ar)
+    public function save_multiple(array $article_keywords_ar): int
     {
 
         if (empty($article_keywords_ar)) return 0;

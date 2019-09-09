@@ -43,7 +43,10 @@ class Movie extends AbstractModule
 
         $keywords_names = [];
         $keywords_ids = [];
-        $keywords_ar = $this->entity_keyword->get_by_article_id($article_ar->id);
+        $article_keywords_ar = $this->entity_article_keyword->get_by_article_id($article_ar->id);
+        $keywords_ar = $this->entity_keyword->get_by_ids_media(array_map(
+            function($article_keyword_ar) { return $article_keyword_ar->keyword_id; }, $article_keywords_ar
+        ));
 
         foreach($keywords_ar as $keyword_ar) {
             $keywords_names[] = $keyword_ar->name_en;
