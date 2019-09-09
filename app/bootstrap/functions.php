@@ -273,3 +273,56 @@ function get_video_files_duration(array $files, bool $is_radio = false): array
 
     return $result;
 }
+
+/**
+ * Iterates from start_date to end_date, regardless of which one is first or last time-wise
+ *
+ * @param string $start_date
+ * @param string $end_date
+ * @return string
+ */
+function get_dates_in_range($start_date, $end_date)
+{
+    $tz = new DateTimeZone('Asia/Amman');
+    $start_date = Datetime::createFromFormat('Y-m-d H:i:s', $start_date, $tz);
+    $end_date = Datetime::createFromFormat('Y-m-d H:i:s', $end_date, $tz);
+    $diff = strtotime($end_date->format('Y-m-d'))
+            - strtotime($start_date->format('Y-m-d'));
+    $diff = ($diff / 3600 / 24);
+
+    yield ($current_date = $start_date->format('Y-m-d'));
+    while ($diff !== 0) {
+        $current_date = $start_date->modify(sprintf('%s days', $diff <=> 0))->format('Y-m-d');
+        $diff -= $diff <=> 0;
+
+        yield $current_date;
+    }
+}
+
+function time_diff_human_format($time)
+{
+
+    $time = time() - $time;
+    $time = $time < 1 ? 1 : $time;
+    $tokens = array (
+        31536000 => 'year',
+        2592000 => 'month',
+        604800 => 'week',
+        86400 => 'day',
+        3600 => 'hour',
+        60 => 'minute',
+        1 => 'second'
+    );
+
+    foreach ($tokens as $unit => $text) {
+        if ($time < $unit) continue;
+        $number_of_units = floor($time / $unit);
+
+        return sprintf(
+            '%s %s%s',
+            $number_of_units,
+            $text,
+            $number_of_units > 1 ? 's' : ''
+        );
+    }
+}
