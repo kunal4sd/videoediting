@@ -125,17 +125,27 @@ class Publication extends AbstractModule
             foreach ($paths_iterator as $stream_path) {
                 if (file_exists($stream_path)) {
 
-                    $handle = fopen($stream_path, "r");
-                    if ($handle) {
+                    $file_arr = file($stream_path);
+                    if (!empty($file_arr)) {
 
+                        $file_arr = array_reverse($file_arr);
                         $duration = 0.0;
-                        while (($line = fgets($handle)) !== false) {
+                        $filename = false;
+                        $rawVideoFile = false;
+                        foreach($file_arr as $line) {
 
                             $line = trim($line);
-                            if (strpos($line, '#EXTINF:') === 0) {
-                                $duration = str_replace('#EXTINF:', '', $line);
+                            if (
+                                strpos($line, '#EXTINF:') === 0
+                                && $filename !== false
+                                && $rawVideoFile !== false
+                            ) {
+                                $duration = str_replace(['#EXTINF:', ','], '', $line);
+                                $result[$publication_ar->id] = $rawVideoFile->set_length($duration)
+                                                                            ->build_end_datetime();
+                                break;
                             }
-                            elseif (strpos($line, '#') !== 0 && $duration > 0.0) {
+                            elseif (strpos($line, '#') !== 0 && $duration === 0.0) {
                                 $filename = basename($line);
                                 $details = get_file_details_from_path($filename);
                                 $sub_path = Datetime::createFromFormat(
@@ -143,7 +153,7 @@ class Publication extends AbstractModule
                                         $details[1]
                                     )->format('Y/m/d');
 
-                                $result[$publication_ar->id] = (new RawVideoFile())
+                                    $rawVideoFile = (new RawVideoFile())
                                     ->set_locations(
                                         sprintf(
                                             '%s/%s/%s/%s',
@@ -153,18 +163,11 @@ class Publication extends AbstractModule
                                             $filename
                                         )
                                     )
-                                    ->set_name($filename)
-                                    ->set_length($duration)
-                                    ->build_end_datetime();
-                                $duration = 0.0;
+                                    ->set_name($filename);
                             }
                         }
-                        fclose($handle);
                     }
-
-                    if ($result[$publication_ar->id] !== $default) {
-                        break;
-                    }
+                    break;
                 }
             }
         }
