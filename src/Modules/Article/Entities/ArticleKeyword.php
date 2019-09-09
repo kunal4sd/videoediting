@@ -14,6 +14,24 @@ class ArticleKeyword extends AbstractModule
 {
 
     /**
+     * @param int[] $article_ids
+     * @return ArticleKeywordAR[]
+     */
+    public function get_by_article_ids_media(array $article_ids): array
+    {
+        return (new ArticleKeywordDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->get_by_article_ids($article_ids);
+    }
+
+    /**
+     * @param int[] $article_ids
+     * @return ArticleKeywordAR[]
+     */
+    public function get_by_article_ids(array $article_ids): array
+    {
+        return (new ArticleKeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_article_ids($article_ids);
+    }
+
+    /**
      * @param int $article_id
      * @return ArticleKeywordAR[]
      */

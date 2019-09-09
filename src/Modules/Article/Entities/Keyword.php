@@ -31,7 +31,7 @@ class Keyword extends AbstractModule
 
     /**
      * @param int[] $ids
-     * @return KeywordAR[]
+     * @return KeywordAR[] [$keyword_ar->id => $keyword_ar]
      */
     public function get_by_ids_media(array $ids): array
     {
@@ -40,7 +40,7 @@ class Keyword extends AbstractModule
 
     /**
      * @param int[] $ids
-     * @return KeywordAR[]
+     * @return KeywordAR[] [$keyword_ar->id => $keyword_ar]
      */
     public function get_by_ids(array $ids): array
     {

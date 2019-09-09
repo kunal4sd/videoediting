@@ -110,7 +110,7 @@ class KeywordDB extends AbstractDatabase
 
     /**
      * @param int[] $id
-     * @return KeywordAR[]
+     * @return KeywordAR[] [id => KeywordAR]
      */
     public function get_by_ids(array $ids): array
     {
@@ -133,7 +133,7 @@ class KeywordDB extends AbstractDatabase
         );
 
         foreach($data as $row) {
-            $result[] = new KeywordAR($row);
+            $result[$row['id']] = new KeywordAR($row);
         }
 
         return $result;

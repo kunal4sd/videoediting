@@ -11,6 +11,42 @@ class ArticleKeywordDB extends AbstractDatabase
 {
 
     /**
+     * @param int[] $article_ids
+     * @return ArticleKeywordAR[]
+     */
+    public function get_by_article_ids(array $article_ids): array
+    {
+        $result = [];
+        if (empty($article_ids)) return $result;
+
+        $params = array_map(function($id) { return sprintf('id_%s', $id); }, $article_ids);
+        $data = $this->db->fetch_all(
+            sprintf(
+                "
+                    SELECT
+                        *
+                    FROM article_keyword
+                    WHERE 1
+                        AND article_id IN (:%s)
+                    GROUP BY
+                        id
+                    ORDER BY
+                        article_id,
+                        keyword_id
+                ",
+                implode(',:', $params)
+            ),
+            array_combine($params, $article_ids)
+        );
+
+        foreach($data as $row) {
+            $result[] = new ArticleKeywordAR($row);
+        }
+
+        return $result;
+    }
+
+    /**
      * @param int $id
      * @return ArticleKeywordAR[]
      */
