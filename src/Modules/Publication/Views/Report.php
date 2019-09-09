@@ -22,6 +22,8 @@ class Report extends AbstractModule
                 $publications_details,
                 'publication_id'
             );
+            $countries_ar = $this->entity_country->get_all();
+            $grouped_countries_ar = $this->entity_country->group_by_iso($countries_ar);
         }
         catch(Exception $e) {
             $this->logger->write($e);
@@ -31,7 +33,9 @@ class Report extends AbstractModule
             'page_title' => 'Publications Report',
             'page_name' => 'report',
             'channels' => $publications_active,
-            'types' => $this->entity_publication->get_types($publications_active)
+            'countries' => $grouped_countries_ar,
+            'types' => $this->entity_publication->get_types($publications_active),
+            'is_admin' => $this->entity_user->is_admin($this->session_user->get_user())
         ]);
     }
 }

@@ -17,7 +17,7 @@ class SameSessionId extends AbstractModule
 
         try {
 
-            $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type(
+            $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type_media(
                 $this->config->{MandatoryFields::USER_SESSIONS_MAX},
                 $this->session_user->get_user()->id,
                 UserActivity::LOGIN

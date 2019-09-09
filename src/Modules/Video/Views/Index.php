@@ -29,13 +29,13 @@ class Index extends AbstractModule
             );
 
             if (isset($args['activity_id'])) {
-                $user_activity_ar = $this->entity_user_activity->get_by_id_and_user(
+                $user_activity_ar = $this->entity_user_activity->get_by_id_and_user_media(
                     $args['activity_id'],
                     $this->session_user->get_user()->id
                 );
             }
             else {
-                $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type(
+                $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type_media(
                     1, $this->session_user->get_user()->id, UserActivity::PLAYLIST
                 );
                 $user_activity_ar = array_shift($user_activities_ar);

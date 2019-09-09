@@ -18,12 +18,12 @@ class Authenticate extends AbstractModule
         $result = [];
         $code = 200;
         try {
-            $user_ar = $this->entity_user->get_by_credentials(
+            $user_ar = $this->entity_user->get_by_credentials_media(
                 $request->getParam('username'),
                 $request->getParam('password')
             );
             $this->session_user->init_from_entity($user_ar);
-            $this->entity_user_activity->save(
+            $this->entity_user_activity->save_media(
                 new UserActivityAR([
                     'user_id' => $this->session_user->get_user()->id,
                     'publication_id' => 0,
@@ -73,14 +73,13 @@ class Authenticate extends AbstractModule
 
     private function delete_previous_sessions_files()
     {
-        $user_activities_ar = $this->entity_user_activity
-            ->get_by_user_and_type_since(
-                $this->session_user->get_user()->id,
-                date('Y-m-d H:i:s', strtotime('-2 months')),
-                UserActivity::PLAYLIST,
-                UserActivity::EPISODE,
-                UserActivity::CLIP
-            );
+        $user_activities_ar = $this->entity_user_activity->get_by_user_and_type_since_media(
+            $this->session_user->get_user()->id,
+            date('Y-m-d H:i:s', strtotime('-2 months')),
+            UserActivity::PLAYLIST,
+            UserActivity::EPISODE,
+            UserActivity::CLIP
+        );
 
         // remove latest playlist from array, so its files won't be deleted
         $latest_user_activity_ar = false;

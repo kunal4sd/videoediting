@@ -26,7 +26,7 @@ class GetPlaylist extends AbstractModule
 
             $result['playlists'] = $this->entity_playlist->get_playlists_for_output($request);
 
-            $this->entity_user_activity->save(new UserActivityAR(
+            $this->entity_user_activity->save_media(new UserActivityAR(
                 [
                     'user_id' => $this->session_user->get_user()->id,
                     'publication_id' => $request->getParam('publication'),

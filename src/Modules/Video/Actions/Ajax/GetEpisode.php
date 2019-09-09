@@ -50,7 +50,7 @@ class GetEpisode extends AbstractModule
                 }
 
                 $new_playlist_file = $this->entity_playlist->get_playlist_with_files($new_files);
-                $this->entity_user_activity->save(new UserActivityAR(
+                $this->entity_user_activity->save_media(new UserActivityAR(
                     [
                         'user_id' => $this->session_user->get_user()->id,
                         'publication_id' => 0,

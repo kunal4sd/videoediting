@@ -87,7 +87,7 @@ class GetMovie extends AbstractModule
             );
             $article_ar->id = $this->entity_article->save($article_ar);
 
-            $this->entity_user_activity->save(new UserActivityAR(
+            $this->entity_user_activity->save_media(new UserActivityAR(
                 [
                     'user_id' => $this->session_user->get_user()->id,
                     'publication_id' => $publication_id,
