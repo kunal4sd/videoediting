@@ -24,6 +24,18 @@ class Report extends AbstractModule
             );
             $countries_ar = $this->entity_country->get_all();
             $grouped_countries_ar = $this->entity_country->group_by_iso($countries_ar);
+            $grouped_latest_datetimes = $this->entity_publication->get_latest_stream_update(
+                $publications_active
+            );
+            $grouped_dates = [];
+            $grouped_times = [];
+            $grouped_times_since_update = [];
+            foreach($grouped_latest_datetimes as $publication_id => $latest_datetime) {
+                $unix = strtotime($latest_datetime);
+                $grouped_dates[$publication_id] = date('Y-m-d', $unix);
+                $grouped_times[$publication_id] = date('H:i:s', $unix);
+                $grouped_times_since_update[$publication_id] = time_diff_human_format($unix);
+            };
         }
         catch(Exception $e) {
             $this->logger->write($e);
@@ -34,6 +46,9 @@ class Report extends AbstractModule
             'page_name' => 'report',
             'channels' => $publications_active,
             'countries' => $grouped_countries_ar,
+            'dates' => $grouped_dates,
+            'times' => $grouped_times,
+            'times_since_update' => $grouped_times_since_update,
             'types' => $this->entity_publication->get_types($publications_active),
             'is_admin' => $this->entity_user->is_admin($this->session_user->get_user())
         ]);

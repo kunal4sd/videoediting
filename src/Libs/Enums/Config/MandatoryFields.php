@@ -13,4 +13,5 @@ class MandatoryFields
     const TEMPLATES_PATH = 'view.templates_path';
     const TWIG = 'view.twig';
     const USER_SESSIONS_MAX = 'user.sessions.max';
+    const SSH = 'ssh';
 }

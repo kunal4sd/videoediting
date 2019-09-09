@@ -158,9 +158,11 @@ class PlaylistMasterDisk extends AbstractModule
         $playlist_master_file = new PlaylistMasterFile($this->container);
         $start_date_unix = strtotime($start_date);
         $end_date_unix = strtotime($end_date);
+        $scan_start_date = date("Y-m-d H:i:s", $start_date_unix - Videos::STANDARD_SCANNING_PERIOD);
+        $scan_end_date = date("Y-m-d H:i:s", $end_date_unix + Videos::STANDARD_SCANNING_PERIOD);
         $files = [];
-        foreach($this->get_stream_playlist_paths($id, $start_date, $end_date) as $stream_path) {
 
+        foreach($this->get_stream_playlist_paths($id, $scan_start_date, $scan_end_date) as $stream_path) {
             if (file_exists($stream_path)) {
 
                 $handle = fopen($stream_path, "r");
@@ -177,7 +179,8 @@ class PlaylistMasterDisk extends AbstractModule
                             $filename = basename($line);
                             $details = get_file_details_from_path($filename);
                             $sub_path = Datetime::createFromFormat(
-                                    'Y_m_d-H:i:s', $details[1]
+                                    'Y_m_d-H:i:s',
+                                    $details[1]
                                 )->format('Y/m/d');
 
                             $raw_video_file = (new RawVideoFile())
@@ -235,27 +238,17 @@ class PlaylistMasterDisk extends AbstractModule
         return $playlist_master_file;
     }
 
-    private function get_stream_playlist_paths($id, $start_date, $end_date)
+    public static function get_stream_playlist_paths($id, $start_date, $end_date)
     {
-        $tz = new DateTimeZone('Asia/Amman');
-        $start_date = Datetime::createFromFormat('Y-m-d H:i:s', $start_date, $tz);
-        $end_date = Datetime::createFromFormat('Y-m-d H:i:s', $end_date, $tz);
-        $diff = strtotime($end_date->format('Y-m-d')) - strtotime($start_date->format('Y-m-d'));
-        $diff = abs($diff / 3600 / 24);
-
-        do {
+        foreach(get_dates_in_range($start_date, $end_date) as $current_date) {
             yield sprintf(
                 '%s/%s/%s.%s.m3u8',
                 Videos::RAW_VIDEO_PATH,
                 $id,
                 $id,
-                $end_date
-                    ->modify(sprintf('-%s days', $diff))
-                    ->format('Y_m_d')
+                str_replace('-', '_', $current_date)
             );
-            $diff--;
         }
-        while($diff > 0);
     }
 
     /**
