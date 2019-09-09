@@ -7,6 +7,7 @@ use App\Libs\Enums\Config\MandatoryFields;
 use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use phpseclib\Net\SSH2;
 use \Exception;
 
 class RestartFfmpeg extends AbstractModule
