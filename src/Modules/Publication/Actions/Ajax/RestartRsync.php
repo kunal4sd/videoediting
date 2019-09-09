@@ -22,15 +22,15 @@ class RestartRsync extends AbstractModule
         try {
             $publication_ar = $this->entity_publication->get_by_id($publication_id);
             if ((int) $publication_ar->id) {
+                $cmd = sprintf(
+                    "ps aux | grep rsync | grep %s | awk '{print $2;}' | xargs kill -9",
+                    (int) $publication_ar->id
+                );
+
+                $this->logger->write(new Exception($cmd, 200));
                 foreach($servers as $server) {
                     $connection = ssh2_connect($server['address'], $server['port']);
-                    ssh2_exec(
-                        $connection,
-                        sprintf(
-                            "ps aux | grep rsync | grep %s | awk '{print $2;}' | xargs kill -9",
-                            (int) $publication_ar->id
-                        )
-                    );
+                    ssh2_exec($connection, $cmd);
                     ssh2_disconnect($connection);
                 }
             }
