@@ -7,7 +7,6 @@ use App\Libs\Enums\Config\MandatoryFields;
 use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use phpseclib\Net\SSH2;
 use \Exception;
 
 class RestartFfmpeg extends AbstractModule
@@ -31,15 +30,15 @@ class RestartFfmpeg extends AbstractModule
                 $this->logger->write(new Exception($cmd, 200));
                 foreach($servers as $server) {
 
-                    $ssh = new SSH2($server['host'], $server['port']);
-                    if (!$ssh->login($server['user'])) {
-                        $result['message'] = 'Login Failed';
-                        $code = 500;
-                    }
-                    else{
-                        $result['message'] = $ssh->exec($cmd);
-                        $this->logger->write(new Exception("output: " . $result['message'], 200));
-                    }
+                    $result['message'] = shell_exec(
+                        sprintf(
+                            'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet %s@%s -p %s %s 2>&1',
+                            $server['user'],
+                            $server['host'],
+                            $server['port'],
+                            $cmd
+                        )
+                    );
                 }
             }
         }
