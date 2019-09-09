@@ -28,7 +28,7 @@ class ArticleKeyword extends AbstractModule
      */
     public function get_by_article_id(int $article_id): array
     {
-        return (new ArticleKeywordDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->get_by_article_id($article_id);
+        return (new ArticleKeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_article_id($article_id);
     }
 
     /**

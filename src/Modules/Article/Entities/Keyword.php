@@ -15,18 +15,18 @@ class Keyword extends AbstractModule
      * @param string $name
      * @return KeywordAR[]
      */
-    public function search_by_name($name)
+    public function search_by_name_media($name)
     {
-        return (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->search_by_name($name);
+        return (new KeywordDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->search_by_name_media($name);
     }
 
     /**
      * @param string $name
      * @return KeywordAR[]
      */
-    public function search_by_name_media($name)
+    public function search_by_name($name)
     {
-        return (new KeywordDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->search_by_name_media($name);
+        return (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->search_by_name($name);
     }
 
     /**
