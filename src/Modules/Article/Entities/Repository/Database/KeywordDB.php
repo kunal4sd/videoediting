@@ -118,18 +118,7 @@ class KeywordDB extends AbstractDatabase
         if (empty($ids)) return $result;
 
         $params = array_map(function($id) { return sprintf('id_%s', $id); }, $ids);
-        throw new \Exception(sprintf(
-            "
-                SELECT
-                    *
-                FROM keyword
-                WHERE 1
-                    AND id IN (:%s)
-            ",
-            implode(',:', $params)
-        ), 200);
-
-        $data = $this->db->fetch(
+        $data = $this->db->fetch_all(
             sprintf(
                 "
                     SELECT

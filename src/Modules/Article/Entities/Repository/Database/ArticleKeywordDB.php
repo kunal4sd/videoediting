@@ -17,7 +17,7 @@ class ArticleKeywordDB extends AbstractDatabase
     public function get_by_article_id(int $article_id): array
     {
         $result = [];
-        $data = $this->db->fetch(
+        $data = $this->db->fetch_all(
             "
                 SELECT
                     *
