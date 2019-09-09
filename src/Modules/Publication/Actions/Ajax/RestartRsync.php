@@ -3,10 +3,11 @@
 namespace App\Modules\Publication\Actions\Ajax;
 
 use App\Libs\Json;
-use App\Libs\Enums\Config\MandatoryFields;
 use App\Modules\Abstracts\AbstractModule;
+use App\Libs\Enums\Config\MandatoryFields;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use phpseclib\Net\SSH2;
 use \Exception;
 
 class RestartRsync extends AbstractModule
@@ -29,9 +30,16 @@ class RestartRsync extends AbstractModule
 
                 $this->logger->write(new Exception($cmd, 200));
                 foreach($servers as $server) {
-                    $connection = ssh2_connect($server['address'], $server['port']);
-                    ssh2_exec($connection, $cmd);
-                    ssh2_disconnect($connection);
+
+                    $ssh = new SSH2($server['host'], $server['port']);
+                    if (!$ssh->login($server['user'])) {
+                        $result['message'] = 'Login Failed';
+                        $code = 500;
+                    }
+                    else{
+                        $result['message'] = $ssh->exec($cmd);
+                        $this->logger->write(new Exception("output: " . $result['message'], 200));
+                    }
                 }
             }
         }

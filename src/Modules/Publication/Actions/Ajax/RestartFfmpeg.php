@@ -29,9 +29,16 @@ class RestartFfmpeg extends AbstractModule
 
                 $this->logger->write(new Exception($cmd, 200));
                 foreach($servers as $server) {
-                    $connection = ssh2_connect($server['address'], $server['port']);
-                    ssh2_exec($connection, $cmd);
-                    ssh2_disconnect($connection);
+
+                    $ssh = new SSH2($server['host'], $server['port']);
+                    if (!$ssh->login($server['user'])) {
+                        $result['message'] = 'Login Failed';
+                        $code = 500;
+                    }
+                    else{
+                        $result['message'] = $ssh->exec($cmd);
+                        $this->logger->write(new Exception("output: " . $result['message'], 200));
+                    }
                 }
             }
         }
