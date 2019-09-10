@@ -162,20 +162,35 @@ class PlaylistMasterDisk extends AbstractModule
         $scan_end_date = date("Y-m-d H:i:s", $end_date_unix + Videos::STANDARD_SCANNING_PERIOD);
         $files = [];
 
-        foreach($this->get_stream_playlist_paths($id, $scan_start_date, $scan_end_date) as $stream_path) {
+        foreach ($this->get_stream_playlist_paths($id, $scan_start_date, $scan_end_date) as $stream_path) {
             if (file_exists($stream_path)) {
 
-                $handle = fopen($stream_path, "r");
-                if ($handle) {
+                $file_arr = file($stream_path);
+                if (!empty($file_arr)) {
 
                     $duration = 0.0;
-                    while (($line = fgets($handle)) !== false) {
+                    $length = count($file_arr);
+                    $is_new_start = true;
+                    $is_new_idx = true;
+                    $max_reverts = 3;
+                    $current_revert = 1;
+                    $base_step_divider = 4;
+                    $previous_starting_points = [0];
+                    for ($idx = floor($length / $base_step_divider); $idx < $length; $idx++) {
 
-                        $line = trim($line);
-                        if (strpos($line, '#EXTINF:') === 0) {
+                        $line = trim($file_arr[$idx]);
+                        $is_duration = strpos($line, '#EXTINF:') === 0;
+                        $is_file_path = strpos($line, '#') !== 0 && $duration > 0.0;
+
+                        if ($idx && $is_new_idx && $is_new_start && !$is_duration) {
+                            $idx -= 2;
+                            continue;
+                        }
+
+                        if ($is_duration) {
                             $duration = str_replace(['#EXTINF:', ','], '', $line);
                         }
-                        elseif (strpos($line, '#') !== 0 && $duration > 0.0) {
+                        elseif ($is_file_path) {
                             $filename = basename($line);
                             $details = get_file_details_from_path($filename);
                             $sub_path = Datetime::createFromFormat(
@@ -200,15 +215,38 @@ class PlaylistMasterDisk extends AbstractModule
                             $start_datetime = $raw_video_file->build_start_datetime();
                             $end_datetime = $raw_video_file->build_end_datetime();
                             if (strtotime($end_datetime) >= $start_date_unix) {
-                                if (strtotime($start_datetime) <= $end_date_unix) {
+                                if ($is_new_start && !empty($previous_starting_points)) {
+                                    $idx = array_pop($previous_starting_points);
+                                    if ($idx && $current_revert <= $max_reverts) {
+                                        $current_revert++;
+                                        $previous_starting_points[] = $idx;
+                                        $idx += floor(
+                                            $length / ( $base_step_divider + $current_revert )
+                                        );
+                                    }
+                                    $is_new_idx = true;
+                                    continue;
+                                }
+                                elseif (strtotime($start_datetime) <= $end_date_unix) {
                                     $files[] = $raw_video_file;
                                 }
                                 else break;
                             }
+                            elseif ($is_new_start && $current_revert === 1) {
+                                $next_idx = $idx + floor($length / ( $base_step_divider + $current_revert ));
+                                if ($next_idx < $length) {
+                                    $previous_starting_points[] = $idx;
+                                    $idx = $next_idx;
+                                    $is_new_idx = true;
+                                    continue;
+                                }
+                            }
                             $duration = 0.0;
+                            $is_new_start = false;
+                            $current_revert = 1;
                         }
+                        $is_new_idx = false;
                     }
-                    fclose($handle);
                 }
             }
         }
