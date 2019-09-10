@@ -36,8 +36,8 @@
                             <td>
                                 <div class="btn-toolbar" role="toolbar">
                                     <div class="btn-group mr-2 mx-auto" role="group">
-                                        <button name="restart-process-btn" type="button" class="btn btn-warning" data-action-url="{{ base_url() }}{{ path_for('publication.action.restart_rsync') }}" data-process="rsync" data-id="{{ channel.id }}">rsync</button>
-                                        <button name="restart-process-btn" type="button" class="btn btn-danger" data-action-url="{{ base_url() }}{{ path_for('publication.action.restart_ffmpeg') }}" data-process="ffmpeg" data-id="{{ channel.id }}">ffmpeg</button>
+                                        <button name="restart-process-btn" type="button" class="btn btn-warning" data-action-url="{{ base_url() }}{{ path_for('publication.action.restart_rsync') }}" data-process="rsync" data-id="{{ channel.id }}" data-toggle="modal" data-target="#publication-modal-restart-process">rsync</button>
+                                        <button name="restart-process-btn" type="button" class="btn btn-danger" data-action-url="{{ base_url() }}{{ path_for('publication.action.restart_ffmpeg') }}" data-process="ffmpeg" data-id="{{ channel.id }}" data-toggle="modal" data-target="#publication-modal-restart-process">ffmpeg</button>
                                     </div>
                                 </div>
                             </td>
@@ -46,6 +46,47 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="row mt-4">
+                <div class="col-sm-12">
+                {% for process, servers in processes %}
+                    {% if loop.index0 is divisible by(2) %}
+                        {% set color = 'warning' %}
+                    {% else %}
+                        {% set color = 'danger' %}
+                    {% endif %}
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-{{ color }} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ process }}
+                        </button>
+                        <div class="dropdown-menu">
+                            {% for server in servers %}
+                                {% if loop.index0 %} <div class="dropdown-divider"></div> {% endif %}
+                                <button name="restart-process-btn" type="button" class="btn dropdown-item btn-{{ color }}" data-action-url="{{ base_url() }}{{ path_for('publication.action.restart_' ~ process) }}" data-process="{{ process }}" data-id="0" data-server="{{ server.name }}" data-toggle="modal" data-target="#publication-modal-restart-process">Restart All On Server <b>{{ server.name }}</b></button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+            <div class="modal fade" id="publication-modal-restart-process" tabindex="-1" role="dialog" aria-labelledby="publication-modal-restart-process-body" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="publication-modal-restart-process-body">Restart Process</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to restart process?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" name="restart-btn" class="btn btn-primary"><span class="oi oi-reload"></span> Restart</button>
+                    </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
