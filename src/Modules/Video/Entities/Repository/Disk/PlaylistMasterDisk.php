@@ -173,7 +173,7 @@ class PlaylistMasterDisk extends AbstractModule
 
                         $line = trim($line);
                         if (strpos($line, '#EXTINF:') === 0) {
-                            $duration = str_replace('#EXTINF:', '', $line);
+                            $duration = str_replace(['#EXTINF:', ','], '', $line);
                         }
                         elseif (strpos($line, '#') !== 0 && $duration > 0.0) {
                             $filename = basename($line);
