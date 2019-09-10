@@ -11,7 +11,7 @@ use App\Libs\Enums\UserActivity;
 use App\Modules\Abstracts\AbstractModule;
 use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use App\Modules\Video\Entities\ActiveRecords\RemoteFileAR;
-use App\Modules\Article\Entities\ActiveRecords\IssueAR;
+use App\Modules\Publication\Entities\ActiveRecords\IssueAR;
 use App\Modules\Article\Entities\ActiveRecords\ArticleOneAR;
 use App\Modules\Article\Entities\ActiveRecords\ArticleKeywordAR;
 use App\Modules\Video\Entities\Files\VideoFile;
