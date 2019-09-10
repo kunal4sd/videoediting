@@ -10,7 +10,6 @@
                 {{ csrf.fields | raw }}
                 <thead>
                     <tr>
-                        <th class="text-left">#</th>
                         <th class="text-left">ID</th>
                         <th class="text-left">Channel Name</th>
                         <th class="text-left">Country</th>
@@ -26,7 +25,6 @@
                 <tbody id="publications-list-holder">
                     {% for channel in channels %}
                         <tr>
-                            <td>{{ loop.index }}</td>
                             <td>{{ channel.id }}</td>
                             <td>{{ channel.name_en }}</td>
                             <td>{{ countries[channel.country] ? countries[channel.country].name_en : channel.country }}</td>

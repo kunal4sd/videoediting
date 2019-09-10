@@ -1,9 +1,9 @@
 $( function() {
 
     var table = $('#publications-report-table');
-    table.DataTable({
-        select: false
-    });
+    table.DataTable({select: false})
+        .order([4, 'asc'], [5, 'asc'])
+        .draw();
 
     $('button[name="restart-process-btn"]').on('click', function() {
 
