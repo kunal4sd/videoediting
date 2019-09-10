@@ -228,6 +228,10 @@ class PlaylistMasterDisk extends AbstractModule
                                     continue;
                                 }
                                 elseif (strtotime($start_datetime) <= $end_date_unix) {
+                                    $previous_file = array_pop($files);
+                                    if ($previous_file->get_name() !== $raw_video_file->get_name()) {
+                                        $files[] = $previous_file;
+                                    }
                                     $files[] = $raw_video_file;
                                 }
                                 else break;
