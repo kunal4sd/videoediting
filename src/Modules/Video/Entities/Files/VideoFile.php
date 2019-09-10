@@ -122,17 +122,8 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
                 $tmp_filename,
                 $this->get_path()
             );
-            $this->container->logger->write(new Exception(
-                $cmd,
-                200
-            ));
 
             $output = shell_exec($cmd);
-            $this->container->logger->write(new Exception(
-                $output,
-                200
-            ));
-
             unlink($tmp_filename);
         }
 
