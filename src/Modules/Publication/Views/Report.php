@@ -2,6 +2,7 @@
 
 namespace App\Modules\Publication\Views;
 
+use App\Libs\Enums\Config\MandatoryFields;
 use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -50,7 +51,8 @@ class Report extends AbstractModule
             'times' => $grouped_times,
             'times_since_update' => $grouped_times_since_update,
             'types' => $this->entity_publication->get_types($publications_active),
-            'is_admin' => $this->entity_user->is_admin($this->session_user->get_user())
+            'is_admin' => $this->entity_user->is_admin($this->session_user->get_user()),
+            'processes' => $this->config->{MandatoryFields::SSH}
         ]);
     }
 }

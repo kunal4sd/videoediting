@@ -2,6 +2,7 @@
 
 namespace App\Modules\Publication\Middleware\Validation;
 
+use App\Libs\Enums\Config\MandatoryFields;
 use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -13,7 +14,8 @@ class RestartProcess extends AbstractModule
     {
 
         $validation = $this->validator->validate($request, [
-            'id' => v::notEmpty()->intVal(),
+            'id' => v::notEmpty()::intVal(),
+            'server' => v::stringType(),
             'process' => v::notEmpty()->stringType(),
             'ajax' => v::trueVal()
         ]);
@@ -29,8 +31,21 @@ class RestartProcess extends AbstractModule
         ];
 
         if (!in_array($process, $valid_processes)) {
-            $validation['process'] = ['unrecognized process'];
+            $validation['process'] = ['provided unrecognized process name'];
         }
+
+        $server = $request->getParam('server');
+        if ($request->getParam('id') === null && !strlen($server)) {
+            $validation['id'] = ['must be defined'];
+            $validation['server'] = ['must be defined'];
+        }
+
+        $servers = $this->config->{MandatoryFields::SSH}[$process];
+        if (
+            strlen($server)
+            && !in_array($server, array_map(function($server) { return $server['name']; }, $servers))
+        ) $validation['server'] = ['provided unrecognized server name'];
+
         if (count($validation)) return $this->validation_failed($validation, $response);
 
         return $next($request, $response);
