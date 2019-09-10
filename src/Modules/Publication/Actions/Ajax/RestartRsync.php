@@ -7,6 +7,7 @@ use App\Modules\Abstracts\AbstractModule;
 use App\Libs\Enums\Config\MandatoryFields;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use phpseclib\Net\SSH2;
 use \Exception;
 
 class RestartRsync extends AbstractModule
@@ -17,26 +18,31 @@ class RestartRsync extends AbstractModule
 
         $servers = $this->config->{MandatoryFields::SSH}['rsync'] ?: [];
         $result = [];
-        $code = 200;
+        $code = 400;
         $publication_id = (int) $request->getParam('id');
         try {
             $publication_ar = $this->entity_publication->get_by_id($publication_id);
             if ((int) $publication_ar->id) {
                 $kill_cmd = sprintf(
-                    'ps aux | grep rsync | grep %s | awk "{print $2;}" | xargs kill -9',
+                    "ps aux | grep rsync | grep %s | awk '{print \$2;}'' | xargs kill -9",
                     (int) $publication_ar->id
                 );
 
+                $this->logger->write(new Exception($kill_cmd, 200));
+                $code = 0;
                 foreach($servers as $server) {
-                    $cmd = sprintf(
-                        "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o LogLevel=quiet %s@%s -p %s '%s'",
-                        $server['user'],
-                        $server['host'],
-                        $server['port'],
-                        $kill_cmd
-                    );
-                    $this->logger->write(new Exception($cmd, 200));
-                    $result['message'] = shell_exec($cmd);
+
+                    $ssh = new SSH2($server['host'], $server['port']);
+                    if (!$ssh->login($server['user'], $server['password'])) {
+                        if ($code === 0) {
+                            $code = 500;
+                            $result['message'][] = 'Login Failed';
+                        }
+                    }
+                    else {
+                        $code = 200;
+                        $result['message'][] = $ssh->exec($kill_cmd);
+                    }
                 }
             }
         }
@@ -44,6 +50,17 @@ class RestartRsync extends AbstractModule
             $this->logger->write($e);
             $result['message'] = 'Error encountered while trying to restart rsync process';
             $code = $e->getCode();
+        }
+        $result['message'] = array_filter($result['message']);
+
+        if (!empty($result['message'])) {
+            $result['message'] = implode('; ', $result['message']);
+        }
+        elseif ($code === 200) {
+            $result['message'] = 'Command executed successfully';
+        }
+        else {
+            $result['message'] = 'Failed launching command';
         }
 
         return Json::build($response, $result, $code);
