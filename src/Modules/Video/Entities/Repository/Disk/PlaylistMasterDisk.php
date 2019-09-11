@@ -161,28 +161,73 @@ class PlaylistMasterDisk extends AbstractModule
         $scan_start_date = date("Y-m-d H:i:s", $start_date_unix - Videos::STANDARD_SCANNING_PERIOD);
         $scan_end_date = date("Y-m-d H:i:s", $end_date_unix + Videos::STANDARD_SCANNING_PERIOD);
         $files = [];
+        $jump_steps = [
+            28800, // 8 hours
+            14400, // 4 hours
+            7200, // 2 hours
+            3600, // 1 hours
+            1800, // 30 min
+            600, // 10 min
+            300 // 5 min
+        ];
 
-        foreach ($this->get_stream_playlist_paths($id, $scan_start_date, $scan_end_date) as $stream_path) {
+        foreach (get_dates_in_range($scan_start_date, $scan_end_date) as $idx_range => $current_date) {
+
+            $stream_path = sprintf(
+                '%s/%s/%s.%s.m3u8',
+                Videos::RAW_VIDEO_PATH,
+                $id,
+                $id,
+                str_replace('-', '_', $current_date)
+            );
+
             if (file_exists($stream_path)) {
 
                 $file_arr = file($stream_path);
                 if (!empty($file_arr)) {
 
                     $duration = 0.0;
-                    $length = count($file_arr);
-                    $is_new_start = true;
-                    $is_new_idx = true;
-                    $max_reverts = 3;
-                    $current_revert = 1;
-                    $base_step_divider = 4;
-                    $previous_starting_points = [0];
-                    for ($idx = floor($length / $base_step_divider); $idx < $length; $idx++) {
+                    $stream_playlist_length = count($file_arr);
+                    $stream_playlist_headers_length = 4;
+                    $current_start_unix = $idx_range
+                        ? strtotime($current_date)
+                        : $start_date_unix - Videos::STANDARD_SCANNING_PERIOD;
+                    ;
+                    $start_date_seconds_since_midnight = (
+                        date('H', $current_start_unix) * 3600
+                        + date('i', $current_start_unix) * 60
+                        + date('s', $current_start_unix)
+                    );
+                    $current_date_seconds_since_midnight = (
+                        $current_date === date('Y-m-d')
+                        ? (date('H') * 3600 + date('i') * 60 + date('s'))
+                        : 24 * 3600
+                    );
+                    $pct = $idx_range
+                        ? 0
+                        : $start_date_seconds_since_midnight / $current_date_seconds_since_midnight;
+                    $start_approximation = floor(
+                        ($stream_playlist_length - $stream_playlist_headers_length) * $pct
+                    );
+                    $no_of_idx_per_second = $start_approximation
+                        / (
+                            $current_date_seconds_since_midnight
+                            - $start_date_seconds_since_midnight
+                        );
+                    $start_approximation = max(0, $start_approximation);
+                    $is_new_start = $idx_range === 0;
+                    $is_idx_modified = true;
+                    $current_jump_step = 0;
+                    $can_jump = true;
+                    for ($idx = $start_approximation; $idx < $stream_playlist_length; $idx++) {
+
+                        if (!isset($file_arr[$idx])) break;
 
                         $line = trim($file_arr[$idx]);
                         $is_duration = strpos($line, '#EXTINF:') === 0;
                         $is_file_path = strpos($line, '#') !== 0 && $duration > 0.0;
 
-                        if ($idx && $is_new_idx && $is_new_start && !$is_duration) {
+                        if ($idx && $is_idx_modified && $is_new_start && !$is_duration) {
                             $idx -= 2;
                             continue;
                         }
@@ -214,17 +259,26 @@ class PlaylistMasterDisk extends AbstractModule
 
                             $start_datetime = $raw_video_file->build_start_datetime();
                             $end_datetime = $raw_video_file->build_end_datetime();
+
+                            // file is inside interval
                             if (strtotime($end_datetime) >= $start_date_unix) {
-                                if ($is_new_start && !empty($previous_starting_points)) {
-                                    $idx = array_pop($previous_starting_points);
-                                    if ($idx && $current_revert <= $max_reverts) {
-                                        $current_revert++;
-                                        $previous_starting_points[] = $idx;
-                                        $idx += floor(
-                                            $length / ( $base_step_divider + $current_revert )
-                                        );
+
+                                // just jumped directly inside the interval
+                                // must jump back, outside of it if possible
+                                if ($is_new_start) {
+                                    $distance_to_target_in_seconds = abs($start_date_unix - strtotime($start_datetime));
+                                    $reversed_jump_steps = array_reverse($jump_steps);
+                                    foreach($reversed_jump_steps as $idx_step => $step) {
+                                        $current_jump_step = $idx_step;
+                                        if ($step > $distance_to_target_in_seconds) break;
                                     }
-                                    $is_new_idx = true;
+                                    $next_idx = max(0, floor($idx - (
+                                            $reversed_jump_steps[$current_jump_step]
+                                            / $no_of_idx_per_second
+                                        )
+                                    ));
+                                    $idx = $next_idx - 1;
+                                    $is_idx_modified = true;
                                     continue;
                                 }
                                 elseif (strtotime($start_datetime) <= $end_date_unix) {
@@ -239,20 +293,42 @@ class PlaylistMasterDisk extends AbstractModule
                                 }
                                 else break;
                             }
-                            elseif ($is_new_start && $current_revert === 1) {
-                                $next_idx = $idx + floor($length / ( $base_step_divider + $current_revert ));
-                                if ($next_idx < $length) {
-                                    $previous_starting_points[] = $idx;
-                                    $idx = $next_idx;
-                                    $is_new_idx = true;
-                                    continue;
+
+                            // file is outside of the interval
+                            // try to jump closer to the beginning of the interval
+                            elseif ($is_new_start && $can_jump) {
+                                $found_jump = false;
+                                $distance_to_target_in_seconds = abs($start_date_unix - strtotime($end_datetime));
+                                foreach($jump_steps as $idx_step => $step) {
+                                    if ($step > $distance_to_target_in_seconds) continue;
+                                    $found_jump = true;
+                                    $current_jump_step = $idx_step;
+                                    break;
                                 }
+
+                                if ($found_jump) {
+                                    $next_idx = floor($idx + (
+                                        $jump_steps[$current_jump_step] / $no_of_idx_per_second
+                                    ));
+                                    if ($next_idx < $stream_playlist_length) {
+                                        $idx = $next_idx - 1;
+                                        $is_idx_modified = true;
+                                        continue;
+                                    }
+
+                                    // this should never happen
+                                    // and if it does it means there's something very wrong
+                                    // so just stop jumping and walk normally
+                                    else $can_jump = false;
+                                }
+
+                                // jumping distance is too small, so just walk
+                                else $can_jump = false;
                             }
                             $duration = 0.0;
                             $is_new_start = false;
-                            $current_revert = 1;
                         }
-                        $is_new_idx = false;
+                        $is_idx_modified = false;
                     }
                 }
             }
