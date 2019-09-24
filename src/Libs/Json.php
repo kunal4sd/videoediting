@@ -10,12 +10,14 @@ class Json
     const JSON_RESPONSE_OUTPUT_FIELDS_SUCCESS = [
         'success',
         'result',
-        'message'
+        'message',
+        'code'
     ];
 
     const JSON_RESPONSE_OUTPUT_FIELDS_FAIL = [
         'success',
-        'message'
+        'message',
+        'code'
     ];
 
     public static function build(
@@ -31,20 +33,16 @@ class Json
                 $message = $data['message'];
                 unset($data['message']);
             }
-            $response_array = self::response_success(true, $data, $message);
+            $response_array = self::response_success(true, $data, $message, $code);
         }
         else {
-            $response_array = self::response_fail(false, $data);
+            $response_array = self::response_fail(false, $data, $code);
         }
 
-        return $response
-            ->withHeader('Content-type', 'application/json')
-            ->withStatus($code)
-            ->write(json_encode($response_array))
-            ;
+        return $response->withJson($response_array, $code);
     }
 
-    private static function response_success($success, $data, $message)
+    private static function response_success($success, $data, $message, $code)
     {
 
         return array_combine(
@@ -52,19 +50,21 @@ class Json
             [
                 $success,
                 $data,
-                $message
+                $message,
+                $code
             ]
         );
     }
 
-    private static function response_fail($success, $data)
+    private static function response_fail($success, $data, $code)
     {
 
         return array_combine(
             self::JSON_RESPONSE_OUTPUT_FIELDS_FAIL,
             [
                 $success,
-                $data
+                $data,
+                $code
             ]
         );
     }
