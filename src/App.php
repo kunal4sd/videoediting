@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Libs\Json;
 use App\Libs\Config;
 use App\Modules\Core\CoreServiceProvider;
 use App\Modules\User\UserServiceProvider;
@@ -78,19 +79,28 @@ class App
         $container['notFoundHandler'] = function(&$container) {
             return function ($request, $response, $exception = null) use (&$container) {
 
-                if ($exception === null) {
-                    $exception = new Exception(
-                        'URL not found: ' . $request->getUri()->__tostring(),
-                        404
-                    );
-                }
-                $container->logger->write($exception);
+                $url = $request->getUri()->__tostring();
+                $extension = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
+                if (!strlen($extension)) {
+                    if ($exception === null) {
+                        $exception = new Exception(
+                            'URL not found: ' . $url,
+                            404
+                        );
+                    }
+                    $container->logger->write($exception);
 
-                return $container->view->render(
-                        $response,
-                        'errors/404.twig',
-                        []
-                    )->withStatus(404);
+                    return $container->view->render(
+                            $response,
+                            'errors/404.twig',
+                            []
+                        )->withStatus(404);
+                }
+                else {
+                    return Json::build($response, [
+                        'url' => $url
+                    ], 404);
+                }
             };
         };
     }
