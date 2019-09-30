@@ -14,22 +14,17 @@ class SameSessionId extends AbstractModule
 {
     public function __invoke(Request $request, Response $response, $next)
     {
+        $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type_media(
+            $this->config->{MandatoryFields::USER_SESSIONS_MAX},
+            $this->session_user->get_user()->id,
+            UserActivity::LOGIN
+        );
 
-        try {
-
-            $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type_media(
-                $this->config->{MandatoryFields::USER_SESSIONS_MAX},
-                $this->session_user->get_user()->id,
-                UserActivity::LOGIN
-            );
-
-            foreach($user_activities_ar as $user_activity_ar) {
-                if ($user_activity_ar->description === session_id()) {
-                    return $next($request, $response);
-                }
+        foreach($user_activities_ar as $user_activity_ar) {
+            if ($user_activity_ar->description === session_id()) {
+                return $next($request, $response);
             }
         }
-        catch(Exception $e) {}
 
         if ($request->getParam('ajax')) {
             return Json::build(

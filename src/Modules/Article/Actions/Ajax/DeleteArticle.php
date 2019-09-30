@@ -21,9 +21,12 @@ class DeleteArticle extends AbstractModule
             $result['message'] = 'Article deleted successfully';
         }
         catch(Exception $e) {
-            $this->logger->write($e);
+            $code = 500;
+            $this->logger->write(new Exception(
+                $e->getMessage(),
+                $code
+            ));
             $result['message'] = 'Error encountered while trying to delete article';
-            $code = $e->getCode();
         }
 
         return Json::build($response, $result, $code);

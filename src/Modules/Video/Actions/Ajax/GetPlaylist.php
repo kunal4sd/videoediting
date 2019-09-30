@@ -48,17 +48,15 @@ class GetPlaylist extends AbstractModule
             }
         }
         catch(Exception $e) {
-            $this->logger->write(
-                new Exception(
-                    sprintf(
-                        'Failed generating the playlist: %s',
-                        print_r($e->getMessage(), true)
-                    ),
-                    $e->getCode()
-                )
-            );
+            $code = 500;
+            $this->logger->write(new Exception(
+                sprintf(
+                    'Failed generating the playlist: %s',
+                    print_r($e->getMessage(), true)
+                ),
+                $code
+            ));
             $result['message'] = $e->getMessage();
-            $code = $e->getCode();
         }
 
 

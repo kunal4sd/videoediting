@@ -26,9 +26,12 @@ class SearchKeyword extends AbstractModule
             }
         }
         catch(Exception $e) {
-            $this->logger->write($e);
-            $result['message'] = sprintf('%s (%s)', $e->getMessage(), $e->getCode());
             $code = 500;
+            $this->logger->write(new Exception(
+                $e->getMessage(),
+                $code
+            ));
+            $result['message'] = 'Unexpected error.';
         }
 
         return Json::build($response, $result, $code);
