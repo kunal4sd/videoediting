@@ -72,7 +72,7 @@ $( function() {
         movies_holder.find('button[name="download-btn"]').unbind().on('click', function(e) {
             window.location.href = $(this).attr('data-download');
         });
-        modal_delete_movie.on('show.bs.modal', function(e) {
+        modal_delete_movie.unbind().on('show.bs.modal', function(e) {
             var triggerButton = $(e.relatedTarget);
             modal_delete_movie.unbind('click').on('click', 'button[name="delete-btn"]', function(e) {
                 var url = triggerButton.attr('data-action-url');

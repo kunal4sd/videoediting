@@ -104,7 +104,7 @@ $( function() {
         return new_element
     };
     var register_actions = function() {
-        movie_modal.on('show.bs.modal', function(e) {
+        movie_modal.unbind().on('show.bs.modal', function(e) {
 
             var btn = $(e.relatedTarget);
             var this_holder = btn.closest('tr');
@@ -132,7 +132,7 @@ $( function() {
         list_holder.unbind('click').on('click', 'button[name="download-btn"]', function(e) {
             window.location.href = $(this).attr('data-download');
         });
-        modal_delete_movie.on('show.bs.modal', function(e) {
+        modal_delete_movie.unbind().on('show.bs.modal', function(e) {
             var triggerButton = $(e.relatedTarget);
             modal_delete_movie.unbind('click').on('click', 'button[name="delete-btn"]', function(e) {
                 var url = triggerButton.attr('data-action-url');

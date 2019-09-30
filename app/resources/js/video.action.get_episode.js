@@ -62,7 +62,6 @@ $( function() {
     form_get_episode.on('submit', function(e) {
         e.preventDefault();
 
-
         if (!is_loading) {
 
             is_loading = true;
