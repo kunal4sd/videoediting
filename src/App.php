@@ -34,7 +34,20 @@ class App
 
     public function run()
     {
+        $start_time = microtime(true);
         $this->slim->run();
+        $execution_time = (microtime(true) - $start_time) / 60;
+
+        if ($execution_time > 1.0) {
+            $container = $this->slim->getContainer();
+            $container->logger->write(new Exception(
+                sprintf(
+                    'WARNING: Request took longer than expected: %.5f',
+                    $execution_time
+                ),
+                200
+            ));
+        }
     }
 
     private function build_app()
