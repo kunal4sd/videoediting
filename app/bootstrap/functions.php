@@ -286,14 +286,14 @@ function get_dates_in_range($start_date, $end_date)
     $tz = new DateTimeZone('Asia/Amman');
     $start_date = Datetime::createFromFormat('Y-m-d H:i:s', $start_date, $tz);
     $end_date = Datetime::createFromFormat('Y-m-d H:i:s', $end_date, $tz);
-    $diff = strtotime($end_date->format('Y-m-d'))
-            - strtotime($start_date->format('Y-m-d'));
-    $diff = ($diff / 3600 / 24);
+    $diff = strtotime($end_date->format('Y-m-d')) - strtotime($start_date->format('Y-m-d'));
+    $diff = (int) floor($diff / 3600 / 24);
+    $step = $diff <=> 0;
 
-    yield ($current_date = $start_date->format('Y-m-d'));
+    yield $start_date->format('Y-m-d');
     while ($diff !== 0) {
-        $current_date = $start_date->modify(sprintf('%s days', $diff <=> 0))->format('Y-m-d');
-        $diff -= $diff <=> 0;
+        $current_date = $start_date->modify(sprintf('%s days', $step))->format('Y-m-d');
+        $diff -= $step;
 
         yield $current_date;
     }
