@@ -28,11 +28,13 @@ class Report extends AbstractModule
             $grouped_latest_datetimes = $this->entity_publication->get_latest_stream_update(
                 $publications_active
             );
+            $timestamps = [];
             $grouped_dates = [];
             $grouped_times = [];
             $grouped_times_since_update = [];
             foreach($grouped_latest_datetimes as $publication_id => $latest_datetime) {
                 $unix = strtotime($latest_datetime);
+                $timestamps[$publication_id] = $unix;
                 $grouped_dates[$publication_id] = date('Y-m-d', $unix);
                 $grouped_times[$publication_id] = date('H:i:s', $unix);
                 $grouped_times_since_update[$publication_id] = time_diff_human_format($unix);
@@ -50,6 +52,7 @@ class Report extends AbstractModule
             'dates' => $grouped_dates,
             'times' => $grouped_times,
             'times_since_update' => $grouped_times_since_update,
+            'timestamps' => $timestamps,
             'types' => $this->entity_publication->get_types($publications_active),
             'is_admin' => $this->entity_user->is_admin($this->session_user->get_user()),
             'processes' => $this->config->{MandatoryFields::SSH}

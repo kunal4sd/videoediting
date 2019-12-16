@@ -31,7 +31,7 @@
                             <td>{{ types[channel.id] }}</td>
                             <td>{{ dates[channel.id]}}</td>
                             <td>{{ times[channel.id] }}</td>
-                            <td>{{ times_since_update[channel.id] }}</td>
+                            <td data-sort="{{ timestamps[channel.id] }}">{{ times_since_update[channel.id] }}</td>
                             {% if is_admin %}
                             <td>
                                 <div class="btn-toolbar" role="toolbar">
