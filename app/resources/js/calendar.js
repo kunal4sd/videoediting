@@ -8,7 +8,16 @@ $( function() {
         time_24hr: true,
         minuteIncrement: 1,
         dateFormat: "Y-m-d H:i:S",
-        defaultDate: (from.length && from.val().length) ? from.val() : moment().format('YYYY-MM-DD 00:00:00')
+        defaultDate: (from.length && from.val().length) ? from.val() : moment().format('YYYY-MM-DD 00:00:00'),
+        onClose: function(dates, currentdatestring, picker) {
+            if (dates.length === 1) {
+                var selectedDate = dates[0];
+                selectedDate.setHours($(picker.calendarContainer).find('.flatpickr-hour').val());
+                selectedDate.setMinutes($(picker.calendarContainer).find('.flatpickr-minute').val());
+                selectedDate.setSeconds($(picker.calendarContainer).find('.flatpickr-second').val());
+                picker.setDate(selectedDate, true);
+            }
+        }
     });
     var to_pickr = to.flatpickr({
         enableTime: true,
@@ -16,7 +25,16 @@ $( function() {
         time_24hr: true,
         minuteIncrement: 1,
         dateFormat: "Y-m-d H:i:S",
-        defaultDate: (to.length && to.val().length) ? to.val() : moment().format('YYYY-MM-DD 00:00:00')
+        defaultDate: (to.length && to.val().length) ? to.val() : moment().format('YYYY-MM-DD 00:00:00'),
+        onClose: function(dates, currentdatestring, picker) {
+            if (dates.length === 1) {
+                var selectedDate = dates[0];
+                selectedDate.setHours($(picker.calendarContainer).find('.flatpickr-hour').val());
+                selectedDate.setMinutes($(picker.calendarContainer).find('.flatpickr-minute').val());
+                selectedDate.setSeconds($(picker.calendarContainer).find('.flatpickr-second').val());
+                picker.setDate(selectedDate, true);
+            }
+        }
     });
 
 });
