@@ -10,4 +10,4 @@ define(
     "SCHEME",
     ( isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ) ? 'https' : 'http'
 );
-define("STORAGE_PATH", '/storage/recordings');
+define("STORAGE_PATH", '/recordings');
