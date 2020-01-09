@@ -1,5 +1,5 @@
 //g++ -o duration -lavutil -lavformat -ljsoncpp duration.cpp
-//g++ -o duration duration.cpp -ljsoncpp `pkg-config --cflags --libs libavformat libavutil`
+//g++ -o ../bin/duration duration.cpp -ljsoncpp `pkg-config --cflags --libs libavformat libavutil`
 
 #define __STDC_CONSTANT_MACROS
 #include <iostream>
@@ -27,13 +27,13 @@ int main(int argc, char* argv[])
 		std::cout << "usage: " << argv[0] << " video_file(s)\n";
 		return 0;
     }
-	
+
 	av_log_set_level(AV_LOG_INFO);
 	av_register_all();
 	char dur[20];
 
-	Json::Value root;		
-	
+	Json::Value root;
+
 	for(int i = 1; i < argc; i++)
 	{
 		char* file = argv[i];
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 			Json::Value jfile;
 			jfile["filename"] = file;
 			jfile["duration"] = dur;
-			root.append(jfile);			
+			root.append(jfile);
 		}
 	}
 

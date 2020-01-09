@@ -1,5 +1,6 @@
 //g++ -o ../bin/duration_multiple duration_multiple.cpp `pkg-config --cflags --libs libavformat libavutil jsoncpp`
 
+#include <iostream>
 #include <future>
 #include <vector>
 #include <string>
