@@ -10,4 +10,5 @@ define(
     "SCHEME",
     ( isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ) ? 'https' : 'http'
 );
+define("PORT", isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : null);
 define("STORAGE_PATH", '/recordings');
