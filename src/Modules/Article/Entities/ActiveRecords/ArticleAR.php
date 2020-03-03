@@ -175,6 +175,15 @@ class ArticleAR extends AbstractActiveRecord
      */
     public $file_path;
 
+
+    // TODO fix: maybe create separated Article entity class for Media server. Or smarter solution.
+    /**
+     * PLEASE NOTE: this property has a corresponding field only in the table on the LOCALHOST server
+     * Issues could arise because of this if not managed correctly
+     * @var int|null
+     */
+    public $file_size;
+
     /**
      * @var int
      */

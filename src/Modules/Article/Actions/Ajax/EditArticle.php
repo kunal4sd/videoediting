@@ -102,6 +102,7 @@ class EditArticle extends AbstractModule
                     $article_ar_media->publish_id = null;
                     $article_ar_media->status = null;
                     $article_ar_media->file_path = null;
+                    $article_ar_media->file_size = null;
                     $article_ar_media->size = '0.00';
                     $article_ar_media->section_id = 10;
                     $article_ar_media->page_name = ' ';

@@ -108,7 +108,7 @@ class GetMovie extends AbstractModule
             $movie_file->set_locations($movie_path)
                 ->save($this->playlist_file)
                 ->build_length()
-                ->build_size();
+                ->build_size($article_ar);
 
             $article_ar->duration = $movie_file->get_length();
             $this->entity_article->save($article_ar);

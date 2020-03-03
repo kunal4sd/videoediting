@@ -121,7 +121,9 @@ class Article extends AbstractModule
     public function save_media(ArticleAR $article_ar)
     {
 
-        $insert_id = (new ArticleDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->save($article_ar);
+        $clone = clone $article_ar;
+        $clone->file_size = null;
+        $insert_id = (new ArticleDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->save($clone);
 
         if (is_null($insert_id)) {
             throw new Exception("Failed saving article", 400);
@@ -137,7 +139,9 @@ class Article extends AbstractModule
     public function save(ArticleAR $article_ar)
     {
 
-        $insert_id = (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->save($article_ar);
+        $clone = clone $article_ar;
+        $clone->headline_modified = null;
+        $insert_id = (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->save($clone);
 
         if (is_null($insert_id)) {
             throw new Exception("Failed saving article", 400);

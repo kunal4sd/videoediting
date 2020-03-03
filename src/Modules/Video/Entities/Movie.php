@@ -44,11 +44,11 @@ class Movie extends AbstractModule
         }
 
         foreach ($articles_ar as $article_ar) {
-            $movie_file = new VideoFile(false);
+            $movie_file = new VideoFile(false, $this->container);
             $movie_path = $movie_file->build_movie_path($article_ar);
             $movie_file->set_locations($movie_path)
                 ->set_length($article_ar->duration)
-                ->build_size();
+                ->build_size($article_ar, true);
             $publication_ar = $this->entity_publication->get_by_id($article_ar->publication_id);
 
             if (!isset($article_to_keywords[$article_ar->id])) {

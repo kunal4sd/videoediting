@@ -41,14 +41,19 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
         $this->set_type(Files::VIDEO);
     }
 
-    public function build_size()
+    public function build_size($ar = null, $save = false)
     {
-        $path = $this->get_path();
-        $byte_size = 0;
-        if (strlen($path) && file_exists($path)) {
-            $byte_size = (int) @filesize($path);
+        if (is_null($ar) || !$ar->file_size) {
+            $path = $this->get_path();
+            $byte_size = 0;
+            if (strlen($path) && file_exists($path)) {
+                $byte_size = (int) @filesize($path);
+            }
+            $this->size = human_filesize($byte_size);
+            if (!is_null($ar)) $ar->file_size = $byte_size;
+            if (!is_null($ar) && $save) $this->container->entity_article->save($ar);
         }
-        $this->size = human_filesize( $byte_size );
+        else $this->size = human_filesize($ar->file_size);
 
         return $this;
     }

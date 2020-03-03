@@ -8,7 +8,7 @@ interface SizeInterface
     /**
      * @return SizeInterface
      */
-    public function build_size();
+    public function build_size($ar = null, $save = false);
 
     /**
      * @return string
