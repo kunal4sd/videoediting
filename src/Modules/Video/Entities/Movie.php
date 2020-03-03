@@ -27,7 +27,7 @@ class Movie extends AbstractModule
             },
             $article_keywords_ar
         );
-        $keywords_ar = $this->entity_keyword->get_by_ids($keyword_ids);
+        $keywords_ar = $this->entity_keyword->get_by_ids_media($keyword_ids);
 
         $article_to_keywords = [];
         foreach ($article_keywords_ar as $article_keyword_ar) {
