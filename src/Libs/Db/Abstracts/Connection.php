@@ -57,7 +57,7 @@ abstract class Connection
                 $this->connect();
             }
             else {
-                throw new Exception(sprintf('%s (%s)', $e->getMessage(), $e->getCode()), 200);
+                throw new Exception(sprintf('%s (%s)', $e->getMessage(), $e->getCode()), 500);
             }
         }
     }
