@@ -143,10 +143,12 @@ class App
         $container['errorHandler'] = function(&$container) {
             return function ($request, $response, $exception = null) use (&$container) {
 
-                $exception = new Exception(
-                    'Unknown error encountered at ' . $request->getUri()->__tostring(),
-                    500
-                );
+                if (is_null($exception)) {
+                    $exception = new Exception(
+                        'Unknown error encountered at ' . $request->getUri()->__tostring(),
+                        500
+                    );
+                }
                 $container->logger->write($exception);
 
                 return $container->view->render(
@@ -162,10 +164,12 @@ class App
         $container['phpErrorHandler'] = function(&$container) {
             return function ($request, $response, $exception = null) use (&$container) {
 
-                $exception = new Exception(
-                    'Unknown PHP error encountered in at ' . $request->getUri()->__tostring(),
-                    404
-                );
+                if (is_null($exception)) {
+                    $exception = new Exception(
+                        'Unknown PHP error encountered in at ' . $request->getUri()->__tostring(),
+                        500
+                    );
+                }
                 $container->logger->write($exception);
 
                 return $container->view->render(
