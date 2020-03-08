@@ -148,15 +148,15 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
     /**
      * @param ArticleAR $article_ar_from
      * @param ArticleAR $article_ar_to
-     * @return AbstractFile
+     * @return bool
      */
     public function copy_media($article_ar_from, $article_ar_to)
     {
-        copy(
-            $this->build_movie_path($article_ar_from),
-            $this->build_movie_path_live($article_ar_to)
-        );
-        return $this;
+        $source_path = $this->build_movie_path($article_ar_from);
+        $live_file_path = $this->build_movie_path_live($article_ar_to);
+        if (strlen($live_file_path)) return copy($source_path, $live_file_path);
+
+        return false;
     }
 
     /**
@@ -169,6 +169,7 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
 
     /**
      * @param ArticleAR $article_ar
+     * @return bool|string Return path of live video file, false if creating path to file fails
      */
     public static function build_movie_path_live($article_ar)
     {
@@ -181,6 +182,10 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
 
         if (!file_exists($path)) {
             mkdir($path, 0777, true);
+        }
+
+        if (!file_exists($path)) {
+            return false;
         }
 
         return sprintf('%s/%s-1.%s', $path, $article_ar->id, Videos::MOVIE_FORMAT);

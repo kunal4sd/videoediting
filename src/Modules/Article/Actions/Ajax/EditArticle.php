@@ -62,10 +62,45 @@ class EditArticle extends AbstractModule
                     $request->getParam('status') === Status::LIVE
                     && is_null($article_ar->publish_id)
                 ) {
-
+                    /**
+                     * Beginning of reversable area.
+                     * All persistent changes made in this area must be reversed in revert_changes()
+                     */
                     $publication_ar = $this->entity_publication->get_by_id(
                         $article_ar->publication_id
                     );
+
+                    $media_now = $this->db[Hosts::MEDIA][Dbs::MEDIA]->now();
+
+                    $article_ar_media = clone $article_ar;
+                    $article_ar_media->id = null;
+                    $article_ar_media->publish_id = null;
+                    $article_ar_media->status = null;
+                    $article_ar_media->file_path = null;
+                    $article_ar_media->file_size = null;
+                    $article_ar_media->size = '0.00';
+                    $article_ar_media->section_id = 10;
+                    $article_ar_media->page_name = ' ';
+                    $article_ar_media->ave = $publication_ar->adrate * $article_ar->duration;
+                    $article_ar_media->created = $media_now;
+
+                    $article_ar_media_clone = clone $article_ar_media;
+
+                    $article_ar_media->headline_modified = $media_now;
+                    $article_ar_media->id = $this->entity_article->save_media($article_ar_media);
+
+                    $video_file = (new VideoFile($this->entity_publication->is_radio($publication_ar)));
+                    /**
+                     * End of reversable area
+                     */
+                    if (!$video_file->copy_media($article_ar, $article_ar_media)) {
+                        $changes_reverted = $this->revert_changes($article_ar_media);
+                        $result['message'] = "Failed copying video to live output directory.";
+                        if (!$changes_reverted) $result['message'] .= " Unwanted changes might have been made to the article, and failed being reverted.";
+                        $code = 500;
+
+                        return Json::build($response, $result, $code);
+                    }
 
                     $issue_ar = $this->entity_issue->get_by_issue_date_and_publication_id_media(
                         $article_ar->issue_date, $publication_ar->id
@@ -95,26 +130,9 @@ class EditArticle extends AbstractModule
                         );
                     }
 
-                    $media_now = $this->db[Hosts::MEDIA][Dbs::MEDIA]->now();
-
-                    $article_ar_media = clone $article_ar;
-                    $article_ar_media->id = null;
-                    $article_ar_media->publish_id = null;
-                    $article_ar_media->status = null;
-                    $article_ar_media->file_path = null;
-                    $article_ar_media->file_size = null;
-                    $article_ar_media->size = '0.00';
-                    $article_ar_media->section_id = 10;
-                    $article_ar_media->page_name = ' ';
-                    $article_ar_media->ave = $publication_ar->adrate * $article_ar->duration;
-                    $article_ar_media->created = $media_now;
-
                     $this->entity_article_one->save(
-                        new ArticleOneAR($article_ar_media->build_to_array())
+                        new ArticleOneAR($article_ar_media_clone->build_to_array())
                     );
-
-                    $article_ar_media->headline_modified = $media_now;
-                    $article_ar_media->id = $this->entity_article->save_media($article_ar_media);
 
                     $remote_file_ar = new RemoteFileAR([
                         'path' => sprintf(
@@ -134,9 +152,6 @@ class EditArticle extends AbstractModule
                         $article_keyword_ar->article_id = $article_ar_media->id;
                     }
                     $this->entity_article_keyword->save_multiple_media($article_keywords_ar);
-
-                    (new VideoFile($this->entity_publication->is_radio($publication_ar)))
-                        ->copy_media($article_ar, $article_ar_media);
 
                     $article_ar->publish_id = $article_ar_media->id;
                     $article_ar->status = Status::LIVE;
@@ -166,7 +181,7 @@ class EditArticle extends AbstractModule
             }
             elseif(is_null($article_ar->id)) {
                 $result['message'] = "No article found with the provided details";
-                $code = 400;
+                $code = 404;
             }
             else {
                 $result['message'] = "Article status is Live and cannot be changed";
@@ -183,5 +198,14 @@ class EditArticle extends AbstractModule
         }
 
         return Json::build($response, $result, $code);
+    }
+
+    /**
+     * @param ArticleAR $article_ar_media
+     * @return bool
+     */
+    private function revert_changes($article_ar_media)
+    {
+        return (bool) $this->entity_article->delete_media($article_ar_media);
     }
 }

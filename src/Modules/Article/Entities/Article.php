@@ -150,4 +150,24 @@ class Article extends AbstractModule
         return $insert_id;
     }
 
+    /**
+     * @throws Exception
+     * @return int
+     */
+    public function delete_media(ArticleAR $article_ar)
+    {
+        if ($article_ar->id === 0 || is_null($article_ar->id)) return 0;
+        return (new ArticleDB($this->db[Hosts::MEDIA][Dbs::MEDIA]))->delete_by_id($article_ar->id);
+    }
+
+    /**
+     * @throws Exception
+     * @return int
+     */
+    public function delete(ArticleAR $article_ar)
+    {
+        if ($article_ar->id === 0 || is_null($article_ar->id)) return 0;
+        return (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->delete_by_id($article_ar->id);
+    }
+
 }
