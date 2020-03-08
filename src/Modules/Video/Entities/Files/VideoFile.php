@@ -179,14 +179,7 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
             Videos::MOVIE_PATH_LIVE,
             $article_ar->issue_date
         );
-
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
-        }
-
-        if (!file_exists($path)) {
-            return false;
-        }
+        if (!file_exists($path) && !mkdir($path, 0777, true)) return false;
 
         return sprintf('%s/%s-1.%s', $path, $article_ar->id, Videos::MOVIE_FORMAT);
     }
