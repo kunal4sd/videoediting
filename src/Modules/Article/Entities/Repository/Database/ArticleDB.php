@@ -2,9 +2,9 @@
 
 namespace App\Modules\Article\Entities\Repository\Database;
 
+use \PDO;
 use App\Modules\Abstracts\AbstractDatabase;
 use App\Modules\Article\Entities\ActiveRecords\ArticleAR;
-use \PDO;
 
 class ArticleDB extends AbstractDatabase
 {
@@ -163,6 +163,53 @@ class ArticleDB extends AbstractDatabase
     }
 
     /**
+     * @param int[] $article_ids
+     * @param bool $order_desc
+     * @return ArticleAR[]
+     */
+    public function get_by_ids(array $article_ids, $order_desc = false)
+    {
+        $result = [];
+        $in = [];
+        $params = [];
+        $order = 'ASC';
+
+        if ($order_desc) {
+            $order = 'DESC';
+        }
+
+        foreach($article_ids as $id) {
+            $key = "id_{$id}";
+            $in[] = ":{$key}";
+            $params[$key] = [$id, PDO::PARAM_INT];
+        }
+
+        $data = $this->db->fetch_all(
+            sprintf(
+                "
+                    SELECT
+                        *
+                    FROM article
+                    WHERE 1
+                        AND id IN (%1\$s)
+                    ORDER BY
+                        id
+                        %2\$s
+                ",
+                implode(',', $in),
+                $order
+            ),
+            $params
+        );
+
+        foreach($data as $row) {
+            $result[] = new ArticleAR($row);
+        }
+
+        return $result;
+    }
+
+    /**
      * @param int $article_id
      * @return int nb of affected rows
      */
@@ -183,7 +230,7 @@ class ArticleDB extends AbstractDatabase
 
     /**
      * Updating of existing rows is made based on the tables Primary Key (column `id`)
-     * @param ArticleAR
+     * @param ArticleAR $article
      * @return int id of inserted row
      */
     public function save(ArticleAR $article)
@@ -216,6 +263,65 @@ class ArticleDB extends AbstractDatabase
                 ))
             ),
             $article_array
+        );
+    }
+
+    /**
+     * @param ArticleAR[] $articles_ar
+     * @param string[] $remove_fields
+     * @return int nb of inserted rows
+     */
+    public function save_multiple(array $articles_ar, array $remove_fields = []): int
+    {
+
+        if (empty($articles_ar)) return 0;
+
+        $counter = 0;
+        $rows_counter = 0;
+        $article_fields = [];
+        $values = [];
+        $rows = [];
+        $remove_fields = array_flip($remove_fields);
+
+        foreach($articles_ar as $article_ar) {
+
+            $article_array_raw = $article_ar->build_to_array();
+            $article_array = array_diff_key($article_array_raw, $remove_fields);
+
+            if (empty($article_fields)) {
+                $article_fields = array_keys($article_array);
+            }
+
+            foreach($article_array as $field => $value) {
+                $values["{$field}_{$counter}"] = $value;
+                $rows[$rows_counter][] = ":{$field}_{$counter}";
+                $counter++;
+            }
+            $rows_counter++;
+        }
+
+        return $this->db->row_count(
+            sprintf(
+                "
+                    INSERT INTO article
+                    (
+                        %s
+                    )
+                    VALUES
+                    (
+                        %s
+                    )
+                    ON DUPLICATE KEY UPDATE
+                        %s
+                ",
+                implode(',', $article_fields),
+                implode('), (', array_map( function($row) { return implode(',', $row); }, $rows )),
+                implode(',', array_map(
+                    function($val) { return sprintf('%1$s=VALUES(%1$s)', $val); },
+                    $article_fields
+                ))
+            ),
+            $values
         );
     }
 
