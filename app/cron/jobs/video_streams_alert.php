@@ -5,11 +5,11 @@ require BASE_PATH . '/vendor/autoload.php';
 require APP_PATH . '/bootstrap/functions.php';
 
 use App\Libs\Db\Db;
-use App\Libs\Config;
-use App\Modules\Article\Entities\Publication;
-use App\Modules\Article\Entities\PublicationDetails;
 use Slim\Container;
+use App\Libs\Config;
 use PHPMailer\PHPMailer\PHPMailer;
+use App\Modules\Publication\Entities\Publication;
+use App\Modules\Publication\Entities\PublicationDetails;
 
 define('JOB_NAME', basename(__FILE__, '.php'));
 define('MAX_ALERT', 12 * 3600); // 12 h
@@ -18,6 +18,13 @@ define('MIN_MINUTES_BETWEEN_ALERTS', 15); // 15 minutes (must be divisors of 15 
 
 $container = new Container();
 $container->config = new Config();
+
+$mail_config = get_from_array(
+    sprintf('jobs.%s.mail_config', JOB_NAME),
+    $container->config->cron
+);
+if (!$mail_config) throw new \Exception('Email config missing! Execution stopped!', 500);
+
 Db::build($container);
 $publications_ar = (new Publication($container))->get_all_active_tv_and_radio_media();
 $publications_details_ar = (new PublicationDetails($container))->get_all_recording247();
@@ -65,12 +72,6 @@ if (!empty($alerts)) {
 
     $alerts = $alerts + $old_alerts;
     $mail = new PHPMailer();
-
-    $mail_config = get_from_array(
-        sprintf('jobs.%s.mail_config', JOB_NAME),
-        $container->config->cron
-    );
-    if (!$mail_config) throw new \Exception('Email config missing! Execution stopped!', 500);
 
     ksort($mail_config, SORT_NATURAL);
     foreach($mail_config as $field => $value) {
