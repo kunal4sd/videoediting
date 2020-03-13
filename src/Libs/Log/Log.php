@@ -4,10 +4,10 @@ namespace App\Libs\Log;
 
 use \App\Libs\Log\Config as LogConfig;
 use \Monolog\Logger as Logger;
-use \Monolog\ErrorHandler;
 use \Monolog\Handler\StreamHandler;
 use \Monolog\Formatter\LineFormatter;
 use \Exception;
+use Throwable;
 
 class Log
 {
@@ -41,14 +41,14 @@ class Log
         $this->logger->pushHandler($this->stream);
     }
 
-    public function write(Exception $e)
+    public function write(Throwable $e)
     {
         if ($this->config->enabled && $e->getCode() >= $this->config->min_level) {
             $this->push_to_logger($e->getCode(), $this->build_message($e));
         }
     }
 
-    private function build_message(Exception $e)
+    private function build_message(Throwable $e)
     {
         return str_replace(
             PHP_EOL,
