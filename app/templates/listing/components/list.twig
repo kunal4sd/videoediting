@@ -28,7 +28,7 @@
             </table>
             {% for status in statuses %}
                 {% if status.name != 'new' %}
-                    <button type="button" id="listing-status-{{ status.name }}" class="btn btn-primary" data-value="{{ status.name }}">{{ status.name | capitalize }}</button>
+                    <button type="button" id="listing-status-{{ status.name }}" class="btn btn-primary" data-value="{{ status.name }}" data-url="{{ base_url() }}{{ path_for('article.action.edit_article_status') }}">{{ status.name | capitalize }}</button>
                 {% endif %}
             {% endfor %}
         </div>

@@ -2,22 +2,13 @@
 
 namespace App\Modules\Article\Actions\Ajax;
 
+use \Exception;
 use App\Libs\Json;
-use App\Libs\Enums\Dbs;
-use App\Libs\Enums\Hosts;
-use App\Libs\Enums\Status;
-use App\Libs\Enums\Videos;
-use App\Libs\Enums\UserActivity;
-use App\Modules\Abstracts\AbstractModule;
-use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
-use App\Modules\Video\Entities\ActiveRecords\RemoteFileAR;
-use App\Modules\Publication\Entities\ActiveRecords\IssueAR;
-use App\Modules\Article\Entities\ActiveRecords\ArticleOneAR;
-use App\Modules\Article\Entities\ActiveRecords\ArticleKeywordAR;
-use App\Modules\Video\Entities\Files\VideoFile;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use \Exception;
+use App\Libs\Enums\Status;
+use App\Modules\Abstracts\AbstractModule;
+use App\Modules\Article\Entities\ActiveRecords\ArticleKeywordAR;
 
 class EditArticle extends AbstractModule
 {
@@ -39,9 +30,6 @@ class EditArticle extends AbstractModule
                 $article_ar->text = $request->getParam('text');
                 $article_ar->headline = $request->getParam('headline');
 
-                if ($request->getParam('status') !== Status::LIVE) {
-                    $article_ar->status = $request->getParam('status');
-                }
                 $this->entity_article->save($article_ar);
 
                 // delete old keywords associated with current article id
@@ -57,125 +45,6 @@ class EditArticle extends AbstractModule
                     ]);
                 }
                 $this->entity_article_keyword->save_multiple($article_keywords_ar);
-
-                if (
-                    $request->getParam('status') === Status::LIVE
-                    && is_null($article_ar->publish_id)
-                ) {
-                    /**
-                     * Beginning of reversable area.
-                     * All persistent changes made in this area must be reversed in revert_changes()
-                     */
-                    $publication_ar = $this->entity_publication->get_by_id(
-                        $article_ar->publication_id
-                    );
-
-                    $media_now = $this->db[Hosts::MEDIA][Dbs::MEDIA]->now();
-
-                    $article_ar_media = clone $article_ar;
-                    $article_ar_media->id = null;
-                    $article_ar_media->publish_id = null;
-                    $article_ar_media->status = null;
-                    $article_ar_media->file_path = null;
-                    $article_ar_media->file_size = null;
-                    $article_ar_media->size = '0.00';
-                    $article_ar_media->section_id = 10;
-                    $article_ar_media->page_name = ' ';
-                    $article_ar_media->ave = $publication_ar->adrate * $article_ar->duration;
-                    $article_ar_media->created = $media_now;
-
-                    $article_ar_media_clone = clone $article_ar_media;
-
-                    $article_ar_media->headline_modified = $media_now;
-                    $article_ar_media->id = $this->entity_article->save_media($article_ar_media);
-
-                    $video_file = (new VideoFile($this->entity_publication->is_radio($publication_ar)));
-                    /**
-                     * End of reversable area
-                     */
-                    if (!$video_file->copy_media($article_ar, $article_ar_media)) {
-                        $changes_reverted = $this->revert_changes($article_ar_media);
-                        $result['message'] = "Failed copying video to live output directory.";
-                        if (!$changes_reverted) $result['message'] .= " Unwanted changes might have been made to the article, and failed being reverted.";
-                        $code = 500;
-
-                        return Json::build($response, $result, $code);
-                    }
-
-                    $issue_ar = $this->entity_issue->get_by_issue_date_and_publication_id_media(
-                        $article_ar->issue_date, $publication_ar->id
-                    );
-
-                    $this->entity_user_activity->save(
-                        new UserActivityAR([
-                            'user_id' => $this->session_user->get_user()->id,
-                            'publication_id' => $publication_ar->id,
-                            'article_id' => $article_ar->id,
-                            'issue_date' => $article_ar->issue_date,
-                            'activity_id' => UserActivity::LIVE,
-                            'created' => $this->db[Hosts::LOCAL][Dbs::MAIN]->now()
-                        ])
-                    );
-
-                    if (is_null($issue_ar->id)) {
-                        $this->entity_issue->save_media(
-                            new IssueAR([
-                                'date' => $article_ar->issue_date,
-                                'publication_id' => $publication_ar->id,
-                                'status' => 0,
-                                'pages_number' => 0,
-                                'issue_number' => 0,
-                                'volume_number' => 0
-                            ])
-                        );
-                    }
-
-                    $this->entity_article_one->save(
-                        new ArticleOneAR($article_ar_media_clone->build_to_array())
-                    );
-
-                    $remote_file_ar = new RemoteFileAR([
-                        'path' => sprintf(
-                            '%s/%s-1.%s',
-                             $article_ar_media->issue_date,
-                             $article_ar_media->id,
-                             Videos::MOVIE_FORMAT
-                        ),
-                        'status' => 0,
-                        'type' => 0,
-                        'created' => $media_now
-                    ]);
-                    $this->entity_remote_file->save($remote_file_ar);
-                    $this->entity_remote_file->save_media($remote_file_ar);
-
-                    foreach($article_keywords_ar as &$article_keyword_ar) {
-                        $article_keyword_ar->article_id = $article_ar_media->id;
-                    }
-                    $this->entity_article_keyword->save_multiple_media($article_keywords_ar);
-
-                    $article_ar->publish_id = $article_ar_media->id;
-                    $article_ar->status = Status::LIVE;
-                    $this->entity_article->save($article_ar);
-
-                    $this->entity_user_activity->save_media(
-                        new UserActivityAR([
-                            'user_id' => $this->session_user->get_user()->id,
-                            'publication_id' => $publication_ar->id,
-                            'article_id' => $article_ar_media->id,
-                            'issue_date' => $article_ar_media->issue_date,
-                            'activity_id' => UserActivity::LIVE_MEDIA,
-                            'created' => $media_now
-                        ])
-                    );
-
-                    $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type_media(
-                        1, $this->session_user->get_user()->id, UserActivity::CLIP
-                    );
-                    $user_activity_ar = array_shift($user_activities_ar);
-                    $user_activity_ar->article_id = $article_ar_media->id;
-                    $this->entity_user_activity->save_media($user_activity_ar);
-
-                }
 
                 $result['message'] = "Article updated successfully";
             }
@@ -198,14 +67,5 @@ class EditArticle extends AbstractModule
         }
 
         return Json::build($response, $result, $code);
-    }
-
-    /**
-     * @param ArticleAR $article_ar_media
-     * @return bool
-     */
-    private function revert_changes($article_ar_media)
-    {
-        return (bool) $this->entity_article->delete_media($article_ar_media);
     }
 }

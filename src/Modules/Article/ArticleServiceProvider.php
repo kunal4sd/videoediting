@@ -2,23 +2,25 @@
 
 namespace App\Modules\Article;
 
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use App\Modules\Article\Entities\Article;
 use App\Modules\Article\Entities\Keyword;
 use App\Modules\Article\Entities\ArticleOne;
-use App\Modules\Article\Entities\ArticleKeyword;
 use App\Modules\Article\Actions\Ajax\GetKeyword;
+use App\Modules\Article\Entities\ArticleKeyword;
 use App\Modules\Article\Actions\Ajax\EditArticle;
 use App\Modules\Article\Actions\Ajax\DeleteArticle;
 use App\Modules\Article\Actions\Ajax\SearchKeyword;
+use App\Modules\Article\Actions\Ajax\EditArticleStatus;
+use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
 use App\Modules\Article\Middleware\Validation\GetKeyword as GetKeywordValidationMiddleware;
+use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
 use App\Modules\Article\Middleware\Validation\EditArticle as EditArticleValidationMiddleware;
 use App\Modules\Article\Middleware\Validation\DeleteArticle as DeleteArticleValidationMiddleware;
 use App\Modules\Article\Middleware\Validation\SearchKeyword as SearchKeywordValidationMiddleware;
-use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Authorization\SameSessionId as SameSessionIdAuthorizationMiddleware;
-use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
-use Pimple\Container;
-use Pimple\ServiceProviderInterface;
+use App\Modules\Article\Middleware\Validation\EditArticleStatus as EditArticleStatusValidationMiddleware;
 
 class ArticleServiceProvider implements ServiceProviderInterface
 {
@@ -36,6 +38,9 @@ class ArticleServiceProvider implements ServiceProviderInterface
         };
         $container['article.action.ajax.edit_article'] = function ($container) {
             return new EditArticle($container);
+        };
+        $container['article.action.ajax.edit_article_status'] = function ($container) {
+            return new EditArticleStatus($container);
         };
         $container['article.action.ajax.search_keyword'] = function ($container) {
             return new SearchKeyword($container);
@@ -59,6 +64,12 @@ class ArticleServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('article.action.edit_article');
+        $container->slim->post('/articles/actions/edit/article-status', 'article.action.ajax.edit_article_status')
+                        ->add(new EditArticleStatusValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('article.action.edit_article_status');
         $container->slim->post('/articles/actions/search/keyword', 'article.action.ajax.search_keyword')
                         ->add(new SearchKeywordValidationMiddleware($container))
                         ->add(new SameIpAuthorizationMiddleware($container))

@@ -268,6 +268,30 @@ $( function() {
 
     });
 
+    event_emitter.on('article.edit.article_status.done', function(event, result, data, btn) {
+        global_functions.button_is_not_loading(btn);
+
+        if (
+            result.responseJSON !== undefined
+            && result.responseJSON.success
+        ) {
+            var rows = data_table.rows();
+            var row = false;
+
+            rows.every(function( rowIdx, table_loop, row_loop ) {
+                if (data.rowIdxs.indexOf(rowIdx) === -1) return false;
+
+                row = this.data();
+                row[table_cols_index.status] = data.status;
+                row[table_cols_index['status_badge']] = global_functions.build_status_badge(data.status).prop('outerHTML');
+                this.data(row);
+
+                return false;
+            });
+        }
+
+    });
+
     movie_modal.on('hidden.bs.modal', function (e) {
        clear_form_edit_article();
     });
@@ -315,14 +339,36 @@ $( function() {
 
         if (selected_rows.count()) {
 
-            var button = $(this);
-            var data = button.data();
+            var btn = $(this);
+            var btn_data = btn.data();
+            var url = btn_data.url;
+            var data = {
+                ids: [],
+                rowIdxs: [],
+                status: btn_data.value,
+                csrf_name: list_holder.find('input[name="csrf_name"]').val(),
+                csrf_value: list_holder.find('input[name="csrf_value"]').val()
+            };
 
             selected_rows.every(function( rowIdx, table_loop, row_loop ) {
                 var row = this.data();
-                row[table_cols_index.status] = data.value;
-                populate_form_edit_article(row, false);
-                form_edit_article.submit();
+                data.ids.push(row[table_cols_index.id]);
+                data.rowIdxs.push(rowIdx);
+
+                row[table_cols_index['status_badge']] = $(row[table_cols_index['status_badge']]).html('<img height="24" src="/images/preloader_circle.gif">').prop('outerHTML');
+                this.data(row);
+
+                return false;
+            });
+
+            $.ajax({
+                method: 'post',
+                url: url,
+                data: data,
+                complete: function (result) {
+                    event_emitter.trigger('article.edit.article_status.done', [result, data, btn]);
+                    event_emitter.trigger('form.ajax.result.alert', [result]);
+                }
             });
         }
     });
