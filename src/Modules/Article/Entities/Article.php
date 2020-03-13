@@ -68,11 +68,20 @@ class Article extends AbstractModule
 
     /**
      * @param int $id
-     * @return ArticleAR[]
+     * @return ArticleAR
      */
     public function get_by_id($id)
     {
         return (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_id($id);
+    }
+
+    /**
+     * @param int[] $ids
+     * @return ArticleAR[]
+     */
+    public function get_by_ids($ids)
+    {
+        return (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_ids($ids);
     }
 
     /**
@@ -148,6 +157,23 @@ class Article extends AbstractModule
         }
 
         return $insert_id;
+    }
+
+    /**
+     * @param ArticleAr[] $articles_ar
+     * @throws Exception
+     * @return int
+     */
+    public function save_multiple(array $articles_ar)
+    {
+
+        $nb_inserts = (new ArticleDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->save_multiple($articles_ar, ['headline_modified']);
+
+        if (is_null($nb_inserts)) {
+            throw new Exception("Failed saving articles", 400);
+        }
+
+        return $nb_inserts;
     }
 
     /**
