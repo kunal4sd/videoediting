@@ -79,6 +79,10 @@ class EditArticleStatus extends AbstractModule
                         $result['message'] = "Failed copying a video file to live output directory.";
                         if (!$changes_reverted) $result['message'] .= " Unwanted changes have been made to the affected article, and failed being reverted.";
                         $code = 500;
+                        $this->logger->write(new Exception(
+                            $result['message'],
+                            $code
+                        ));
 
                         return Json::build($response, $result, $code);
                     }
@@ -131,6 +135,7 @@ class EditArticleStatus extends AbstractModule
 
                     $article_keywords_ar = $this->entity_article_keyword->get_by_article_id($article_ar->id);
                     foreach($article_keywords_ar as &$article_keyword_ar) {
+                        $article_keyword_ar->id = null;
                         $article_keyword_ar->article_id = $article_ar_media->id;
                     }
                     $this->entity_article_keyword->save_multiple_media($article_keywords_ar);
