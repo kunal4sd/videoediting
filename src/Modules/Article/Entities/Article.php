@@ -56,7 +56,8 @@ class Article extends AbstractModule
         else {
             throw new Exception(
                 sprintf(
-                    "Unexpected number of affected rows returned on Article deletion: %s",
+                    "Unexpected number of affected rows returned on Article #%s deletion: %s",
+                    $article_id,
                     $rows
                 ),
                 400
