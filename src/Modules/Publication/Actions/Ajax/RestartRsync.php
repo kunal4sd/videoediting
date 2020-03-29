@@ -89,7 +89,7 @@ class RestartRsync extends AbstractModule
         if ((int) $publication_ar->id) {
 
             $kill_cmd = sprintf(
-                "ps aux | grep rsync | grep %s | awk '{print \$2;}'' | xargs kill -9",
+                "ps aux | grep rsync | grep %s | awk '{print \$2;}' | xargs kill -9",
                 (int) $publication_ar->id
             );
             $this->logger->write(new Exception($kill_cmd, 200));
