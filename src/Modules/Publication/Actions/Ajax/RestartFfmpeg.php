@@ -51,7 +51,7 @@ class RestartFfmpeg extends AbstractModule
             $kill_cmd = "ps aux | grep ffmpeg | xargs kill -9";
             $this->logger->write(new Exception($kill_cmd, 200));
             $code = 0;
-            $ssh = new SSH2($target_server['host'], $target_server['port']);
+            $ssh = new SSH2($target_server['host']);
             if (!$ssh->login($target_server['user'], $target_server['password'])) {
                 if ($code === 0) {
                     $code = 500;
@@ -96,7 +96,7 @@ class RestartFfmpeg extends AbstractModule
             $code = 0;
             foreach($servers as $server) {
 
-                $ssh = new SSH2($server['host'], $server['port']);
+                $ssh = new SSH2($server['host']);
                 if (!$ssh->login($server['user'], $server['password'])) {
                     if ($code === 0) {
                         $code = 500;
