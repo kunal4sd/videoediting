@@ -15,7 +15,6 @@ class RestartProcess extends AbstractModule
 
         $validation = $this->validator->validate($request, [
             'id' => v::notEmpty()::intVal(),
-            'server' => v::stringType(),
             'process' => v::notEmpty()->stringType(),
             'ajax' => v::trueVal()
         ]);
