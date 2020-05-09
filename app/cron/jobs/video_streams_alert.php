@@ -26,7 +26,8 @@ $mail_config = get_from_array(
 if (!$mail_config) throw new \Exception('Email config missing! Execution stopped!', 500);
 
 Db::build($container);
-$publications_ar = (new Publication($container))->get_all_active_tv_and_radio_media();
+$entity_publication = new Publication($container);
+$publications_ar = $entity_publication->get_all_active_tv_and_radio_media();
 $publications_details_ar = (new PublicationDetails($container))->get_all_recording247();
 $publications_active = intersect_objects_by_fields(
     $publications_ar,
@@ -34,36 +35,21 @@ $publications_active = intersect_objects_by_fields(
     $publications_details_ar,
     'publication_id'
 );
+$grouped_latest_datetimes = $entity_publication->get_latest_stream_update(
+    $publications_active
+);
 
 $alerts = [];
 $old_alerts = [];
-foreach($publications_active as $idx => $publication_ar) {
-
-    $id = $publication_ar->id;
-    $curr_date = date("Y/m/d");
-    $cmd_raw = 'find /storage/recordings/%s/%s -name "*.ts" -type f -printf \'%%T@ %%p\n\' 2>/dev/null \
-    | sort -n \
-    | tail -1 \
-    | cut -f2- -d" "';
-    $cmd = sprintf($cmd_raw, $id, $curr_date);
-    $file = exec($cmd);
-
-    if (!$file) {
-        $cmd = sprintf($cmd_raw, $id, date("Y/m/d", strtotime('-1 day')));
-        $file = exec($cmd);
-    }
-
-    if (isset($file)) {
-        $file_name = basename($file);
-        $seconds_since_update = get_seconds_since_file($file_name, MAX_ALERT + 90);
-
-        if ($seconds_since_update >= ALERT_THRESHOLD) {
-            if (intval($seconds_since_update / 60) % MIN_MINUTES_BETWEEN_ALERTS) {
-                $old_alerts[$idx] = $seconds_since_update;
-            }
-            else {
-                $alerts[$idx] = $seconds_since_update;
-            }
+foreach($grouped_latest_datetimes as $publication_id => $datetime) {
+    $unix = strtotime($datetime);
+    $seconds_since_update = time() - $unix;
+    if ($seconds_since_update >= ALERT_THRESHOLD) {
+        if (intval($seconds_since_update / 60) % MIN_MINUTES_BETWEEN_ALERTS) {
+            $old_alerts[$idx] = $seconds_since_update;
+        }
+        else {
+            $alerts[$idx] = $seconds_since_update;
         }
     }
 }
@@ -83,8 +69,8 @@ if (!empty($alerts)) {
         }
     }
 
-    $mail->setFrom('no-reply@mediaobserver-me.com', 'Mediaobserver');
-    $mail->addReplyTo('no-reply@mediaobserver-me.com', 'Mediaobserver');
+    $mail->setFrom('video.alerts@mediaobserver-me.com', 'MOVE Alerts');
+    $mail->addReplyTo('no-reply@mediaobserver-me.com', 'MOVE Alerts');
 
     $mailing_list = get_from_array(
         sprintf('jobs.%s.mailing_list', JOB_NAME),
@@ -94,7 +80,7 @@ if (!empty($alerts)) {
     foreach($mailing_list as $name => $email) {
         $mail->addAddress($email, !is_int($name) ? $name : '');
     }
-    $mail->Subject = 'ALERT: Video Streams Delay';
+    $mail->Subject = 'MOVE alert - Video Streams Delay';
 
     $body = '
     <html>
