@@ -104,7 +104,7 @@ class Publication extends AbstractModule
 
     /**
      * @param PublicationAR[] $publications_ar
-     * @return int[]: [$publication_ar->id => RawVideoFile]
+     * @return int[]: [$publication_ar->id => datetime_string]
      */
     public function get_latest_stream_update(array $publications_ar, $max_days_back = 30): array
     {
