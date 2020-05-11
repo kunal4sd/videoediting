@@ -114,7 +114,7 @@ class GetMovie extends AbstractModule
             $this->entity_article->save($article_ar);
 
             $result = $this->entity_movie->get_movie_for_output($article_ar, $movie_file);
-            $movie_file->move_to_permanent_path($article_ar)
+            $movie_file->move_to_permanent_path($article_ar);
             $result['message'] = 'Article created successfully';
         }
         catch(Exception $e) {
