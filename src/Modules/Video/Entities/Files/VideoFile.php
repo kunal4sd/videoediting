@@ -162,6 +162,23 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
     /**
      * @param ArticleAR $article_ar
      */
+    public function move_to_permanent_path($article_ar)
+    {
+        $tmp_path = sprintf('%s/%s', PUBLIC_PATH, Videos::MOVIE_PATH_TMP);
+        $permanent_path = sprintf('%s/%s', PUBLIC_PATH, Videos::MOVIE_PATH);
+        $file = sprintf('%s.%s', $article_ar->id, Videos::MOVIE_FORMAT);
+        exec(sprintf(
+            'nohup /usr/bin/rsync -raHAXxv --remove-source-files %s/%s %s/%s > /dev/null 2>&1',
+            $tmp_path,
+            $file,
+            $permanent_path,
+            $file
+        ));
+    }
+
+    /**
+     * @param ArticleAR $article_ar
+     */
     public static function build_movie_path($article_ar)
     {
         $base_path = sprintf('%s/%s', PUBLIC_PATH, Videos::MOVIE_PATH);
