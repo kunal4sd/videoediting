@@ -5,5 +5,7 @@ app/config/*stag*
 app/config/*prod*
 vendor/
 node_modules/
-public/tmp/
+public/tmp/**/*.mp4
+public/tmp/**/*.m3u8
+public/tmp/**/*.jpg
 public/userfiles/
