@@ -10,6 +10,7 @@ class Videos
     const CUT_VIDEO_PATH = 'tmp/perfect_cuts';
     const PLAYLIST_PATH = 'tmp/playlist';
     const POSTER_PATH = 'tmp/poster';
+    const MOVIE_PATH_TMP = 'tmp/testOutput';
     const MOVIE_PATH = 'userfiles/output/testOutput';
     const MOVIE_PATH_LIVE = 'userfiles/output/liveVideos';
     const PLAYLIST_FORMAT = 'm3u8';

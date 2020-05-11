@@ -8,4 +8,5 @@ node_modules/
 public/tmp/**/*.mp4
 public/tmp/**/*.m3u8
 public/tmp/**/*.jpg
+public/tmp/**/*.ts
 public/userfiles/
