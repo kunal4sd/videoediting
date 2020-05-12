@@ -9,7 +9,6 @@ use App\Modules\Video\Entities\Files\VideoFile;
 use Slim\Http\Stream;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use \Exception;
 
 class DownloadMovie extends AbstractModule
 {

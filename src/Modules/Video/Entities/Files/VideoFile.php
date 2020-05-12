@@ -179,12 +179,12 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
     /**
      * @param ArticleAR $article_ar
      */
-    public static function build_movie_path($article_ar)
+    public static function build_movie_path($article_ar, $skip = false)
     {
         $base_path = sprintf('%s/%s', PUBLIC_PATH, Videos::MOVIE_PATH);
         $file = sprintf('%s.%s', $article_ar->id, Videos::MOVIE_FORMAT);
 
-        if (file_exists($path = sprintf('%s/%s', $base_path, $file))) return $path;
+        if ($skip === true || file_exists($path = sprintf('%s/%s', $base_path, $file))) return $path;
         return sprintf('%s/%s/%s', PUBLIC_PATH, Videos::MOVIE_PATH_TMP, $file);
     }
 

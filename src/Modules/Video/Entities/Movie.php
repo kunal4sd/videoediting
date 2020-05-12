@@ -45,7 +45,7 @@ class Movie extends AbstractModule
 
         foreach ($articles_ar as $article_ar) {
             $movie_file = new VideoFile(false, $this->container);
-            $movie_path = $movie_file->build_movie_path($article_ar);
+            $movie_path = $movie_file->build_movie_path($article_ar, true);
             $movie_file->set_locations($movie_path)
                 ->set_length($article_ar->duration)
                 ->build_size($article_ar, true);
