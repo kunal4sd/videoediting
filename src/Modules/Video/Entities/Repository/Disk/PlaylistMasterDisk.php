@@ -148,7 +148,8 @@ class PlaylistMasterDisk extends AbstractModule
     {
         foreach(get_dates_in_range($start_date, $end_date) as $current_date) {
             yield sprintf(
-                '%s/%s/%s.%s.m3u8',
+                '%s/%s/%s/%s.%s.m3u8',
+                PUBLIC_PATH,
                 Videos::RAW_VIDEO_PATH,
                 $id,
                 $id,

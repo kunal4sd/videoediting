@@ -109,63 +109,57 @@ class Publication extends AbstractModule
     public function get_latest_stream_update(array $publications_ar, $max_days_back = 30): array
     {
         $result = [];
+        $time_left = 120;
+        $total_publications = count($publications_ar);
         $start_date_unix = strtotime(date('Y-m-d'));
         $scan_start_date = date("Y-m-d H:i:s", $start_date_unix);
         $scan_end_date = date("Y-m-d H:i:s", $start_date_unix - $max_days_back * 24 * 3600);
         $default = $scan_end_date;
+        $session_id = str_replace(' ', '_', microtime());
+        $output_files_path = sprintf(
+            '%s/tmp/latest_streams',
+            PUBLIC_PATH
+        );
 
         foreach ($publications_ar as $publication_ar) {
 
             $result[$publication_ar->id] = $default;
-            $paths_iterator = PlaylistMasterDisk::get_stream_playlist_paths(
+            $output_file = sprintf(
+                '%s/%s-%s.out',
+                $output_files_path,
+                $session_id,
+                $publication_ar->id
+            );
+            $paths = iterator_to_array(PlaylistMasterDisk::get_stream_playlist_paths(
                 $publication_ar->id,
                 $scan_start_date,
                 $scan_end_date
-            );
-            foreach ($paths_iterator as $stream_path) {
-                $file_arr = file($stream_path);
-                if (is_array($file_arr) && !empty($file_arr)) {
+            ));
 
-                    $file_arr = array_reverse($file_arr);
-                    $duration = 0.0;
-                    $filename = false;
-                    $rawVideoFile = false;
-                    foreach($file_arr as $line) {
+            exec(sprintf(
+                '/usr/bin/nohup /usr/bin/php %s/scripts/latest_streams.php  %s %s',
+                APP_PATH,
+                $output_file,
+                $publication_ar->id,
+                implode(' ', $paths)
+            ));
+        }
 
-                        $line = trim($line);
-                        if (
-                            strpos($line, '#EXTINF:') === 0
-                            && $filename !== false
-                            && $rawVideoFile !== false
-                        ) {
-                            $duration = str_replace(['#EXTINF:', ','], '', $line);
-                            $result[$publication_ar->id] = $rawVideoFile->set_length($duration)
-                                                                        ->build_end_datetime();
-                            break;
-                        }
-                        elseif (strpos($line, '#') !== 0 && $duration === 0.0) {
-                            $filename = basename($line);
-                            $details = get_file_details_from_path($filename);
-                            $sub_path = Datetime::createFromFormat(
-                                    'Y_m_d-H:i:s',
-                                    $details[1]
-                                )->format('Y/m/d');
+        do {
+            $files = glob(sprintf(
+                '%s/%s*.out',
+                $session_id,
+                $output_files_path
+            ));
+            $time_left--;
+            sleep(1);
+        } while($time_left > 0 && count($files) < $total_publications);
 
-                                $rawVideoFile = (new RawVideoFile())
-                                    ->set_locations(
-                                        sprintf(
-                                            '%s/%s/%s/%s',
-                                            Videos::RAW_VIDEO_PATH,
-                                            $publication_ar->id,
-                                            $sub_path,
-                                            $filename
-                                        )
-                                    )->set_name($filename);
-                        }
-                    }
-                    break;
-                }
-            }
+        foreach($files as $file) {
+            $filepath = file_get_contents(sprintf('%s/%s', $output_files_path, $file));
+            $data = explode(',', $filepath);
+            $result[$data[0]] = $data[1];
+            unlink($filepath);
         }
 
         return $result;
