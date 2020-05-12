@@ -183,8 +183,8 @@ class VideoFile extends AbstractFile implements SizeInterface, LengthInterface
     {
         $base_path = sprintf('%s/%s', PUBLIC_PATH, Videos::MOVIE_PATH);
         $file = sprintf('%s.%s', $article_ar->id, Videos::MOVIE_FORMAT);
-
-        if ($skip === true || file_exists($path = sprintf('%s/%s', $base_path, $file))) return $path;
+        $path = sprintf('%s/%s', $base_path, $file);
+        if ($skip === true || file_exists($path)) return $path;
         return sprintf('%s/%s/%s', PUBLIC_PATH, Videos::MOVIE_PATH_TMP, $file);
     }
 
