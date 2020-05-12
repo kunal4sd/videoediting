@@ -26,7 +26,8 @@ class Report extends AbstractModule
             $countries_ar = $this->entity_country->get_all();
             $grouped_countries_ar = $this->entity_country->group_by_iso($countries_ar);
             $grouped_latest_datetimes = $this->entity_publication->get_latest_stream_update(
-                $publications_active
+                $publications_active,
+                14
             );
             $timestamps = [];
             $grouped_dates = [];
@@ -38,6 +39,11 @@ class Report extends AbstractModule
                 $grouped_dates[$publication_id] = date('Y-m-d', $unix);
                 $grouped_times[$publication_id] = date('H:i:s', $unix);
                 $grouped_times_since_update[$publication_id] = time_diff_human_format($unix);
+                if (strpos($grouped_times_since_update[$publication_id], 'week') !== false) {
+                    $grouped_times_since_update[$publication_id] = sprintf(
+                        'over %s', $grouped_times_since_update[$publication_id]
+                    );
+                }
             };
         }
         catch(Exception $e) {
