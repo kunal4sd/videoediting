@@ -11,7 +11,7 @@ array_shift($argv);
 $output_file = array_shift($argv);
 $pub_id = array_shift($argv);
 
-if (!is_null($output_file) && !empty($argv)) {
+if (!is_null($output_file) && !is_null($pub_id) && !empty($argv)) {
     foreach ($argv as $stream_path) {
         $file_arr = file($stream_path);
         if (is_array($file_arr) && !empty($file_arr)) {
