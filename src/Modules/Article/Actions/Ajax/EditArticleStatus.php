@@ -76,7 +76,10 @@ class EditArticleStatus extends AbstractModule
                      */
                     if (!$video_file->copy_media($article_ar, $article_ar_media)) {
                         $changes_reverted = $this->revert_changes($article_ar_media);
-                        $result['message'] = "Failed copying a video file to live output directory.";
+                        $result['message'] = sprintf(
+                            "Failed copying video file #%s to live output directory.",
+                            $article_ar->id
+                        );
                         if (!$changes_reverted) $result['message'] .= " Unwanted changes have been made to the affected article, and failed being reverted.";
                         $code = 500;
                         $this->logger->write(new Exception(
