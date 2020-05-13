@@ -155,7 +155,7 @@ class Publication extends AbstractModule
 
         foreach($files as $filepath) {
             $data = explode(',', file_get_contents($filepath));
-            $result[$data[0]] = strlen($data[1]) ? $data[1]: $result[$data[0]];
+            $result[$data[0]] = strlen($data[1]) ? $data[1] : $result[$data[0]];
             unlink($filepath);
         }
 
