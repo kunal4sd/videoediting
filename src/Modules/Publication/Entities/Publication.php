@@ -109,13 +109,13 @@ class Publication extends AbstractModule
     public function get_latest_stream_update(array $publications_ar, $max_days_back = 30): array
     {
         $result = [];
-        $time_left = 120;
+        $time_left = 60;
         $total_publications = count($publications_ar);
         $start_date_unix = strtotime(date('Y-m-d'));
         $scan_start_date = date("Y-m-d H:i:s", $start_date_unix);
         $scan_end_date = date("Y-m-d H:i:s", $start_date_unix - $max_days_back * 24 * 3600);
         $default = $scan_end_date;
-        $session_id = str_replace(' ', '_', microtime());
+        $session_id = str_replace(['.', ' '], '_', microtime());
         $output_files_path = sprintf(
             '%s/tmp/latest_streams',
             PUBLIC_PATH
@@ -135,30 +135,27 @@ class Publication extends AbstractModule
                 $scan_start_date,
                 $scan_end_date
             ));
-
             exec(sprintf(
-                '/usr/bin/nohup /usr/bin/php %s/scripts/latest_streams.php  %s %s',
+                '/usr/bin/nohup /usr/bin/php %s/scripts/latest_streams.php  %s %s %s > /dev/null 2>&1 &',
                 APP_PATH,
                 $output_file,
                 $publication_ar->id,
                 implode(' ', $paths)
             ));
         }
-
         do {
             $files = glob(sprintf(
                 '%s/%s*.out',
-                $session_id,
-                $output_files_path
+                $output_files_path,
+                $session_id
             ));
             $time_left--;
             sleep(1);
         } while($time_left > 0 && count($files) < $total_publications);
 
-        foreach($files as $file) {
-            $filepath = file_get_contents(sprintf('%s/%s', $output_files_path, $file));
-            $data = explode(',', $filepath);
-            $result[$data[0]] = $data[1];
+        foreach($files as $filepath) {
+            $data = explode(',', file_get_contents($filepath));
+            $result[$data[0]] = strlen($data[1]) ? $data[1]: $result[$data[0]];
             unlink($filepath);
         }
 

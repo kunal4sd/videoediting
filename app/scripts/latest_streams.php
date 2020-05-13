@@ -37,7 +37,7 @@ if (!is_null($output_file) && !is_null($pub_id) && !empty($argv)) {
                             $rawVideoFile->set_length($duration)->build_end_datetime()
                         )
                     );
-                    break;
+                    die();
                 }
                 elseif (strpos($line, '#') !== 0 && $duration === 0.0) {
                     $filename = basename($line);
@@ -61,4 +61,12 @@ if (!is_null($output_file) && !is_null($pub_id) && !empty($argv)) {
             break;
         }
     }
+    file_put_contents(
+        $output_file,
+        sprintf(
+            '%s,%s',
+            $pub_id,
+            ''
+        )
+    );
 }
