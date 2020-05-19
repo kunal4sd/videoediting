@@ -1,5 +1,7 @@
 <?php
 
+use App\Libs\Enums\Videos;
+
 /**
  * @param object $object : instance of class
  * @param array $array : target array to check fields in
@@ -329,4 +331,32 @@ function time_diff_human_format($time)
             $number_of_units > 1 ? 's' : ''
         );
     }
+}
+
+function get_raw_video_path($publication_id)
+{
+    $alternative_path_pub_ids = [
+        858,
+        857,
+        3343,
+        3919,
+        2707,
+        3062,
+        2769,
+        3289,
+        2714,
+        5038,
+        2776,
+        18706,
+        6428,
+        25748,
+        5147,
+        3458,
+        2703
+    ];
+
+    if (in_array((int) $publication_id, $alternative_path_pub_ids)) {
+        return Videos::RAW_VIDEO_PATH2;
+    }
+    return Videos::RAW_VIDEO_PATH;
 }

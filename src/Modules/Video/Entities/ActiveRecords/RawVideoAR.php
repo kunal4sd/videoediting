@@ -2,7 +2,6 @@
 
 namespace App\Modules\Video\Entities\ActiveRecords;
 
-use App\Libs\Enums\Videos;
 use App\Modules\Abstracts\AbstractActiveRecord;
 
 class RawVideoAR extends AbstractActiveRecord
@@ -33,10 +32,10 @@ class RawVideoAR extends AbstractActiveRecord
      */
     public $path;
 
-    public function __construct(array $data = [])
+    public function __construct(array $data = [], $dir)
     {
         if (isset($data['path'])) {
-            $data['path'] = str_replace(STORAGE_PATH, Videos::RAW_VIDEO_PATH, $data['path']);
+            $data['path'] = str_replace(STORAGE_PATH, $dir, $data['path']);
         }
         $this->build_from_array($data);
     }

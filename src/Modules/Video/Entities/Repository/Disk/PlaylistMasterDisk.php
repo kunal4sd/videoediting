@@ -86,7 +86,7 @@ class PlaylistMasterDisk extends AbstractModule
                                 ->set_locations(
                                     sprintf(
                                         '%s/%s/%s/%s',
-                                        Videos::RAW_VIDEO_PATH,
+                                        get_raw_video_path($id),
                                         $id,
                                         $sub_path,
                                         $filename
@@ -150,7 +150,7 @@ class PlaylistMasterDisk extends AbstractModule
             yield sprintf(
                 '%s/%s/%s/%s.%s.m3u8',
                 PUBLIC_PATH,
-                Videos::RAW_VIDEO_PATH,
+                get_raw_video_path($id),
                 $id,
                 $id,
                 str_replace('-', '_', $current_date)

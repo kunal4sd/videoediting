@@ -5,6 +5,7 @@ namespace App\Libs\Enums;
 class Videos
 {
     const RAW_VIDEO_PATH = 'rawVideos';
+    const RAW_VIDEO_PATH2 = 'rawVideos2';
     const RAW_VIDEO_FORMAT = 'ts';
     const RAW_VIDEO_LENGTH = 5;
     const CUT_VIDEO_PATH = 'tmp/perfect_cuts';
