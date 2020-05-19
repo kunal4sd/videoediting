@@ -60,8 +60,9 @@ class RawVideoDB extends AbstractDatabase
             $params
         );
 
+        $dir = get_raw_video_path($publication_id);
         foreach($data as $row) {
-            $result[] = new RawVideoAR($row);
+            $result[] = new RawVideoAR($row, $dir);
         }
 
         return $result;

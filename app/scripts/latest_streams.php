@@ -4,7 +4,6 @@ require realpath(__DIR__ . '/..') . '/bootstrap/constants.php';
 require BASE_PATH . '/vendor/autoload.php';
 require APP_PATH . '/bootstrap/functions.php';
 
-use App\Libs\Enums\Videos;
 use App\Modules\Video\Entities\Files\RawVideoFile;
 
 array_shift($argv);
@@ -50,7 +49,7 @@ if (!is_null($output_file) && !is_null($pub_id) && !empty($argv)) {
                         $rawVideoFile = (new RawVideoFile())->set_locations(
                                 sprintf(
                                     '%s/%s/%s/%s',
-                                    Videos::RAW_VIDEO_PATH,
+                                    get_raw_video_path($pub_id),
                                     $pub_id,
                                     $sub_path,
                                     $filename
