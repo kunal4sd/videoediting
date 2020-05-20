@@ -68,6 +68,9 @@ class PlaylistMasterDisk extends AbstractModule
                 if ($handle) {
 
                     $duration = 0.0;
+                    $date_obj = false;
+                    $date_timestamp = 0;
+                    $base_path = false;
                     while (($line = fgets($handle)) !== false) {
 
                         $line = trim($line);
@@ -76,17 +79,20 @@ class PlaylistMasterDisk extends AbstractModule
                         }
                         elseif (strpos($line, '#') !== 0 && $duration > 0.0) {
                             $filename = basename($line);
-                            $details = get_file_details_from_path($filename);
-                            $sub_path = Datetime::createFromFormat(
-                                    'Y_m_d-H:i:s',
-                                    $details[1]
-                                )->format('Y/m/d');
+                            if ($date_obj === false)
+                            {
+                                $details = get_file_details_from_path($filename);
+                                $date_obj = Datetime::createFromFormat('Y_m_d-H:i:s', $details[1]);
+                                $sub_path = $date_obj->format('Y/m/d');
+                                $date_timestamp = $date_obj->getTimestamp();
+                                $base_path = get_raw_video_path($id, $date_timestamp);
+                            }
 
                             $raw_video_file = (new RawVideoFile())
                                 ->set_locations(
                                     sprintf(
                                         '%s/%s/%s/%s',
-                                        get_raw_video_path($id),
+                                        $base_path,
                                         $id,
                                         $sub_path,
                                         $filename
@@ -147,10 +153,11 @@ class PlaylistMasterDisk extends AbstractModule
     public static function get_stream_playlist_paths($id, $start_date, $end_date)
     {
         foreach(get_dates_in_range($start_date, $end_date) as $current_date) {
+            $timestamp = Datetime::createFromFormat('Y-m-d', $current_date)->getTimestamp();
             yield sprintf(
                 '%s/%s/%s/%s.%s.m3u8',
                 PUBLIC_PATH,
-                get_raw_video_path($id),
+                get_raw_video_path($id, $timestamp),
                 $id,
                 $id,
                 str_replace('-', '_', $current_date)

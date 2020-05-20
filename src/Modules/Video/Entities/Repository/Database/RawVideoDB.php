@@ -60,8 +60,14 @@ class RawVideoDB extends AbstractDatabase
             $params
         );
 
-        $dir = get_raw_video_path($publication_id);
         foreach($data as $row) {
+            $details = get_file_details_from_path($row['path']);
+            $dir = get_raw_video_path(
+                    $publication_id,
+                    strtotime(
+                        \Datetime::createFromFormat('Y_m_d-H:i:s', $details[1])->getTimestamp()
+                    )
+                );
             $result[] = new RawVideoAR($row, $dir);
         }
 

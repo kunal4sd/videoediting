@@ -333,12 +333,14 @@ function time_diff_human_format($time)
     }
 }
 
-function get_raw_video_path($publication_id)
+function get_raw_video_path($publication_id, $timestamp)
 {
+    $reference_date = '2020-05-19';
     $alternative_path_pub_ids = [
         858,
         857,
         3343,
+        2698,
         3919,
         2707,
         3062,
@@ -355,7 +357,10 @@ function get_raw_video_path($publication_id)
         2703
     ];
 
-    if (in_array((int) $publication_id, $alternative_path_pub_ids)) {
+    if (
+        in_array((int) $publication_id, $alternative_path_pub_ids)
+        && $timestamp >= strtotime($reference_date)
+    ) {
         return Videos::RAW_VIDEO_PATH2;
     }
     return Videos::RAW_VIDEO_PATH;
