@@ -33,7 +33,7 @@ class GetMovie extends AbstractModule
 
             $publication_id = false;
             $section_id = 0;
-            $type_id = 0;
+            $type_id = 10;
             $duration = 0;
             $file_path = '';
             $status = 'new';
