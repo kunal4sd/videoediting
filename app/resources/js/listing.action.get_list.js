@@ -39,7 +39,8 @@ $( function() {
             table_cols_index[table_cols[col_index].name] = parseInt(col_index);
         }
 
-        return table.DataTable({
+        var data_table = table.DataTable({
+            dom: 'Bfrtip',
             columns: table_cols,
             columnDefs: [
                 {
@@ -59,12 +60,33 @@ $( function() {
                 }
             ],
             order: [[ table_cols_index.id, "desc" ]],
-            select: true
+            select: {
+                style: 'multi'
+            },
+            buttons: [
+                {
+                    text: 'Select All',
+                    action: function() {
+                        data_table.rows({
+                            page: 'current'
+                        }).select();
+                    }
+                },
+                'selectNone'
+            ],
+            language: {
+                buttons: {
+                    selectNone: "Deselect All"
+                }
+            }
         });
+
+        return data_table;
     };
     var data_table = init_data_table(video_table);
     var add_videos = function(videos) {
 
+        data_table.off('page.dt');
         data_table.destroy();
         list_holder.html('');
         $.each(videos, function(i, video) {
@@ -74,6 +96,9 @@ $( function() {
             );
         });
         data_table = init_data_table(video_table);
+        data_table.on('page.dt', function() {
+            data_table.rows( { selected: true } ).deselect();
+        });
         register_actions();
     };
     var convert_list_to_row = function(global_list_video) {

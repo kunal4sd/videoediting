@@ -23,6 +23,7 @@ var config = {
                 'jquery.min.js',
                 'jquery.dataTables.min.js',
                 'jquery.dataTables.select.min.js',
+                'jquery.dataTables.buttons.min.js',
                 'bootstrap*',
                 'moment.min.js',
                 'video7.js',
