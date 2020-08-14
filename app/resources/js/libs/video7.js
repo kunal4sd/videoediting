@@ -22629,6 +22629,7 @@
 
 
       Player.prototype.handleTechLoadStart_ = function handleTechLoadStart_() {
+        Player.prototype.is_first_play = true;
         // TODO: Update to use `emptied` event instead. See #1277.
 
         this.removeClass('vjs-ended');
@@ -23178,8 +23179,12 @@
           && this.rangeslider.bar !== undefined
           && this.rangeslider.bar.rs !== undefined
         ) {
-            this.rangeslider._reset();
-            this.rangeslider._setValuesLocked(0, this.techGet_('duration'), true);
+            if (this.rangeslider.start == 0 ||
+              Player.prototype.is_first_play == true) {
+              this.rangeslider._reset();
+              this.rangeslider._setValuesLocked(0, this.techGet_('duration'), true);
+              Player.prototype.is_first_play = false;
+            }
         }
       };
 
