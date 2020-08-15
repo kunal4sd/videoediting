@@ -88,7 +88,6 @@ _vjs7 = {
 
             if (plugin.options.controlTime === false)
                 plugin.hidecontrolTime(); //Hide the control time panel
-
             plugin._reset();
             player.trigger('loadedRangeSlider'); //Let know if the Range Slider DOM is ready
         }
@@ -605,7 +604,6 @@ _vjs7 = {
                 tpl = this.rs.tpl.el_,
                 bar = this.rs.bar,
                 ctp = this.rs[index === 0 ? 'ctpl' : 'ctpr'].el_;
-
         //Check if left arrow is passing the right arrow
         if ((index === 0 ? bar.updateLeft(left) : bar.updateRight(left))) {
 
