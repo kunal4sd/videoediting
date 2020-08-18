@@ -40,7 +40,7 @@ $( function() {
         }
 
         var data_table = table.DataTable({
-            dom: 'Bfrtip',
+            dom: 'Brfltip',
             columns: table_cols,
             columnDefs: [
                 {
