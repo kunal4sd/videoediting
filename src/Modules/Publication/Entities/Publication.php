@@ -136,14 +136,13 @@ class Publication extends AbstractModule
                 $scan_end_date
             ));
             exec(sprintf(
-                '/usr/bin/nohup /usr/bin/php %s/scripts/latest_streams.php  %s %s % > /dev/null 2>&1 &',
+                '/usr/bin/nohup /usr/bin/php %s/scripts/latest_streams.php  %s %s %s > /dev/null 2>&1 &',
                 APP_PATH,
                 $output_file,
                 $publication_ar->id,
                 implode(' ', $paths)
             ));
         }
-
         do {
             $files = glob(sprintf(
                 '%s/%s*.out',
