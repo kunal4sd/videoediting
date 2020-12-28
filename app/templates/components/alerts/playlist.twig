@@ -2,7 +2,7 @@
     name="{% if not content %}global_template_alert_playlist{% endif %}"
     class="list-group-item list-group-item-action list-group-item-success cursor-pointer"
     data-poster="{% if playlist.poster %}{{ playlist.poster }}{% endif %}"
-    data-url="{% if playlist.url %}{{ playlist.url }}{% endif %}"
+    data-url="{% if playlist.url %}{{ playlist.url }}{% endif %}" data-publication="{% if playlist.publication %}{{ playlist.publication }}{% endif %}" data-start-date="{% if playlist.start_date %}{{ playlist.start_date }}{% endif %}" data-end-date="{% if playlist.end_date %}{{ playlist.end_date }}{% endif %}" data-url-texts="{% if playlist.url_texts %}{{ playlist.url_texts }}{% endif %}"
 >
     <div class="d-fill row">
         <div class="col-sm-3 d-fill m-auto">

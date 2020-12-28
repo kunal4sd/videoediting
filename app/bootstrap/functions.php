@@ -165,12 +165,18 @@ function intersect_objects_by_fields(
     );
 }
 
+function base_url()
+{
+    $url_base = sprintf('%s://%s', SCHEME, HOST);
+    if (PORT) $url_base .= sprintf(':%s', PORT);
+
+    return $url_base;
+}
+
 function path_to_url($file_path)
 {
     if (strlen($file_path)) {
-        $url_base = sprintf('%s://%s', SCHEME, HOST);
-        if (PORT) $url_base .= sprintf(':%s', PORT);
-
+        $url_base = base_url();
         $file_path = str_replace(PUBLIC_PATH, '', $file_path);
         $file_path = str_replace($url_base, '', $file_path);
 
@@ -183,9 +189,7 @@ function path_to_url($file_path)
 function url_to_path($file_url)
 {
     if (strlen($file_url)) {
-        $url_base = sprintf('%s://%s', SCHEME, HOST);
-        if (PORT) $url_base .= sprintf(':%s', PORT);
-
+        $url_base = base_url();
         $file_url = str_replace(PUBLIC_PATH, '', $file_url);
         $file_url = str_replace($url_base, '', $file_url);
 

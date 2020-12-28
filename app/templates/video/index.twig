@@ -7,11 +7,14 @@
 {% block content %}
 
 <div class="row">
-    <div class="row d-flex col-xl-8 mx-auto p-0">
+    <div class="row d-flex col-xl-6 mx-auto p-0">
         {% include 'video/components/preview.twig' %}
         {% include 'video/components/episodes.twig' %}
     </div>
-    <div class="row d-flex col-xl-4 mx-auto p-0">
+    <div class="row d-flex col-xl-3 mx-auto p-0">
+        {% include 'video/components/texts.twig' %}
+    </div>
+    <div class="row d-flex col-xl-3 mx-auto p-0">
         {% include 'video/components/videos.twig' %}
     </div>
 </div>

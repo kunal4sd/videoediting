@@ -2,7 +2,6 @@
 
 namespace App\Modules\Core\Middleware\Standardization;
 
-use App\Libs\Json;
 use App\Modules\Abstracts\AbstractModule;
 use Slim\Http\Request;
 use Slim\Http\Response;

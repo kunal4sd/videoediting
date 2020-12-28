@@ -82,7 +82,7 @@ var global_functions = {
             }
 
             // if field holder not found, check for data type attribute and set it to value
-            var attr_field = 'data-' + field;
+            var attr_field = 'data-' + field.replace('_', '-');
             if (new_element.attr( attr_field ) !== undefined) {
                 new_element.attr( attr_field, value );
 

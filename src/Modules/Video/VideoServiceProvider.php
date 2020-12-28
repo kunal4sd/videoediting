@@ -2,30 +2,32 @@
 
 namespace App\Modules\Video;
 
+use Pimple\Container;
 use App\Modules\Video\Views\Index;
 use App\Modules\Video\Views\Listing;
+use Pimple\ServiceProviderInterface;
 use App\Modules\Video\Entities\Movie;
 use App\Modules\Video\Entities\Playlist;
 use App\Modules\Video\Entities\RawVideo;
 use App\Modules\Video\Entities\RemoteFile;
-use App\Modules\Video\Actions\DownloadMovie;
+use App\Modules\Video\Actions\Ajax\GetText;
 use App\Modules\Video\Actions\Ajax\GetMovie;
+use App\Modules\Video\Actions\DownloadMovie;
 use App\Modules\Video\Actions\Ajax\GetEpisode;
 use App\Modules\Video\Actions\Ajax\GetPlaylist;
 use App\Modules\Video\Actions\Ajax\GetMovieList;
 use App\Modules\Video\Actions\Ajax\GetVideoList;
 use App\Modules\Core\Middleware\Persistant as PersistantMiddleware;
+use App\Modules\Video\Middleware\Validation\GetText as GetTextValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetMovie as GetMovieValidationMiddleware;
+use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetEpisode as GetEpisodeValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetPlaylist as GetPlaylistValidationMiddleware;
+use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetMovieList as GetMovieListValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetVideoList as GetVideoListValidationMiddleware;
-use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
-use App\Modules\Core\Middleware\Authorization\SameSessionId as SameSessionIdAuthorizationMiddleware;
-use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Standardization\DateRange as DateRangeStandardizationMiddleware;
-use Pimple\Container;
-use Pimple\ServiceProviderInterface;
+use App\Modules\Core\Middleware\Authorization\SameSessionId as SameSessionIdAuthorizationMiddleware;
 
 class VideoServiceProvider implements ServiceProviderInterface
 {
@@ -66,6 +68,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['video.action.ajax.get_video_list'] = function ($container) {
             return new GetVideoList($container);
+        };
+        $container['video.action.ajax.get_text'] = function ($container) {
+            return new GetText($container);
         };
     }
 
@@ -130,6 +135,13 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.get_list');
+
+        $container->slim->post('/videos/actions/get/text', 'video.action.ajax.get_text')
+                        ->add(new GetTextValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.action.get_text');
     }
 
     private function register_entities(Container $container)

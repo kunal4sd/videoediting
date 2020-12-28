@@ -176,6 +176,10 @@
     top: -0.75em !important;
 }
 
+#segment_text {
+    min-width: 100%;
+}
+
 
  /**
  * bootstrap modal

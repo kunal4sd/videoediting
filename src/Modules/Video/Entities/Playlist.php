@@ -2,14 +2,17 @@
 
 namespace App\Modules\Video\Entities;
 
+use \Exception;
+use Slim\Http\Request;
+use App\Libs\Enums\Dbs;
+use App\Libs\Enums\Hosts;
 use App\Libs\Enums\Videos;
 use App\Modules\Abstracts\AbstractFile;
 use App\Modules\Abstracts\AbstractModule;
 use App\Modules\Video\Entities\Files\PlaylistMasterFile;
+use App\Modules\Video\Entities\Repository\Database\TextDB;
 use App\Modules\Video\Entities\Repository\Disk\PlaylistDisk;
 use App\Modules\Video\Entities\Repository\Disk\PlaylistMasterDisk;
-use \Exception;
-use Slim\Http\Request;
 
 class Playlist extends AbstractModule
 {
@@ -36,13 +39,15 @@ class Playlist extends AbstractModule
 
             $result[] = [
                 'url' => $playlist_file->get_url(),
+                'url_texts' => sprintf('%s/videos/actions/get/texts', base_url()),
                 'start_date' => date("Y-m-d H:i:s", $start_datetime),
                 'end_date' => date("Y-m-d H:i:s", $end_datetime),
                 'start_day' => date("l, Y-m-d", $start_datetime),
                 'start_hour' => date("H:i:s", $start_datetime),
                 'end_day' => date("l, Y-m-d", $end_datetime),
                 'end_hour' => date("H:i:s", $end_datetime),
-                'poster' => $playlist_file->get_poster()->get_url()
+                'poster' => $playlist_file->get_poster()->get_url(),
+                'publication' => $request->getParam('publication')
             ];
         }
 
@@ -100,6 +105,24 @@ class Playlist extends AbstractModule
     {
         $playlist_file = (new PlaylistDisk($this->container))->create_playlist($files, $force);
         return $playlist_file;
+    }
+
+    /**
+     * @param Request $request
+     * @throws Exception
+     * @return string[]
+     */
+    public function get_playlist_texts(Request $request)
+    {
+        $result = [];
+
+        $text_ars = (new TextDB($this->db[Hosts::LOCAL][Dbs::TEXTS]))
+        ->get_for_interval_by_publication($request->getParam('start_date'), $request->getParam('end_date'), $request->getParam('publication'));
+        foreach($text_ars as $text_ar) {
+            $result[] = $text_ar->word;
+        }
+
+        return $result;
     }
 
     /**

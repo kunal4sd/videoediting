@@ -7,7 +7,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Respect\Validation\Validator as v;
 
-class GetVideoList extends AbstractModule
+class GetText extends AbstractModule
 {
     public function __invoke(Request $request, Response $response, $next)
     {
@@ -15,8 +15,7 @@ class GetVideoList extends AbstractModule
         $validation = $this->validator->validate($request, [
             'start_date' => v::notEmpty()->stringType(),
             'end_date' => v::notEmpty()->stringType(),
-            'publication' => v::oneOf(v::stringType(), v::nullType()),
-            'status' => v::oneOf(v::stringType(), v::nullType()),
+            'publication' => v::notEmpty()->intVal(),
             'ajax' => v::trueVal()
         ]);
         if ($validation->failed()) {

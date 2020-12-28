@@ -36,6 +36,7 @@ $( function() {
 
             global_functions.set_playlist_to_videojs(data.url);
             global_functions.set_poster_to_videojs(data.poster);
+            load_segment_texts(data.publication, data.start_date, data.end_date, data.url_texts);
         });
     };
     var clear_movies = function() {
@@ -44,6 +45,27 @@ $( function() {
     var clear_playlists = function() {
         playlists_holder.html('');
     };
+    var load_segment_texts = function(publication, start_date, end_date, url) {
+        $.ajax({
+            method: 'get',
+            url: url,
+            data: {
+                publication: publication,
+                start_date: start_date,
+                end_date: end_date,
+                ajax: true
+            },
+            complete: function (result) {
+                if (
+                    result.responseJSON !== undefined
+                    && result.responseJSON.result !== undefined
+                    && result.responseJSON.result.playlists !== undefined
+                ) {
+                    $('#segment_text').text(result.responseJSON.result.texts.join(' '));
+                }
+            }
+        });
+    }
 
     button.on('click', function(e) {
         e.preventDefault();
