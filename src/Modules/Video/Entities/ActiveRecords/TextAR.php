@@ -53,7 +53,7 @@ class TextAR extends AbstractActiveRecord
     public $created;
 
 
-    public function __construct(array $data = [], $dir)
+    public function __construct(array $data = [])
     {
         $this->build_from_array($data);
     }
