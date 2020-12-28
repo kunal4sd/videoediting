@@ -38,7 +38,7 @@ $( function() {
 
             global_functions.set_playlist_to_videojs(data.url);
             global_functions.set_poster_to_videojs(data.poster);
-            load_segment_texts(data.publication, data.start_date, data.end_date, data.url_texts);
+            load_segment_texts(data.publication, data.startDate, data.endDate, data.urlTexts);
         });
     };
     var clear_movies = function() {
