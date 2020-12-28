@@ -22,15 +22,15 @@ class GetText extends AbstractModule
 
             $result['texts'] = $this->entity_playlist->get_playlist_texts($request);
 
-            if (empty($result['playlists'])) {
-                $result['message'] = 'Could not find any videos with the provided details';
+            if (empty($result['texts'])) {
+                $result['message'] = 'Could not find any words for the current segment';
             }
         }
         catch(Exception $e) {
             $code = 500;
             $this->logger->write(new Exception(
                 sprintf(
-                    'Failed generating the playlist: %s',
+                    'Failed fetching the words: %s',
                     print_r($e->getMessage(), true)
                 ),
                 $code

@@ -65,7 +65,7 @@ $( function() {
                     && result.responseJSON.result !== undefined
                     && result.responseJSON.result.playlists !== undefined
                 ) {
-                    $('#segment_text').text(result.responseJSON.result.texts.join(' '));
+                    $('#segment_text').val(result.responseJSON.result.texts.join(' '));
                 }
             }
         });
