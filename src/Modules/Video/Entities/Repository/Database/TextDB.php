@@ -23,9 +23,9 @@ class TextDB extends AbstractDatabase
     {
 
         $start = strtotime($from);
-        $start_midnight = strtotime(date("Y-m-d 00:00:00"), $start);
+        $start_midnight = strtotime(date("Y-m-d 00:00:00", $start));
         $end = strtotime($to);
-        $end_midnight = strtotime(date("Y-m-d 00:00:00"), $end);
+        $end_midnight = strtotime(date("Y-m-d 00:00:00", $end));
         $result = [];
         $params = [
             'start_day' => date("Y-m-d", $start),
@@ -64,7 +64,7 @@ class TextDB extends AbstractDatabase
         );
 
         foreach($data as $row) {
-            $result[] = new TextAR($row);
+            $result[] = new TextAR($row, $dir);
         }
 
         return $result;

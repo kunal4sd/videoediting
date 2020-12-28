@@ -63,7 +63,7 @@ $( function() {
                 if (
                     result.responseJSON !== undefined
                     && result.responseJSON.result !== undefined
-                    && result.responseJSON.result.playlists !== undefined
+                    && result.responseJSON.result.texts !== undefined
                 ) {
                     $('#segment_text').val(result.responseJSON.result.texts.join(' '));
                 }
