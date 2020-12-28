@@ -8,6 +8,8 @@ $( function() {
     var global_templates_holder = $('#global-templates-holder');
     var global_alert_playlist = global_templates_holder.find('div[name="global_template_alert_playlist"]');
     var button = form.find('button[type="button"]');
+    var csrf_name = form.find('input[name="csrf_name"]').val();
+    var csrf_value = form.find('input[name="csrf_value"]').val();
     var is_loading = false;
     var add_playlists = function(playlists) {
 
@@ -53,6 +55,8 @@ $( function() {
                 publication: publication,
                 start_date: start_date,
                 end_date: end_date,
+                csrf_name: csrf_name,
+                csrf_value: csrf_value,
                 ajax: true
             },
             complete: function (result) {
