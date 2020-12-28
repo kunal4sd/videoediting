@@ -47,7 +47,7 @@ $( function() {
     };
     var load_segment_texts = function(publication, start_date, end_date, url) {
         $.ajax({
-            method: 'get',
+            method: 'post',
             url: url,
             data: {
                 publication: publication,

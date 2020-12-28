@@ -39,7 +39,7 @@ class Playlist extends AbstractModule
 
             $result[] = [
                 'url' => $playlist_file->get_url(),
-                'url_texts' => sprintf('%s/videos/actions/get/texts', base_url()),
+                'url_texts' => sprintf('%s/videos/actions/get/text', base_url()),
                 'start_date' => date("Y-m-d H:i:s", $start_datetime),
                 'end_date' => date("Y-m-d H:i:s", $end_datetime),
                 'start_day' => date("l, Y-m-d", $start_datetime),

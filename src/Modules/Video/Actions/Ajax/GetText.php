@@ -2,11 +2,7 @@
 
 namespace App\Modules\Video\Actions\Ajax;
 
-use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use App\Modules\Abstracts\AbstractModule;
-use App\Libs\Enums\UserActivity;
-use App\Libs\Enums\Hosts;
-use App\Libs\Enums\Dbs;
 use App\Libs\Json;
 use Slim\Http\Response;
 use Slim\Http\Request;
