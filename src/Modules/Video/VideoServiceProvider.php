@@ -138,9 +138,9 @@ class VideoServiceProvider implements ServiceProviderInterface
 
         $container->slim->post('/videos/actions/get/text', 'video.action.ajax.get_text')
                         ->add(new GetTextValidationMiddleware($container))
-                        // ->add(new SameIpAuthorizationMiddleware($container))
-                        // ->add(new SameSessionIdAuthorizationMiddleware($container))
-                        // ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.get_text');
     }
 

@@ -58,23 +58,23 @@ class CoreServiceProvider implements ServiceProviderInterface
 
     private function register_csrf(Container &$container)
     {
-        // $container['csrf'] = function($container) {
+        $container['csrf'] = function($container) {
 
-        //     $guard = new Guard();
-        //     $guard->setPersistentTokenMode(true);
-        //     $guard->setFailureCallable(function ($request, $response, $next) use ($container) {
-        //         return Json::build($response, [ 'csrf' => 'CSRF check failed' ], 400);
-        //     });
+            $guard = new Guard();
+            $guard->setPersistentTokenMode(true);
+            $guard->setFailureCallable(function ($request, $response, $next) use ($container) {
+                return Json::build($response, [ 'csrf' => 'CSRF check failed' ], 400);
+            });
 
-        //     return $guard;
-        // };
+            return $guard;
+        };
     }
 
     private function register_global_middleware(Container &$container)
     {
-        // $container->slim->add(new CsrfMiddleware($container));
-        // $container->slim->add($container->csrf);
-        // $container->slim->add(new CurrentPathMiddleware($container));
+        $container->slim->add(new CsrfMiddleware($container));
+        $container->slim->add($container->csrf);
+        $container->slim->add(new CurrentPathMiddleware($container));
     }
 
     private function register_flash(Container &$container)
