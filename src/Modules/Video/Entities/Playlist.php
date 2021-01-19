@@ -116,6 +116,7 @@ class Playlist extends AbstractModule
     public function get_playlist_texts(Request $request)
     {
         $result = [];
+        $query = '';
 
         $playlist_file = $this->get_playlist_with_hash($request->getParam('hash'));
 
