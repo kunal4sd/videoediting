@@ -38,7 +38,7 @@ $( function() {
 
             global_functions.set_playlist_to_videojs(data.url);
             global_functions.set_poster_to_videojs(data.poster);
-            load_segment_texts(data.publication, data.startDate, data.endDate, data.urlTexts);
+            load_segment_texts(data.publication, data.hash, data.urlTexts);
         });
     };
     var clear_movies = function() {
@@ -47,14 +47,13 @@ $( function() {
     var clear_playlists = function() {
         playlists_holder.html('');
     };
-    var load_segment_texts = function(publication, start_date, end_date, url) {
+    var load_segment_texts = function(publication, hash, url) {
         $.ajax({
             method: 'post',
             url: url,
             data: {
                 publication: publication,
-                start_date: start_date,
-                end_date: end_date,
+                hash: hash,
                 csrf_name: csrf_name,
                 csrf_value: csrf_value,
                 ajax: true
