@@ -87,15 +87,15 @@ class TextDB extends AbstractDatabase
             INNER JOIN recordings_text.pub_{$publication_id} AS p
                 ON p.segment_id = s.id
                 AND p.pub_id = s.pub_id
-                AND {$from} <= DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second)
-                AND {$to} >= DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second)
+                AND '{$from}' <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
+                AND '{$to}' >= DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second)
             WHERE 1
                 AND s.id >= (
                     SELECT
                         id
                     FROM recordings_text.segments
                     WHERE 1
-                        AND start_segment_datetime <= {$from}
+                        AND start_segment_datetime <= '{$from}'
                     ORDER BY
                         id
                         DESC
@@ -106,7 +106,7 @@ class TextDB extends AbstractDatabase
                         id
                     FROM recordings_text.segments
                     WHERE 1
-                        AND start_segment_datetime <= {$to}
+                        AND start_segment_datetime <= '{$to}'
                     ORDER BY
                         id
                         DESC
