@@ -35,17 +35,41 @@ class TextDB extends AbstractDatabase
                 p.*
             FROM recordings_text.segments AS s
             INNER JOIN recordings_text.pub_{$publication_id} AS p
-                on p.segment_id = s.id
+                ON p.segment_id = s.id
                 AND p.pub_id = s.pub_id
+                AND :from <= DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second)
+                AND :to >= DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second)
             WHERE 1
-                AND s.start_segment_datetime >= :from
-                AND s.end_segment_datetime <= :to
+                AND s.id >= (
+                    SELECT
+                        id
+                    FROM recordings_text.segments
+                    WHERE 1
+                        AND start_segment_datetime <= :from
+                    ORDER BY
+                        id
+                        DESC
+                    LIMIT 1
+                )
+                AND s.id <= (
+                    SELECT
+                        id
+                    FROM recordings_text.segments
+                    WHERE 1
+                        AND start_segment_datetime <= :to
+                    ORDER BY
+                        id
+                        DESC
+                    LIMIT 1
+                )
                 AND s.pub_id = :publication_id
-            ORDER BY
-                s.id,
-                p.date,
-                p.start_time
-                ASC
+                GROUP BY
+                    p.id
+                ORDER BY
+                    s.id,
+                    p.date,
+                    p.start_time
+                    ASC
             ",
             $params
         );
@@ -54,26 +78,7 @@ class TextDB extends AbstractDatabase
             $result[] = new TextAR($row);
         }
 
-        return [
-            $result,
-            "
-                SELECT
-                    p.*
-                FROM recordings_text.segments AS s
-                INNER JOIN recordings_text.pub_{$publication_id} AS p
-                    on p.segment_id = s.id
-                    AND p.pub_id = s.pub_id
-                WHERE 1
-                    AND s.start_segment_datetime >= '$from'
-                    AND s.end_segment_datetime <= '$to'
-                    AND s.pub_id = {$publication_id}
-                ORDER BY
-                    s.id,
-                    p.date,
-                    p.start_time
-                    ASC
-            "
-        ];
+        return $result;
     }
 
 }
