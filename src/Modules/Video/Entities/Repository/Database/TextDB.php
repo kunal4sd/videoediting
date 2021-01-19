@@ -42,7 +42,9 @@ class TextDB extends AbstractDatabase
                 AND s.end_segment_datetime <= :to
                 AND s.pub_id = :publication_id
             ORDER BY
-                CONCAT_WS(' ', p.date, p.start_time)
+                s.id,
+                p.date,
+                p.start_time
                 ASC
             ",
             $params
