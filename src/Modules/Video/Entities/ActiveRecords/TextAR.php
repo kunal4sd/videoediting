@@ -18,6 +18,11 @@ class TextAR extends AbstractActiveRecord
     public $pub_id;
 
     /**
+     * @var int
+     */
+    public $segment_id;
+
+    /**
      * @var string
      */
     public $country;

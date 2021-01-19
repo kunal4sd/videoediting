@@ -22,56 +22,29 @@ class TextDB extends AbstractDatabase
     )
     {
 
-        $start = strtotime($from);
-        $start_midnight = strtotime(date("Y-m-d 00:00:00", $start));
-        $start_time = $start - $start_midnight;
-        $start_day = date("Y-m-d", $start);
-        $end = strtotime($to);
-        $end_midnight = strtotime(date("Y-m-d 00:00:00", $end));
-        $end_time = $end - $end_midnight;
-        $end_day = date("Y-m-d", $end);
         $result = [];
         $params = [
-            'start_day' => $start_day,
-            'end_day' => $end_day,
-            'start_time' => $start_time,
-            'end_time' => $end_time,
+            'from' => $from,
+            'to' => $to,
             'publication_id' => [$publication_id, PDO::PARAM_INT]
         ];
-        $same_day = date("Y-m-d", $start) === date("Y-m-d", $end);
 
         $data = $this->db->fetch_all(
-            sprintf(
-                "
-                    SELECT
-                        *
-                    FROM pub_{$publication_id} AS texts
-                    WHERE 1
-                        AND texts.pub_id = :publication_id
-                        AND (
-                            (
-                                texts.date = :start_day
-                                AND texts.start_time >= :start_time
-                                %s
-                            ) OR
-                            (
-                                texts.date = :end_day
-                                %s
-                                AND texts.start_time <= :end_time
-                            ) %s
-                        )
-                    ORDER BY
-                        CONCAT_WS(' ', texts.date, texts.start_time)
-                        ASC
-                ",
-                $same_day ? "AND texts.start_time <= :end_time" : '',
-                $same_day ? "AND texts.start_time >= :start_time" : '',
-                $same_day ? "" : "OR
-                    (
-                        texts.date > :start_day
-                        AND texts.date < :end_day
-                    )"
-            ),
+            "
+            SELECT
+                pub_{$publication_id}.*
+            FROM segments AS s
+            INNER JOIN pub_{$publication_id} AS p
+                on p.segment_id = s.id
+                AND p.pub_id = s.pub_id
+            WHERE 1
+                AND s.start_segment_datetime >= :from
+                AND s.end_segment_datetime <= :to
+                AND s.pub_id = :publication_id
+            ORDER BY
+                CONCAT_WS(' ', p.date, p.start_time)
+                ASC
+            ",
             $params
         );
 

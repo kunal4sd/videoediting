@@ -38,6 +38,7 @@ class Playlist extends AbstractModule
             $end_datetime = strtotime($playlist_file->get_last_file()->build_end_datetime());
 
             $result[] = [
+                'hash' => $playlist_file->get_hash(),
                 'url' => $playlist_file->get_url(),
                 'url_texts' => sprintf('%s/videos/actions/get/text', base_url()),
                 'start_date' => date("Y-m-d H:i:s", $start_datetime),
@@ -116,10 +117,18 @@ class Playlist extends AbstractModule
     {
         $result = [];
 
-        $text_ars = (new TextDB($this->db[Hosts::LOCAL][Dbs::TEXTS]))
-        ->get_for_interval_by_publication($request->getParam('start_date'), $request->getParam('end_date'), $request->getParam('publication'));
-        foreach($text_ars as $text_ar) {
-            $result[] = $text_ar->word;
+        $playlist_file = $this->get_playlist_with_hash($request->getParam('hash'));
+
+        if (!is_null($first_file = $playlist_file->get_first_file())) {
+
+            $from = $playlist_file->get_first_file()->build_start_datetime();
+            $to = $playlist_file->get_last_file()->build_end_datetime();
+
+            $text_ars = (new TextDB($this->db[Hosts::LOCAL][Dbs::TEXTS]))
+            ->get_for_interval_by_publication($from, $to, $request->getParam('publication'));
+            foreach($text_ars as $text_ar) {
+                $result[] = $text_ar->word;
+            }
         }
 
         return $result;
