@@ -32,9 +32,9 @@ class TextDB extends AbstractDatabase
         $data = $this->db->fetch_all(
             "
             SELECT
-                pub_{$publication_id}.*
-            FROM segments AS s
-            INNER JOIN pub_{$publication_id} AS p
+                p.*
+            FROM recordings_text.segments AS s
+            INNER JOIN recordings_text.pub_{$publication_id} AS p
                 on p.segment_id = s.id
                 AND p.pub_id = s.pub_id
             WHERE 1
