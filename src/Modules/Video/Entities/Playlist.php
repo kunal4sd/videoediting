@@ -121,17 +121,17 @@ class Playlist extends AbstractModule
 
         if (!is_null($first_file = $playlist_file->get_first_file())) {
 
-            $from = $playlist_file->get_first_file()->build_start_datetime();
+            $from = $first_file->build_start_datetime();
             $to = $playlist_file->get_last_file()->build_end_datetime();
 
-            $text_ars = (new TextDB($this->db[Hosts::LOCAL][Dbs::TEXTS]))
+            list($text_ars, $query) = (new TextDB($this->db[Hosts::LOCAL][Dbs::TEXTS]))
             ->get_for_interval_by_publication($from, $to, $request->getParam('publication'));
             foreach($text_ars as $text_ar) {
                 $result[] = $text_ar->word;
             }
         }
 
-        return $result;
+        return [$result, $query];
     }
 
     /**

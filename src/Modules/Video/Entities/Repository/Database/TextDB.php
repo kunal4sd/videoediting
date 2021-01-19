@@ -52,7 +52,24 @@ class TextDB extends AbstractDatabase
             $result[] = new TextAR($row);
         }
 
-        return $result;
+        return [
+            $result,
+            "
+                SELECT
+                    p.*
+                FROM recordings_text.segments AS s
+                INNER JOIN recordings_text.pub_{$publication_id} AS p
+                    on p.segment_id = s.id
+                    AND p.pub_id = s.pub_id
+                WHERE 1
+                    AND s.start_segment_datetime >= '$from'
+                    AND s.end_segment_datetime <= '$to'
+                    AND s.pub_id = {$publication_id}
+                ORDER BY
+                    CONCAT_WS(' ', p.date, p.start_time)
+                    ASC
+            "
+        ];
     }
 
 }

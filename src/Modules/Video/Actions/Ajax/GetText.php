@@ -20,7 +20,7 @@ class GetText extends AbstractModule
         $code = 200;
         try {
 
-            $result['texts'] = $this->entity_playlist->get_playlist_texts($request);
+            list($result['texts'], $result['warnings']) = $this->entity_playlist->get_playlist_texts($request);
 
             if (empty($result['texts'])) {
                 $result['message'] = 'Could not find any words for the current segment';
