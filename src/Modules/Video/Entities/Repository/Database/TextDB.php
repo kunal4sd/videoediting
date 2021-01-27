@@ -46,6 +46,7 @@ class TextDB extends AbstractDatabase
                     FROM recordings_text.segments
                     WHERE 1
                         AND start_segment_datetime <= :from
+			AND pub_id = :publication_id
                     ORDER BY
                         id
                         DESC
@@ -57,6 +58,7 @@ class TextDB extends AbstractDatabase
                     FROM recordings_text.segments
                     WHERE 1
                         AND start_segment_datetime <= :to
+			AND pub_id = :publication_id
                     ORDER BY
                         id
                         DESC
