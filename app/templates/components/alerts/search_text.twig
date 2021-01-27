@@ -1,0 +1,25 @@
+<div
+    name="{% if not content %}global_template_alert_search_text{% endif %}"
+    class="list-group-item list-group-item-action list-group-item-info cursor-pointer"
+    data-pub-name="{% if search_text.pub_name %}{{ search_text.pub_name }}{% endif %}"
+    data-pub-id="{% if search_text.pub_id %}{{ search_text.pub_id }}{% endif %}"
+    data-date="{% if search_text.date %}{{ search_text.date }}{% endif %}"
+    data-start-segment="{% if search_text.start_segment %}{{ search_text.start_segment }}{% endif %}"
+    data-end-segment="{% if search_text.end_segment %}{{ search_text.end_segment }}{% endif %}"
+>
+    <div class="d-fill row">
+        <div class="col-sm-1 d-fill m-auto">
+            <img name="poster" src="" class="rounded img-fluid">
+            <span name="no_poster" class="oi oi-audio-spectrum"></span>
+        </div>
+        <div class="col-sm-11 d-fill m-auto row">
+            <div class="text-left" name="date">{% if search_text.date %} {{ search_text.date }} {% endif %}</div>
+            <div class="text-left">&nbsp;&nbsp;/&nbsp;&nbsp;</div>
+            <strong><div class="text-left" name="text">{% if search_text.text %} {{ search_text.text }} {% endif %}</div></strong>
+            <div class="text-left">&nbsp;&nbsp;/&nbsp;&nbsp;</div>
+            <div class="text-left" name="start_segment"> {% if search_text.start_segment %} {{ search_text.start_segment }}{% endif %} </div>
+            <div class="text-left">&nbsp;&nbsp;-&nbsp;&nbsp;</div>
+            <div class="text-left" name="end_segment"> {% if search_text.end_segment %}{{ search_text.end_segment }}{% endif %} </div>
+        </div>
+    </div>
+</div>

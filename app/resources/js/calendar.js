@@ -2,6 +2,7 @@ $( function() {
 
     var from = $("input[name='start_date']");
     var to = $("input[name='end_date']");
+    var date = $("input[name='date']");
     var from_pickr = from.flatpickr({
         enableTime: true,
         enableSeconds:true,
@@ -32,6 +33,17 @@ $( function() {
                 selectedDate.setHours($(picker.calendarContainer).find('.flatpickr-hour').val());
                 selectedDate.setMinutes($(picker.calendarContainer).find('.flatpickr-minute').val());
                 selectedDate.setSeconds($(picker.calendarContainer).find('.flatpickr-second').val());
+                picker.setDate(selectedDate, true);
+            }
+        }
+    });
+    var date_pickr = date.flatpickr({
+        minuteIncrement: 1,
+        dateFormat: "Y-m-d",
+        defaultDate: (date.length && date.val().length) ? date.val() : moment().format('YYYY-MM-DD'),
+        onClose: function(dates, currentdatestring, picker) {
+            if (dates.length === 1) {
+                var selectedDate = dates[0];
                 picker.setDate(selectedDate, true);
             }
         }

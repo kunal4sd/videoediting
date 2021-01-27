@@ -1,0 +1,60 @@
+<div class="col-xl-12 mb-4 d-flex">
+    <div class="card flex-fill">
+        <div class="card-header">
+            Search
+        </div>
+        <div class="card-body flex-fill">
+            <form id="video-search-text" action="{{ base_url() }}{{ path_for('video.action.search') }}" method="post" novalidate>
+                {{ csrf.fields | raw }}
+                <div class="row form-group">
+                    <input
+                        type="text"
+                        name="date"
+                        class="form-control{{ flash.errors_date ? ' is-invalid' : ''}}"
+                        placeholder="Date"
+                        value="{{ form.date ? form.date : '' }}"
+                        autocomplete="off"
+                    >
+                    {% if flash.errors_date %}
+                        <div class="invalid-feedback">{{ flash.errors_date | first }}</div>
+                    {% endif %}
+                </div>
+                <div class="row form-group">
+                    <select name="publication" class="form-control{{ flash.errors_publication ? ' is-invalid' : ''}}">
+                        <option value="" disabled selected>Choose publication...</option>
+                        {% for publication in publications %}
+                            <option
+                                value="{{ publication.id }}"
+                                {% if form.publication == publication.id %} selected {% endif %}
+                            >
+                                {{ publication.name_en }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if flash.errors_publication %}
+                        <div class="invalid-feedback">{{ flash.errors_publication }}</div>
+                    {% endif %}
+                </div>
+                <div class="row form-group">
+                    <input
+                        type="text"
+                        name="text"
+                        class="form-control{{ flash.errors_text ? ' is-invalid' : ''}}"
+                        placeholder="Search term"
+                        value="{{ form.text ? form.text : '' }}"
+                        autocomplete="off"
+                    >
+                    {% if flash.errors_text %}
+                        <div class="invalid-feedback">{{ flash.errors_text }}</div>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input type="submit" class="d-none">
+                        <button type="button" class="btn btn-primary btn-block mb-3" data-loading="0">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -7,9 +7,12 @@ use App\Modules\Video\Views\Index;
 use App\Modules\Video\Views\Listing;
 use Pimple\ServiceProviderInterface;
 use App\Modules\Video\Entities\Movie;
+use App\Modules\Video\Views\TextSearch;
 use App\Modules\Video\Entities\Playlist;
 use App\Modules\Video\Entities\RawVideo;
+use App\Modules\Video\Actions\Ajax\Search;
 use App\Modules\Video\Entities\RemoteFile;
+use App\Modules\Video\Entities\SearchText;
 use App\Modules\Video\Actions\Ajax\GetText;
 use App\Modules\Video\Actions\Ajax\GetMovie;
 use App\Modules\Video\Actions\DownloadMovie;
@@ -22,6 +25,7 @@ use App\Modules\Video\Middleware\Validation\GetText as GetTextValidationMiddlewa
 use App\Modules\Video\Middleware\Validation\GetMovie as GetMovieValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetEpisode as GetEpisodeValidationMiddleware;
+use App\Modules\Video\Middleware\Validation\SearchText as SearchTextValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetPlaylist as GetPlaylistValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetMovieList as GetMovieListValidationMiddleware;
@@ -46,6 +50,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['video.view.listing'] = function ($container) {
             return new Listing($container);
+        };
+        $container['video.view.search'] = function ($container) {
+            return new TextSearch($container);
         };
     }
 
@@ -72,6 +79,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         $container['video.action.ajax.get_text'] = function ($container) {
             return new GetText($container);
         };
+        $container['video.action.ajax.search'] = function ($container) {
+            return new Search($container);
+        };
     }
 
     private function register_routes(Container $container)
@@ -92,6 +102,15 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.get_playlist');
+
+        $container->slim->post('/videos/actions/search', 'video.action.ajax.search')
+                        ->add(new DateRangeStandardizationMiddleware($container))
+                        ->add(new SearchTextValidationMiddleware($container))
+                        ->add(new PersistantMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.action.search');
 
         $container->slim->post('/videos/actions/get/episode', 'video.action.ajax.get_episode')
                         ->add(new GetEpisodeValidationMiddleware($container))
@@ -142,6 +161,13 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.get_text');
+
+        // text search
+        $container->slim->get('/search', 'video.view.search')
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.view.search');
     }
 
     private function register_entities(Container $container)
@@ -157,6 +183,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['entity_raw_video'] = function ($container) {
             return new RawVideo($container);
+        };
+        $container['entity_search_text'] = function ($container) {
+            return new SearchText($container);
         };
     }
 }
