@@ -2,9 +2,10 @@
 
 namespace App\Modules\Video\Entities\Repository\Database;
 
+use \PDO;
 use App\Modules\Abstracts\AbstractDatabase;
 use App\Modules\Video\Entities\ActiveRecords\TextAR;
-use \PDO;
+use App\Modules\Video\Entities\ActiveRecords\SearchTextAR;
 
 class TextDB extends AbstractDatabase
 {
@@ -63,13 +64,13 @@ class TextDB extends AbstractDatabase
                     LIMIT 1
                 )
                 AND s.pub_id = :publication_id
-                GROUP BY
-                    p.id
-                ORDER BY
-                    s.id,
-                    p.date,
-                    p.start_time
-                    ASC
+            GROUP BY
+                p.id
+            ORDER BY
+                s.id,
+                p.date,
+                p.start_time
+                ASC
             ",
             $params
         );
@@ -113,15 +114,55 @@ class TextDB extends AbstractDatabase
                     LIMIT 1
                 )
                 AND s.pub_id = {$publication_id}
-                GROUP BY
-                    p.id
-                ORDER BY
-                    s.id,
-                    p.date,
-                    p.start_time
-                    ASC
+            GROUP BY
+                p.id
+            ORDER BY
+                s.id,
+                p.date,
+                p.start_time
+                ASC
             "
         ];
+    }
+
+    /**
+     * @param string $date
+     * @param integer $publication_id
+     * @param string $text
+     * @return SearchTextAR[]
+     */
+    public function get_search_text(
+        string $date,
+        int $publication_id,
+        string $text
+    )
+    {
+
+        $result = [];
+        $params = [
+            'date' => [$date, PDO::PARAM_STR],
+            'publication_id' => [$publication_id, PDO::PARAM_INT],
+            'text' => ["%{$text}%", PDO::PARAM_STR],
+        ];
+
+        $data = $this->db->fetch_all(
+            "
+            SELECT
+                t.*
+            FROM manticore.tmp_table AS t
+            WHERE 1
+                AND t.date = :date
+                AND t.pub_id = :publication_id
+                AND t.text LIKE :text
+            ",
+            $params
+        );
+
+        foreach($data as $row) {
+            $result[] = new SearchTextAR($row);
+        }
+
+        return $result;
     }
 
 }
