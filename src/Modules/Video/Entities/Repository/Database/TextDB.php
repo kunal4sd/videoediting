@@ -34,8 +34,8 @@ class TextDB extends AbstractDatabase
             "
             SELECT
                 p.*
-            FROM recordings_text.segments AS s
-            INNER JOIN recordings_text.pub_{$publication_id} AS p
+            FROM segments AS s
+            INNER JOIN pub_{$publication_id} AS p
                 ON p.segment_id = s.id
                 AND p.pub_id = s.pub_id
                 AND :from <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
@@ -44,7 +44,7 @@ class TextDB extends AbstractDatabase
                 AND s.id >= (
                     SELECT
                         id
-                    FROM recordings_text.segments
+                    FROM segments
                     WHERE 1
                         AND start_segment_datetime <= :from
                     ORDER BY
@@ -55,7 +55,7 @@ class TextDB extends AbstractDatabase
                 AND s.id <= (
                     SELECT
                         id
-                    FROM recordings_text.segments
+                    FROM segments
                     WHERE 1
                         AND start_segment_datetime <= :to
                     ORDER BY
@@ -84,8 +84,8 @@ class TextDB extends AbstractDatabase
             "
             SELECT
                 p.*
-            FROM recordings_text.segments AS s
-            INNER JOIN recordings_text.pub_{$publication_id} AS p
+            FROM segments AS s
+            INNER JOIN pub_{$publication_id} AS p
                 ON p.segment_id = s.id
                 AND p.pub_id = s.pub_id
                 AND '{$from}' <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
@@ -94,7 +94,7 @@ class TextDB extends AbstractDatabase
                 AND s.id >= (
                     SELECT
                         id
-                    FROM recordings_text.segments
+                    FROM segments
                     WHERE 1
                         AND start_segment_datetime <= '{$from}'
                     ORDER BY
@@ -105,7 +105,7 @@ class TextDB extends AbstractDatabase
                 AND s.id <= (
                     SELECT
                         id
-                    FROM recordings_text.segments
+                    FROM segments
                     WHERE 1
                         AND start_segment_datetime <= '{$to}'
                     ORDER BY
@@ -126,13 +126,15 @@ class TextDB extends AbstractDatabase
     }
 
     /**
-     * @param string $date
+     * @param string $start_date
+     * @param string $end_date
      * @param integer $publication_id
      * @param string $text
      * @return SearchTextAR[]
      */
     public function get_search_text(
-        string $date,
+        string $start_date,
+        string $end_date,
         int $publication_id,
         string $text
     )
@@ -140,20 +142,21 @@ class TextDB extends AbstractDatabase
 
         $result = [];
         $params = [
-            'date' => [$date, PDO::PARAM_STR],
-            'publication_id' => [$publication_id, PDO::PARAM_INT],
-            'text' => ["%{$text}%", PDO::PARAM_STR],
+            'start_date' => [strtotime($start_date), PDO::PARAM_INT],
+            'end_date' => [strtotime($end_date), PDO::PARAM_INT],
+            'publication_id' => [$publication_id, PDO::PARAM_INT]
         ];
 
         $data = $this->db->fetch_all(
             "
             SELECT
-                t.*
-            FROM manticore.tmp_table AS t
-            WHERE 1
-                AND t.date = :date
-                AND t.pub_id = :publication_id
-                AND t.text LIKE :text
+                *
+            FROM pub_{$publication_id}
+            WHERE
+                date >= :start_date
+                date <= :end_date
+                AND pub_id = :publication_id
+                AND MATCH('@text {$text}')
             ",
             $params
         );

@@ -21,7 +21,8 @@ class Search extends AbstractModule
         try {
 
             $result['texts'] = $this->entity_search_text->get_search_text(
-                $request->getParam('date'),
+                $request->getParam('start_date'),
+                $request->getParam('end_date'),
                 $request->getParam('publication'),
                 $request->getParam('text')
             );

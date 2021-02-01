@@ -11,19 +11,21 @@ class SearchText extends AbstractModule
 {
 
     /**
-     * @param string $date
+     * @param string $start_date
+     * @param string $end_date
      * @param integer $publication_id
      * @param string $text
      * @return SearchTextAR[]
      */
     public function get_search_text(
-        string $date,
+        string $start_date,
+        string $end_date,
         int $publication_id,
         string $text
     )
     {
         return (new TextDB($this->db[Hosts::MANTICORE][Dbs::MAIN]))
-            ->get_search_text($date, $publication_id, $text);
+            ->get_search_text($start_date, $end_date, $publication_id, $text);
     }
 
 }

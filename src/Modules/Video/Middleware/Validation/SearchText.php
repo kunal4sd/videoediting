@@ -13,7 +13,8 @@ class SearchText extends AbstractModule
     {
 
         $validation = $this->validator->validate($request, [
-            'date' => v::notEmpty()->stringType(),
+            'start_date' => v::notEmpty()->stringType(),
+            'end_date' => v::notEmpty()->stringType(),
             'publication' => v::notEmpty()->intVal(),
             'text' => v::notEmpty()->stringType(),
             'ajax' => v::trueVal()
@@ -23,9 +24,16 @@ class SearchText extends AbstractModule
         }
 
         $date_validation = [];
-        $date = $request->getParam('date');
-        if ($date !== date("Y-m-d", strtotime($date))) {
-            $date_validation['date'] = ['unrecognized format'];
+        $start_date = $request->getParam('start_date');
+        $end_date = $request->getParam('end_date');
+        if ($start_date !== date("Y-m-d H:i:s", strtotime($start_date))) {
+            $date_validation['start_date'] = ['unrecognized format'];
+        }
+        if ($end_date !== date("Y-m-d H:i:s", strtotime($end_date))) {
+            $date_validation['end_date'] = ['unrecognized format'];
+        }
+        if (strtotime($start_date) > strtotime($end_date)) {
+            $date_validation['start_date'] = ['start date must be before End date'];
         }
 
         if (count($date_validation)) return $this->validation_failed($date_validation, $response);
