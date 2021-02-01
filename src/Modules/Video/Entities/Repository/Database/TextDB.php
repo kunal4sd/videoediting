@@ -166,6 +166,7 @@ class TextDB extends AbstractDatabase
         );
 
         foreach($data as $row) {
+            $row['text'] = $text;
             $result[] = new SearchTextAR($row);
         }
 
