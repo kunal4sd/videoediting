@@ -47,7 +47,7 @@ class TextDB extends AbstractDatabase
                     FROM segments
                     WHERE 1
                         AND start_segment_datetime <= :from
-			AND pub_id = :publication_id
+                        AND pub_id = :publication_id
                     ORDER BY
                         id
                         DESC
@@ -59,7 +59,7 @@ class TextDB extends AbstractDatabase
                     FROM segments
                     WHERE 1
                         AND start_segment_datetime <= :to
-			AND pub_id = :publication_id
+                        AND pub_id = :publication_id
                     ORDER BY
                         id
                         DESC
@@ -156,7 +156,7 @@ class TextDB extends AbstractDatabase
             FROM pub_{$publication_id}
             WHERE
                 date >= :start_date
-                date <= :end_date
+                AND date <= :end_date
                 AND pub_id = :publication_id
                 AND MATCH('@text {$text}')
             ",
