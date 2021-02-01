@@ -15,7 +15,7 @@ class SearchText extends AbstractModule
      * @param string $end_date
      * @param integer $publication_id
      * @param string $text
-     * @return SearchTextAR[]
+     * @return string[]
      */
     public function get_search_text(
         string $start_date,

@@ -15,7 +15,8 @@ class GetText extends AbstractModule
 
         $result = [
             'texts' => [],
-            'warnings' => []
+            'warnings' => [],
+            'message' => ''
         ];
         $code = 200;
         try {

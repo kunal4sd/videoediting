@@ -15,12 +15,13 @@ class Search extends AbstractModule
 
         $result = [
             'texts' => [],
-            'warnings' => []
+            'warnings' => [],
+            'message' => ''
         ];
         $code = 200;
         try {
 
-            $result['texts'] = $this->entity_search_text->get_search_text(
+            list($result['texts'], $result['message']) = $this->entity_search_text->get_search_text(
                 $request->getParam('start_date'),
                 $request->getParam('end_date'),
                 $request->getParam('publication'),
