@@ -35,24 +35,40 @@ $publications_active = intersect_objects_by_fields(
     $publications_details_ar,
     'publication_id'
 );
-$grouped_latest_datetimes = $entity_publication->get_latest_stream_update(
-    $publications_active
-);
-
-$alerts = [];
-$old_alerts = [];
-foreach($grouped_latest_datetimes as $publication_id => $datetime) {
-    $unix = strtotime($datetime);
-    $seconds_since_update = time() - $unix;
-    if ($seconds_since_update >= ALERT_THRESHOLD) {
-        if (intval($seconds_since_update / 60) % MIN_MINUTES_BETWEEN_ALERTS) {
-            $old_alerts[$idx] = $seconds_since_update;
+$grouped_latest_datetimes = $entity_publication->get_latest_stream_update($publications_active, 14);
+$time = time();
+$seconds_since_update_arr = [];
+$alerts = array_filter(
+    $publications_active,
+    function($publication) use ($grouped_latest_datetimes, $time, $seconds_since_update_arr) {
+        $datetime = $grouped_latest_datetimes[$publication->id];
+        $unix = strtotime($datetime);
+        $seconds_since_update = $time - $unix;
+        $seconds_since_update_arr[$publication->id] = $seconds_since_update;
+        if (
+            $seconds_since_update >= ALERT_THRESHOLD
+            && intval($seconds_since_update / 60) % MIN_MINUTES_BETWEEN_ALERTS === 0
+        ) {
+            return true;
         }
-        else {
-            $alerts[$idx] = $seconds_since_update;
-        }
+        return false;
     }
-}
+);
+$old_alerts = array_filter(
+    $publications_active,
+    function($publication) use ($grouped_latest_datetimes, $time) {
+        $datetime = $grouped_latest_datetimes[$publication->id];
+        $unix = strtotime($datetime);
+        $seconds_since_update = $time - $unix;
+        if (
+            $seconds_since_update >= ALERT_THRESHOLD
+            && intval($seconds_since_update / 60) % MIN_MINUTES_BETWEEN_ALERTS
+        ) {
+            return true;
+        }
+        return false;
+    }
+);
 
 if (!empty($alerts)) {
 
@@ -93,7 +109,16 @@ if (!empty($alerts)) {
     ';
 
     $has_background = false;
-    foreach($alerts as $idx => $seconds_since_update) {
+    foreach($alerts as $publication) {
+
+        if (isset($seconds_since_update_arr[$publication->id]))
+        {
+            $seconds_since_update = $seconds_since_update_arr[$publication->id];
+        }
+        else {
+            // safest to just presume this is bad and trigger an alarm for it
+            $seconds_since_update = MAX_ALERT;
+        }
 
         if ($seconds_since_update >= MAX_ALERT) {
             $time_passed = ' > ' . seconds_to_time(MAX_ALERT, false);
@@ -111,8 +136,8 @@ if (!empty($alerts)) {
                 </tr>
             ',
             $style,
-            $publications_active[$idx]->id,
-            $publications_active[$idx]->name_en,
+            $publication->id,
+            $publication->name_en,
             $time_passed
         );
         $has_background = !$has_background;
