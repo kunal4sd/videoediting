@@ -20,10 +20,12 @@ use App\Modules\Video\Actions\Ajax\GetEpisode;
 use App\Modules\Video\Actions\Ajax\GetPlaylist;
 use App\Modules\Video\Actions\Ajax\GetMovieList;
 use App\Modules\Video\Actions\Ajax\GetVideoList;
+use App\Modules\Video\Actions\Ajax\TextSearchSave;
 use App\Modules\Core\Middleware\Persistant as PersistantMiddleware;
 use App\Modules\Video\Middleware\Validation\GetText as GetTextValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetMovie as GetMovieValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
+use App\Modules\Video\Middleware\Validation\TextSearchSave as TextSearchSaveMiddleware;
 use App\Modules\Video\Middleware\Validation\GetEpisode as GetEpisodeValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\SearchText as SearchTextValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetPlaylist as GetPlaylistValidationMiddleware;
@@ -53,6 +55,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['video.view.search'] = function ($container) {
             return new TextSearch($container);
+        };
+        $container['video.view.search_save'] = function ($container) {
+            return new TextSearchSave($container);
         };
     }
 
@@ -168,6 +173,13 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.search');
+
+        $container->slim->post('/search-save', 'video.view.search_save')
+                        ->add(new TextSearchSaveMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.view.search_save');
     }
 
     private function register_entities(Container $container)

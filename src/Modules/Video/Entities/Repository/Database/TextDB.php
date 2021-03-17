@@ -170,19 +170,7 @@ class TextDB extends AbstractDatabase
             $result[] = new SearchTextAR($row);
         }
 
-        return [
-            $result,
-            "
-            SELECT
-                *
-            FROM pub_{$publication_id}
-            WHERE
-                date >= ".strtotime($start_date)."
-                AND date <= ".strtotime($end_date)."
-                AND pub_id = {$publication_id}
-                AND MATCH('@text {$text}')
-            "
-        ];
+        return $result;
     }
 
 }

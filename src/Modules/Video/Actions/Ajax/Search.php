@@ -21,7 +21,7 @@ class Search extends AbstractModule
         $code = 200;
         try {
 
-            list($result['texts'], $result['message']) = $this->entity_search_text->get_search_text(
+            $result['texts'] = $this->entity_search_text->get_search_text(
                 $request->getParam('start_date'),
                 $request->getParam('end_date'),
                 $request->getParam('publication'),
