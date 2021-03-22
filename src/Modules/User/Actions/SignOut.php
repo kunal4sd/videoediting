@@ -2,10 +2,10 @@
 
 namespace App\Modules\User\Actions;
 
-use App\Modules\Abstracts\AbstractModule;
+use App\Libs\Json;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Pimple\Container;
+use App\Modules\Abstracts\AbstractModule;
 
 class SignOut extends AbstractModule
 {

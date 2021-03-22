@@ -11,7 +11,7 @@
  * or append the echo output manually to the correct crontab
  *
  * ANY CRON JOBS HAVE TO BE CREATED INSIDE THE `./jobs/` DIRECTORY.
- * IN ORDER TO ACTIVATE THEM, ADD THEM INSIDE THE CONFIG FILE
+ * IN ORDER TO ACTIVATE THEM, ADD THEM IN THE CONFIG FILE
  */
 
 ini_set('display_errors', 1);

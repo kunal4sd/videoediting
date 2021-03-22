@@ -26,8 +26,9 @@ var global_functions = {
 
         return json;
     },
-    build_template: function(template, data) {
+    build_template: function(template, data, allow_multiple_assignments) {
 
+        if (allow_multiple_assignments == undefined) allow_multiple_assignments = false;
         // clone template and prepare clone to display
         new_element = template.clone();
         new_element.removeAttr('name');
@@ -40,13 +41,13 @@ var global_functions = {
                     if (target !== undefined && target.attr('data-toggle') === 'tooltip') {
                         target.attr( 'title', value.length ? value : 'No Keywords' );
 
-                        return true;
+                        if (!allow_multiple_assignments) return true;
                     }
 
                     if (new_element.attr('data-toggle') === 'tooltip') {
                         new_element.attr( 'title', value.length ? value : 'No Keywords' );
 
-                        return true;
+                        if (!allow_multiple_assignments) return true;
                     }
                     break;
                 case 'status':
@@ -68,7 +69,7 @@ var global_functions = {
                         }
                         target.removeClass('d-none');
 
-                        return true;
+                        if (!allow_multiple_assignments) return true;
                     }
                     break;
             }
@@ -78,22 +79,27 @@ var global_functions = {
             if (content_holder.length) {
                 content_holder.html(value);
 
-                return true;
+                if (!allow_multiple_assignments) return true;
             }
 
             // if field holder not found, check for data type attribute and set it to value
-            var attr_field = 'data-' + field.replace('_', '-');
-            if (new_element.attr( attr_field ) !== undefined) {
-                new_element.attr( attr_field, value );
 
-                return true;
+            console.log(field)
+            console.log(typeof field)
+            if (typeof field == 'string') {
+                var attr_field = 'data-' + field.replace('_', '-');
+                if (new_element.attr( attr_field ) !== undefined) {
+                    new_element.attr( attr_field, value );
+
+                    if (!allow_multiple_assignments) return true;
+                }
             }
 
             var target = new_element.find('[' + attr_field + ']');
             if (target !== undefined) {
                 target.attr( attr_field, value );
 
-                return true;
+                if (!allow_multiple_assignments) return true;
             }
 
         });
