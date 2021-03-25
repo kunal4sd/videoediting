@@ -4,6 +4,7 @@ $( function() {
 
     if (form.length === 0) return false;
 
+    var segment_text = $('#segment_text');
     var playlists_holder = $('#video-playlists-holder');
     var global_templates_holder = $('#global-templates-holder');
     var global_alert_playlist = global_templates_holder.find('div[name="global_template_alert_playlist"]');
@@ -47,7 +48,11 @@ $( function() {
     var clear_playlists = function() {
         playlists_holder.html('');
     };
+    var clear_segment_text = function() {
+        segment_text.val('');
+    };
     var load_segment_texts = function(publication, hash, url) {
+        clear_segment_text();
         $.ajax({
             method: 'post',
             url: url,
@@ -64,7 +69,7 @@ $( function() {
                     && result.responseJSON.result !== undefined
                     && result.responseJSON.result.texts !== undefined
                 ) {
-                    $('#segment_text').val(result.responseJSON.result.texts.join(' '));
+                    segment_text.val(result.responseJSON.result.texts.join(' '));
                 }
             }
         });
