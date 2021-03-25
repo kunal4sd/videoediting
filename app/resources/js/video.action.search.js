@@ -23,13 +23,17 @@ $( function() {
     };
     var activate_results = function() {
 
-        var results = results_holder.find('.list-group-item');
+        var go_to_button = results_holder.find('.go-to');
+        var preview_button = results_holder.find('.show-preview');
+        var close_preview = results_holder.find('.hide-preview');
 
-        results.unbind().on('click', function() {
+        go_to_button.unbind().on('click', function() {
 
-            var result = $(this);
-            var data = result.data();
+            var ze_button = $(this);
+            var holder = ze_button.parent().parent().parent('.list-group-item');
+            var data = holder.data();
 
+            global_functions.button_is_loading(ze_button);
             $.ajax({
                 method: 'post',
                 url: data.searchSaveUrl,
@@ -42,7 +46,7 @@ $( function() {
                 },
                 complete: function (result) {
                     event_emitter.trigger('form.ajax.result.alert', [result, form]);
-                    global_functions.button_is_not_loading(button);
+                    global_functions.button_is_not_loading(ze_button);
                     is_loading = false;
                     if (
                         result.responseJSON !== undefined
@@ -53,6 +57,51 @@ $( function() {
                     }
                 }
             })
+        });
+
+        preview_button.unbind().on('click', function() {
+
+            var ze_button = $(this);
+            var holder = ze_button.parent().parent().parent('.list-group-item');
+            var data = holder.data();
+
+            global_functions.button_is_loading(ze_button);
+            holder.find('.text-preview').text('');
+            $.ajax({
+                method: 'post',
+                url: data.getTextUrl,
+                data: {
+                    publication: data.pubId,
+                    start_date: data.startDate,
+                    end_date: data.endDate,
+                    csrf_name: csrf_name,
+                    csrf_value: csrf_value,
+                },
+                complete: function (result) {
+                    event_emitter.trigger('form.ajax.result.alert', [result, form]);
+                    global_functions.button_is_not_loading(ze_button);
+                    is_loading = false;
+                    if (
+                        result.responseJSON !== undefined
+                        && result.responseJSON.result !== undefined
+                        && result.responseJSON.result.texts !== undefined
+                    ) {
+                        holder.find('.text-preview').html(result.responseJSON.result.texts.join(' '));
+                        ze_button.hide();
+                        ze_button.parent().find('.hide-preview').show();
+                    }
+                }
+            })
+        });
+
+        close_preview.unbind().on('click', function() {
+
+            var ze_button = $(this);
+            var holder = ze_button.parent().parent().parent('.list-group-item');
+
+            holder.find('.text-preview').text('');
+            ze_button.hide();
+            ze_button.parent().find('.show-preview').show();
         });
     };
     var clear_results = function() {

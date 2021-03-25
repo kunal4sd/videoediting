@@ -7,6 +7,7 @@ use App\Libs\Json;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Modules\Abstracts\AbstractModule;
+use App\Modules\Video\Entities\Files\RawVideoFile;
 
 class Search extends AbstractModule
 {
@@ -15,6 +16,7 @@ class Search extends AbstractModule
 
         $result = [
             'texts' => [],
+            'preview' => [],
             'warnings' => [],
             'message' => ''
         ];
@@ -27,6 +29,18 @@ class Search extends AbstractModule
                 $request->getParam('publication'),
                 $request->getParam('text')
             );
+
+            $raw_video_file = new RawVideoFile();
+            foreach($result['texts'] as &$search_text_ar) {
+                $raw_video_file->set_locations($search_text_ar->start_segment);
+                $end_raw_video_file = (new RawVideoFile())->set_locations($search_text_ar->end_segment);
+
+                $search_text_ar_arr = $search_text_ar->build_to_array();
+                $search_text_ar_arr['start_date'] = $raw_video_file->build_start_datetime();
+                $search_text_ar_arr['end_date'] = $end_raw_video_file->build_end_datetime();
+                $search_text_ar_arr['publication'] = $search_text_ar->pub_id;
+                $search_text_ar = $search_text_ar_arr;
+            }
 
             if (empty($result['texts'])) {
                 $result['message'] = 'Could not find any segments with the provided details';

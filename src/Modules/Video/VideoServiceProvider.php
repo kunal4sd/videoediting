@@ -33,6 +33,7 @@ use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizatio
 use App\Modules\Video\Middleware\Validation\GetMovieList as GetMovieListValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetVideoList as GetVideoListValidationMiddleware;
 use App\Modules\Core\Middleware\Standardization\DateRange as DateRangeStandardizationMiddleware;
+use App\Modules\Video\Middleware\Validation\GetTextPreview as GetTextPreviewValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\SameSessionId as SameSessionIdAuthorizationMiddleware;
 
 class VideoServiceProvider implements ServiceProviderInterface
@@ -180,6 +181,13 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.search_save');
+
+        $container->slim->post('/search/text-preview', 'video.action.ajax.get_text')
+                        ->add(new GetTextPreviewValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.action.get_text_preview');
     }
 
     private function register_entities(Container $container)

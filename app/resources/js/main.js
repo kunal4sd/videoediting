@@ -84,8 +84,6 @@ var global_functions = {
 
             // if field holder not found, check for data type attribute and set it to value
 
-            console.log(field)
-            console.log(typeof field)
             if (typeof field == 'string') {
                 var attr_field = 'data-' + field.replace('_', '-');
                 if (new_element.attr( attr_field ) !== undefined) {
