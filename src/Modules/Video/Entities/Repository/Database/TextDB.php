@@ -43,22 +43,22 @@ class TextDB extends AbstractDatabase
                 AND p.pub_id = s.pub_id
                 AND :from <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
             WHERE 1
-                AND s.id = (				  
-					SELECT 
-					  id 
-					FROM 
-					  segments 
-					WHERE 
-					  1 
+                AND s.id = (
+					SELECT
+					  id
+					FROM
+					  segments
+					WHERE
+					  1
 					  AND end_segment_datetime >= :from
                       AND pub_id = :publication_id
 	  				  AND date = :date
 					  limit 1
                 )
                 AND s.pub_id = :publication_id
-			
+
 			UNION
-			
+
             SELECT
                 p.*
             FROM segments AS s
@@ -68,13 +68,13 @@ class TextDB extends AbstractDatabase
                 AND :from <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
                 AND :to >= DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second)
             WHERE 1
-                AND s.id IN (				  
-					SELECT 
-					  id 
-					FROM 
-					  segments 
-					WHERE 
-					  1 
+                AND s.id IN (
+					SELECT
+					  id
+					FROM
+					  segments
+					WHERE
+					  1
 					  AND start_segment_datetime BETWEEN :from AND :to
                       AND pub_id = :publication_id
 	  				  AND date = :date
@@ -99,22 +99,22 @@ class TextDB extends AbstractDatabase
                 AND p.pub_id = s.pub_id
                 AND {$from} <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
             WHERE 1
-                AND s.id = (				  
-					SELECT 
-					  id 
-					FROM 
-					  segments 
-					WHERE 
-					  1 
+                AND s.id = (
+					SELECT
+					  id
+					FROM
+					  segments
+					WHERE
+					  1
 					  AND end_segment_datetime >= {$from}
                       AND pub_id = {$publication_id}
 	  				  AND date = {$date}
 					  limit 1
                 )
                 AND s.pub_id = {$publication_id}
-			
+
 			UNION
-			
+
             SELECT
                 p.*
             FROM segments AS s
@@ -124,13 +124,13 @@ class TextDB extends AbstractDatabase
                 AND {$from} <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
                 AND {$to} >= DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second)
             WHERE 1
-                AND s.id IN (				  
-					SELECT 
-					  id 
-					FROM 
-					  segments 
-					WHERE 
-					  1 
+                AND s.id IN (
+					SELECT
+					  id
+					FROM
+					  segments
+					WHERE
+					  1
 					  AND start_segment_datetime BETWEEN {$from} AND {$to}
                       AND pub_id = {$publication_id}
 	  				  AND date = {$date}
@@ -178,7 +178,14 @@ class TextDB extends AbstractDatabase
 
         foreach($data as $row) {
             $row['text'] = $text;
-            $result[] = new SearchTextAR($row);
+            $search_text_ar = new SearchTextAR($row);
+
+            // because I don't know the current state of Manticore/Sphinx and if they yet support
+            // DATE_FORMAT or similar functions, we'll use this workaround
+            // note that most probably it would be much faster to get this data already formatted
+            // from the db, so do that in the future if possible
+            $search_text_ar->date = date("Y-m-d H:i:s", intval($search_text_ar->date));
+            $result[] = $search_text_ar;
         }
 
         return $result;
