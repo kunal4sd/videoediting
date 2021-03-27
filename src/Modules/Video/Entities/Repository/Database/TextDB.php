@@ -24,13 +24,10 @@ class TextDB extends AbstractDatabase
     {
 
         $result = [];
-		$dt = \DateTime::createFromFormat('Y-m-d H:i:s', $from);
-		$date = $dt->format('Y-m-d');
         $params = [
             'from' => $from,
             'to' => $to,
-            'publication_id' => [$publication_id, PDO::PARAM_INT],
-			'date' => $date
+            'publication_id' => [$publication_id, PDO::PARAM_INT]
         ];
 
         $data = $this->db->fetch_all(
@@ -41,45 +38,31 @@ class TextDB extends AbstractDatabase
             INNER JOIN pub_{$publication_id} AS p
                 ON p.segment_id = s.id
                 AND p.pub_id = s.pub_id
-                AND :from <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
-            WHERE 1
-                AND s.id = (
-					SELECT
-					  id
-					FROM
-					  segments
-					WHERE
-					  1
-					  AND end_segment_datetime >= :from
-                      AND pub_id = :publication_id
-	  				  AND date = :date
-					  limit 1
-                )
-                AND s.pub_id = :publication_id
-
-			UNION
-
-            SELECT
-                p.*
-            FROM segments AS s
-            INNER JOIN pub_{$publication_id} AS p
-                ON p.segment_id = s.id
-                AND p.pub_id = s.pub_id
-                AND :from <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
-                AND :to >= DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second)
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= :from
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= :to
             WHERE 1
                 AND s.id IN (
-					SELECT
-					  id
-					FROM
-					  segments
-					WHERE
-					  1
-					  AND start_segment_datetime BETWEEN :from AND :to
-                      AND pub_id = :publication_id
-	  				  AND date = :date
+                    SELECT
+                        CONCAT_WS(',', id)
+                    FROM segments
+                    WHERE 1
+                        AND start_segment_datetime >= :from
+                        AND start_segment_datetime <= :to
+                        AND pub_id = :publication_id
+                    ORDER BY
+                        id
+                        DESC
                 )
                 AND s.pub_id = :publication_id
+                AND start_segment_datetime >= :from
+                AND start_segment_datetime <= :to
+            GROUP BY
+                p.id
+            ORDER BY
+                s.id,
+                p.`date`,
+                p.start_time
+                ASC
             ",
             $params
         );
@@ -97,45 +80,31 @@ class TextDB extends AbstractDatabase
             INNER JOIN pub_{$publication_id} AS p
                 ON p.segment_id = s.id
                 AND p.pub_id = s.pub_id
-                AND {$from} <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
-            WHERE 1
-                AND s.id = (
-					SELECT
-					  id
-					FROM
-					  segments
-					WHERE
-					  1
-					  AND end_segment_datetime >= {$from}
-                      AND pub_id = {$publication_id}
-	  				  AND date = {$date}
-					  limit 1
-                )
-                AND s.pub_id = {$publication_id}
-
-			UNION
-
-            SELECT
-                p.*
-            FROM segments AS s
-            INNER JOIN pub_{$publication_id} AS p
-                ON p.segment_id = s.id
-                AND p.pub_id = s.pub_id
-                AND {$from} <= DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second)
-                AND {$to} >= DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second)
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= '{$from}'
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= '{$to}'
             WHERE 1
                 AND s.id IN (
-					SELECT
-					  id
-					FROM
-					  segments
-					WHERE
-					  1
-					  AND start_segment_datetime BETWEEN {$from} AND {$to}
-                      AND pub_id = {$publication_id}
-	  				  AND date = {$date}
+                    SELECT
+                        CONCAT_WS(',', id)
+                    FROM segments
+                    WHERE 1
+                        AND start_segment_datetime >= '{$from}'
+                        AND start_segment_datetime <= '{$to}'
+                        AND pub_id = :publication_id
+                    ORDER BY
+                        id
+                        DESC
                 )
-                AND s.pub_id = {$publication_id}
+                AND s.pub_id = :publication_id
+                AND start_segment_datetime >= '{$from}'
+                AND start_segment_datetime <= '{$to}'
+            GROUP BY
+                p.id
+            ORDER BY
+                s.id,
+                p.`date`,
+                p.start_time
+                ASC
             "
         ];
     }
