@@ -341,7 +341,7 @@ function get_raw_video_path($publication_id, $timestamp)
 {
     $reference_date = '2020-05-19';
     $alternative_path_pub_ids = [
-        3066,
+    3066,
 	4947,
 	13644,
 	16510,
@@ -351,7 +351,6 @@ function get_raw_video_path($publication_id, $timestamp)
 	34425,
 	34427,
 	3054,
-	5371,
 	5639,
 	8340,
 	18674,
@@ -360,8 +359,6 @@ function get_raw_video_path($publication_id, $timestamp)
 	18680,
 	18682,
 	3953,
-	2858,
-	18908,
 	25284,
 	18952,
 	19983,
@@ -374,9 +371,10 @@ function get_raw_video_path($publication_id, $timestamp)
 	6538,
 	6540,
 	2161,
-	31977,
 	32105,
-	36815
+	36815,
+	37747,
+	5175
     ];
 
     if (
