@@ -38,8 +38,7 @@ class TextDB extends AbstractDatabase
             INNER JOIN pub_{$publication_id} AS p
                 ON p.segment_id = s.id
                 AND p.pub_id = s.pub_id
-                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= :from
-                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= :to
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) >= :from
             WHERE 1
                 AND s.id IN (
                     SELECT
@@ -54,8 +53,9 @@ class TextDB extends AbstractDatabase
                         DESC
                 )
                 AND s.pub_id = :publication_id
-                AND start_segment_datetime >= :from
-                AND start_segment_datetime <= :to
+                AND s.start_segment_datetime >= :from
+                AND s.start_segment_datetime <= :to
+                AND s.end_segment_datetime <= :to
             GROUP BY
                 p.id
             ORDER BY
@@ -81,7 +81,6 @@ class TextDB extends AbstractDatabase
                 ON p.segment_id = s.id
                 AND p.pub_id = s.pub_id
                 AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= '{$from}'
-                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= '{$to}'
             WHERE 1
                 AND s.id IN (
                     SELECT
@@ -96,8 +95,9 @@ class TextDB extends AbstractDatabase
                         DESC
                 )
                 AND s.pub_id = :publication_id
-                AND start_segment_datetime >= '{$from}'
-                AND start_segment_datetime <= '{$to}'
+                AND s.start_segment_datetime >= '{$from}'
+                AND s.start_segment_datetime <= '{$to}'
+                AND s.end_segment_datetime <= '{$to}'
             GROUP BY
                 p.id
             ORDER BY
