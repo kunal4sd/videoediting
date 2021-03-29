@@ -38,14 +38,15 @@ class TextDB extends AbstractDatabase
             INNER JOIN pub_{$publication_id} AS p
                 ON p.segment_id = s.id
                 AND p.pub_id = s.pub_id
-                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) >= :from
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= :from
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= :to
             WHERE 1
                 AND s.id IN (
                     SELECT
                         CONCAT_WS(',', id)
                     FROM segments
                     WHERE 1
-                        AND start_segment_datetime >= :from
+                        AND start_segment_datetime >= DATE_SUB(:from, INTERVAL 600 second)
                         AND start_segment_datetime <= :to
                         AND pub_id = :publication_id
                     ORDER BY
@@ -53,9 +54,8 @@ class TextDB extends AbstractDatabase
                         DESC
                 )
                 AND s.pub_id = :publication_id
-                AND s.start_segment_datetime >= :from
+                AND s.start_segment_datetime >= DATE_SUB(:from, INTERVAL 600 second)
                 AND s.start_segment_datetime <= :to
-                AND s.end_segment_datetime <= :to
             GROUP BY
                 p.id
             ORDER BY
@@ -81,23 +81,23 @@ class TextDB extends AbstractDatabase
                 ON p.segment_id = s.id
                 AND p.pub_id = s.pub_id
                 AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= '{$from}'
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= '{$to}'
             WHERE 1
                 AND s.id IN (
                     SELECT
                         CONCAT_WS(',', id)
                     FROM segments
                     WHERE 1
-                        AND start_segment_datetime >= '{$from}'
+                        AND start_segment_datetime >= DATE_SUB('{$from}', INTERVAL 600 second)
                         AND start_segment_datetime <= '{$to}'
-                        AND pub_id = :publication_id
+                        AND pub_id = {$publication_id}
                     ORDER BY
                         id
                         DESC
                 )
-                AND s.pub_id = :publication_id
-                AND s.start_segment_datetime >= '{$from}'
+                AND s.pub_id = {$publication_id}
+                AND s.start_segment_datetime >= DATE_SUB('{$from}', INTERVAL 600 second)
                 AND s.start_segment_datetime <= '{$to}'
-                AND s.end_segment_datetime <= '{$to}'
             GROUP BY
                 p.id
             ORDER BY
