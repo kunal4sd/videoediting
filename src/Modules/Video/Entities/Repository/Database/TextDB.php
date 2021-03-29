@@ -97,8 +97,7 @@ class TextDB extends AbstractDatabase
             GROUP BY
                 p.id
             ORDER BY
-                s.id,
-                p.`date`,
+                s.start_segment_datetime,
                 p.start_time
                 ASC
             "
@@ -131,9 +130,12 @@ class TextDB extends AbstractDatabase
             "
             SELECT
                 *
-            FROM tmp_table
+            FROM pub_{$publication_id}
             WHERE
-                1
+                date >= :start_date
+                AND date <= :end_date
+                AND pub_id = :publication_id
+                AND MATCH('@text {$text}')
             ",
             $params
         );
