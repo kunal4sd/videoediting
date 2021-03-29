@@ -13,18 +13,24 @@ class TextSearchSave extends AbstractModule
     public function __invoke(Request $request, Response $response, $next)
     {
 
-        $validation = $this->validator->validate($request, [
-            'start_segment' => v::notEmpty()->stringType(),
-            'end_segment' => v::notEmpty()->stringType(),
-            'publication' => v::notEmpty()->intVal(),
-            'ajax' => v::trueVal()
-        ]);
+        $validation = $this->validator->validate(
+            $request,
+            [
+                'start_segment' => v::notEmpty()->stringType(),
+                'end_segment' => v::notEmpty()->stringType(),
+                'publication' => v::notEmpty()->intVal()
+            ],
+            true
+        );
         if ($validation->failed()) {
             return $this->validation_failed($validation->get_errors(), $response);
         }
 
-        $start_raw_video_file = (new RawVideoFile())->set_locations($request->getParam('start_segment'));
-        $end_raw_video_file = (new RawVideoFile())->set_locations($request->getParam('end_segment'));
+        $route = $request->getAttribute('route');
+        $params = $route->getArguments();
+
+        $start_raw_video_file = (new RawVideoFile())->set_locations($params['start_segment']);
+        $end_raw_video_file = (new RawVideoFile())->set_locations($params['end_segment']);
 
         $start_date = $start_raw_video_file->build_start_datetime();
         $end_date = $end_raw_video_file->build_start_datetime();
@@ -44,7 +50,7 @@ class TextSearchSave extends AbstractModule
         $clone = $request->withParsedBody([
             'start_date' => $start_date,
             'end_date' => $end_date,
-            'publication' => $request->getParam('publication'),
+            'publication' => $params['publication'],
         ]);
 
         return $next($clone, $response);

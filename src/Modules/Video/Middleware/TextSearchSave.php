@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Modules\Video\Actions\Ajax;
+namespace App\Modules\Video\Middleware;
 
 use \Exception;
-use App\Libs\Json;
 use Slim\Http\Request;
 use App\Libs\Enums\Dbs;
 use Slim\Http\Response;
@@ -14,7 +13,7 @@ use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 
 class TextSearchSave extends AbstractModule
 {
-    public function __invoke(Request $request, Response $response)
+    public function __invoke(Request $request, Response $response, $next)
     {
 
         $result = [
@@ -53,7 +52,7 @@ class TextSearchSave extends AbstractModule
             $result['message'] = $e->getMessage();
         }
 
-        return Json::build($response, $result, $code);
+        return $next($request, $response);
     }
 
 }

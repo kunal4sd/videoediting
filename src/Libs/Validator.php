@@ -2,7 +2,6 @@
 
 namespace App\Libs;
 
-use Respect\Validation\Validator as Respect;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Slim\Http\Request;
 
@@ -11,11 +10,19 @@ class Validator
 
     private $errors;
 
-    public function validate(Request $request, array $rules)
+    public function validate(Request $request, array $rules, bool $use_placeholders = false)
     {
+        if ($use_placeholders) {
+            $route = $request->getAttribute('route');
+            $params = $route->getArguments();
+        }
+        else {
+            $params = $request->getParams();
+        }
+
         foreach($rules as $field => $rule) {
             try {
-                $rule->setName(ucwords($field))->assert($request->getParam($field));
+                $rule->setName(ucwords($field))->assert($params[$field]);
             }
             catch(NestedValidationException $e) {
                 $this->errors[$field] = $e->getMessages();

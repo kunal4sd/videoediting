@@ -49,9 +49,6 @@ class TextDB extends AbstractDatabase
                         AND start_segment_datetime >= DATE_SUB(:from, INTERVAL 600 second)
                         AND start_segment_datetime <= :to
                         AND pub_id = :publication_id
-                    ORDER BY
-                        id
-                        DESC
                 )
                 AND s.pub_id = :publication_id
                 AND s.start_segment_datetime >= DATE_SUB(:from, INTERVAL 600 second)
@@ -59,8 +56,7 @@ class TextDB extends AbstractDatabase
             GROUP BY
                 p.id
             ORDER BY
-                s.id,
-                p.`date`,
+                s.start_segment_datetime,
                 p.start_time
                 ASC
             ",
@@ -135,12 +131,9 @@ class TextDB extends AbstractDatabase
             "
             SELECT
                 *
-            FROM pub_{$publication_id}
+            FROM tmp_table
             WHERE
-                date >= :start_date
-                AND date <= :end_date
-                AND pub_id = :publication_id
-                AND MATCH('@text {$text}')
+                1
             ",
             $params
         );

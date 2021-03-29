@@ -20,12 +20,11 @@ use App\Modules\Video\Actions\Ajax\GetEpisode;
 use App\Modules\Video\Actions\Ajax\GetPlaylist;
 use App\Modules\Video\Actions\Ajax\GetMovieList;
 use App\Modules\Video\Actions\Ajax\GetVideoList;
-use App\Modules\Video\Actions\Ajax\TextSearchSave;
 use App\Modules\Core\Middleware\Persistant as PersistantMiddleware;
+use App\Modules\Video\Middleware\TextSearchSave as TextSearchSaveMiddleware;
 use App\Modules\Video\Middleware\Validation\GetText as GetTextValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetMovie as GetMovieValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
-use App\Modules\Video\Middleware\Validation\TextSearchSave as TextSearchSaveMiddleware;
 use App\Modules\Video\Middleware\Validation\GetEpisode as GetEpisodeValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\SearchText as SearchTextValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetPlaylist as GetPlaylistValidationMiddleware;
@@ -34,6 +33,7 @@ use App\Modules\Video\Middleware\Validation\GetMovieList as GetMovieListValidati
 use App\Modules\Video\Middleware\Validation\GetVideoList as GetVideoListValidationMiddleware;
 use App\Modules\Core\Middleware\Standardization\DateRange as DateRangeStandardizationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetTextPreview as GetTextPreviewValidationMiddleware;
+use App\Modules\Video\Middleware\Validation\TextSearchSave as TextSearchSaveValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\SameSessionId as SameSessionIdAuthorizationMiddleware;
 
 class VideoServiceProvider implements ServiceProviderInterface
@@ -56,9 +56,6 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['video.view.search'] = function ($container) {
             return new TextSearch($container);
-        };
-        $container['video.view.search_save'] = function ($container) {
-            return new TextSearchSave($container);
         };
     }
 
@@ -94,11 +91,19 @@ class VideoServiceProvider implements ServiceProviderInterface
     {
 
         // video editing
-        $container->slim->get('/[/{activity_id}]', 'video.view.index')
+        $container->slim->get('/', 'video.view.index')
                         ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.index');
+
+        $container->slim->get('/{start_segment}/{end_segment}/{publication}', 'video.view.index')
+                        ->add(new TextSearchSaveMiddleware($container))
+                        ->add(new TextSearchSaveValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.view.index_segment_text');
 
         $container->slim->post('/videos/actions/get/playlist', 'video.action.ajax.get_playlist')
                         ->add(new DateRangeStandardizationMiddleware($container))
@@ -174,13 +179,6 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.search');
-
-        $container->slim->post('/search-save', 'video.view.search_save')
-                        ->add(new TextSearchSaveMiddleware($container))
-                        ->add(new SameIpAuthorizationMiddleware($container))
-                        ->add(new SameSessionIdAuthorizationMiddleware($container))
-                        ->add(new KnownUserAuthorizationMiddleware($container))
-                        ->setName('video.view.search_save');
 
         $container->slim->post('/search/text-preview', 'video.action.ajax.get_text')
                         ->add(new GetTextPreviewValidationMiddleware($container))

@@ -1,8 +1,6 @@
 <div
     name="{% if not content %}global_template_alert_search_text{% endif %}"
     class="list-group-item list-group-item-action list-group-item-info"
-    data-redirect-url="{{ base_url() }}{{ path_for('video.view.index') }}"
-    data-search-save-url={{ base_url() }}{{ path_for('video.view.search_save') }}
     data-get-text-url={{ base_url() }}{{ path_for('video.action.get_text_preview') }}
     data-pub-name="{% if search_text.pub_name %}{{ search_text.pub_name }}{% endif %}"
     data-pub-id="{% if search_text.pub_id %}{{ search_text.pub_id }}{% endif %}"
@@ -30,7 +28,7 @@
         <div class="col-md-3" style="text-align:end">
             <button type="mr-3 button" class="show-preview btn btn-primary cursor-pointer">Show Segment Text</button>
             <button type="mr-3 button" class="hide-preview btn btn-danger cursor-pointer display-none">Hide Segment Text</button>
-            <button type="mr-3 button" class="go-to btn btn-success cursor-pointer">Go To Segment</button>
+            <a href="{{ base_url() }}{{ path_for('video.view.index_segment_text', { 'start_segment': 'start_segment', 'end_segment': 'end_segment', 'publication':'publication' }) }}"type="mr-3 button" class="go-to btn btn-success cursor-pointer">Go To Segment</a>
         </div>
     </div>
     <div class="d-fill row">
