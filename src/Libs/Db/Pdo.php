@@ -24,9 +24,12 @@ class Pdo extends Connection implements Runnable
         $stmt = $this->pdo->prepare($query);
 
         foreach($params as $name => $details) {
-
-            if (!is_array($details)) $details = [$details];
-            $stmt->bindValue(":{$name}", array_shift($details), array_shift($details));
+            if (is_array($details)) {
+                $stmt->bindValue(":{$name}", array_shift($details), array_shift($details));
+            }
+            else {
+                $stmt->bindValue(":{$name}", $details);
+            }
         }
         $stmt->execute();
 
