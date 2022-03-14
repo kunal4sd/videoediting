@@ -374,7 +374,8 @@ function get_raw_video_path($publication_id, $timestamp)
 	32105,
 	36815,
 	37747,
-	5175
+	5175,
+	5715
     ];
 
     if (

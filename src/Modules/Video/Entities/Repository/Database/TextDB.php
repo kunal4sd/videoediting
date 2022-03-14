@@ -130,12 +130,14 @@ class TextDB extends AbstractDatabase
             "
             SELECT
                 *
-            FROM pub_{$publication_id}
+            FROM recordings_text
             WHERE
                 date >= :start_date
                 AND date <= :end_date
                 AND pub_id = :publication_id
                 AND MATCH('@text {$text}')
+            ORDER BY id desc
+            LIMIT 1000
             ",
             $params
         );
