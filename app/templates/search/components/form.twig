@@ -51,7 +51,7 @@
                 <div class="row form-group">
                     <div class="col-sm-12">
                         <select id="publication" name="publications[]" class="form-control{{ flash.errors_publication ? ' is-invalid' : ''}}" multiple="multiple" size="10">
-                            <option value="" disabled="disabled" selected="selected">Choose Station</option>
+                            <option value="" disabled="disabled" selected="selected">Choose Publication</option>
                             {% for publication in publications %}
                                 <option
                                     value="{{ publication.id }}"
