@@ -38,4 +38,20 @@ function main(cb) {
     cb();
 }
 
-exports.default = series(libs, main);
+function css(cb) {
+    src(['app/resources/css/*'])
+        .pipe(dest('public/css'))
+        ;
+
+    cb();
+}
+
+function images(cb) {
+    src(['app/resources/images/*'])
+        .pipe(dest('public/images'))
+        ;
+
+    cb();
+}
+
+exports.default = series(libs, main, css, images);
