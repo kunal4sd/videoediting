@@ -13,19 +13,14 @@ class SearchText extends AbstractModule
     /**
      * @param string $start_date
      * @param string $end_date
-     * @param integer $publication_id
+     * @param array $publication_ids
+     * @param array $countries
      * @param string $text
      * @return string[]
      */
-    public function get_search_text(
-        string $start_date,
-        string $end_date,
-        int $publication_id,
-        string $text
-    )
+    public function get_search_text(string $start_date, string $end_date, array $publication_ids, array $countries, string $text): array
     {
         return (new TextDB($this->db[Hosts::MANTICORE][Dbs::MAIN]))
-            ->get_search_text($start_date, $end_date, $publication_id, $text);
+            ->get_search_text($start_date, $end_date, $publication_ids, $countries, $text);
     }
-
 }

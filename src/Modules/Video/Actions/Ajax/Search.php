@@ -22,11 +22,17 @@ class Search extends AbstractModule
         ];
         $code = 200;
         try {
-
+            $countries = [];
+            foreach ($request->getParam('countries') as $country) {
+                if ($country) {
+                    $countries[] = $country;
+                }
+            }
             $result['texts'] = $this->entity_search_text->get_search_text(
                 $request->getParam('start_date'),
                 $request->getParam('end_date'),
-                $request->getParam('publication'),
+                $request->getParam('publications'),
+                $countries,
                 $request->getParam('text')
             );
 

@@ -4,16 +4,16 @@ $config['db'] = [
     'localhost' => [
         'main' => [
             'host' => 'localhost',
-            'port' => 3306,
+            'port' => 3307,
             'database' => 'recordings',
             'username' => 'root',
-            'password' => 'test1234',
+            'password' => '',
             'driver' => 'mysql',
             'charset' => 'utf8mb4'
         ],
         'all' => [
             'host' => 'localhost',
-            'port' => 3306,
+            'port' => 3307,
             'database' => '',
             'username' => 'root',
             'password' => 'test1234',
@@ -24,10 +24,21 @@ $config['db'] = [
     'media' => [
         'media_media' => [
             'host' => 'localhost',
-            'port' => 3306,
+            'port' => 3307,
             'database' => 'recordings',
             'username' => 'root',
-            'password' => 'test1234',
+            'password' => '',
+            'driver' => 'mysql',
+            'charset' => 'utf8mb4'
+        ]
+    ],
+    'manticore' => [
+        'main' => [
+            'host' => 'localhost',
+            'port' => 9306,
+            'database' => 'recordings_text',
+            'username' => '',
+            'password' => '',
             'driver' => 'mysql',
             'charset' => 'utf8mb4'
         ]

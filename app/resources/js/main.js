@@ -21,7 +21,14 @@ var global_functions = {
         var json = {};
 
         jQuery.each(array, function() {
-            json[this.name] = this.value || '';
+            if (json[this.name]) {
+                if (!json[this.name].push) {
+                    json[this.name] = [json[this.name]];
+                }
+                json[this.name].push(this.value || '');
+            } else {
+                json[this.name] = this.value || '';
+            }
         });
 
         return json;

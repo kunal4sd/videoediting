@@ -18,7 +18,8 @@ class TextSearchSave extends AbstractModule
             [
                 'start_segment' => v::notEmpty()->stringType(),
                 'end_segment' => v::notEmpty()->stringType(),
-                'publication' => v::notEmpty()->intVal()
+//                'publication' => v::notEmpty()->intVal(),
+                'publications' => v::notEmpty()->arrayVal(),
             ],
             true
         );
@@ -50,7 +51,7 @@ class TextSearchSave extends AbstractModule
         $clone = $request->withParsedBody([
             'start_date' => $start_date,
             'end_date' => $end_date,
-            'publication' => $params['publication'],
+            'publications' => $params['publications'],
         ]);
 
         return $next($clone, $response);

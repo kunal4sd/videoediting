@@ -96,12 +96,10 @@ $( function() {
     });
 
     form.on("submit", function(e) {
-
         e.preventDefault();
         clear_results();
 
         if (!is_loading) {
-
             is_loading = true;
             var form = $(this);
             var data = global_functions.form_to_json(form);

@@ -36,8 +36,22 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-12">
-                        <select name="publication" class="form-control{{ flash.errors_publication ? ' is-invalid' : ''}}">
-                            <option value="" disabled selected>Choose publication...</option>
+                        <select id="countries" name="countries[]" class="form-control" multiple="multiple" size="10">
+                            <option value="" selected="selected">Choose Country</option>
+                            {% for country in countries %}
+                                <option
+                                    value="{{ country.iso }}"
+                                    {% if form.country == country.iso %} selected {% endif %}>
+                                    {{ country.name_en }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        <select id="publication" name="publications[]" class="form-control{{ flash.errors_publication ? ' is-invalid' : ''}}" multiple="multiple" size="10">
+                            <option value="" disabled="disabled" selected="selected">Choose Station</option>
                             {% for publication in publications %}
                                 <option
                                     value="{{ publication.id }}"
@@ -69,7 +83,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <input type="submit" class="d-none">
+                        <input type="submit" class="d-none" value="dddd">
                         <button type="button" class="btn btn-primary btn-block mb-3" data-loading="0">Search</button>
                     </div>
                 </div>

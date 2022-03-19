@@ -141,8 +141,10 @@ $( function() {
         }
         else {
             if (
-                result.responseJSON.result !== undefined
-                && result.responseJSON.result.warnings !== undefined
+                result.hasOwnProperty('responseJSON')
+                && result.responseJSON.hasOwnProperty('result')
+                && typeof result.responseJSON.result !== 'undefined'
+                && typeof result.responseJSON.result.warnings !== 'undefined'
             ) {
 
                 var new_alert = {};
@@ -173,7 +175,11 @@ $( function() {
                 });
             }
 
-            if (result.responseJSON.message) {
+            if (
+                result.hasOwnProperty('responseJSON')
+                && result.responseJSON.hasOwnProperty('message')
+                && result.responseJSON.message
+            ) {
                 global_functions
                     .launch_template(
                         global_functions.build_template(

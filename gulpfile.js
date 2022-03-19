@@ -1,55 +1,41 @@
-var gulp = require('gulp');
-var toolbox = require('gulp-toolbox');
+const { src, dest, series } = require('gulp');
+const uglify = require('gulp-uglify');
+const rename = require('gulp-rename');
+const concat = require('gulp-concat');
 
-var config = {
-    production: true,
-    assets: {
-        enabled: true,
-        origin: 'app/resources',
-        target: 'public',
-        glob: [
-            'fonts/**',
-            'images/**',
-            'css/**',
-            'js/libs/lang/*'
-        ]
-    },
-    js: {
-        enabled: true,
-        libs: {
-            origin: 'app/resources/js/libs',
-            target: 'public/js',
-            glob: [
-                'jquery.min.js',
-                'jquery.dataTables.min.js',
-                'jquery.dataTables.select.min.js',
-                'buttons.dataTables.min.js',
-                'bootstrap*',
-                'moment.min.js',
-                'video7.js',
-                '*.js'
-            ]
-        },
-        src: {
-            origin: 'app/resources/js',
-            target: 'public/js',
-            glob: [
-                'main.js',
-                'triggers.js',
-                'rangeslider.js',
-                '*.js'
-            ]
-        }
-    },
-    sync: {
-        enabled: true,
-        glob: [
-            'app/resources/templates/**/*',
-            'public/css/**/*',
-            'public/fonts/**/*',
-            'public/js/**/*'
-        ]
-    }
-};
+function libs(cb) {
+    // src('app/resources/js/libs/*.js')
+    src(['app/resources/js/libs/jquery.min.js',
+        'app/resources/js/libs/jquery.dataTables.min.js',
+        'app/resources/js/libs/jquery.dataTables.select.min.js',
+        'app/resources/js/libs/buttons.dataTables.min.js',
+        'app/resources/js/libs/bootstrap*',
+        'app/resources/js/libs/moment.min.js',
+        'app/resources/js/libs/video7.js',
+        'app/resources/js/libs/*.js'
+        ])
+        .pipe(concat('libs.js'))
+        .pipe(uglify())
+        .pipe(rename({ extname: '.min.js' }))
+        .pipe(dest('public/js'))
+        ;
 
-toolbox.init(gulp, config);
+    cb();
+}
+
+function main(cb) {
+    src(['app/resources/js/main.js',
+        'app/resources/js/triggers.js',
+        'app/resources/js/rangeslider.js',
+        'app/resources/js/*.js'
+        ])
+        .pipe(concat('main.js'))
+        .pipe(uglify())
+        .pipe(rename({ extname: '.min.js' }))
+        .pipe(dest('public/js'))
+        ;
+
+    cb();
+}
+
+exports.default = series(libs, main);

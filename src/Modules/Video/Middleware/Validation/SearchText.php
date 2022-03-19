@@ -15,7 +15,8 @@ class SearchText extends AbstractModule
         $validation = $this->validator->validate($request, [
             'start_date' => v::notEmpty()->stringType(),
             'end_date' => v::notEmpty()->stringType(),
-            'publication' => v::notEmpty()->intVal(),
+            'publications' => v::notEmpty()->arrayVal(),
+            'countries' => v::oneOf(v::arrayVal(), v::nullType()),
             'text' => v::notEmpty()->stringType(),
             'ajax' => v::trueVal()
         ]);

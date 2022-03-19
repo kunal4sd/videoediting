@@ -14,6 +14,7 @@ class TextSearch extends AbstractModule
     {
 
         $publications_active = [];
+        $countries = [];
         $form = [];
         $playlists = [];
         $movies = [];
@@ -27,6 +28,8 @@ class TextSearch extends AbstractModule
                 $publications_details,
                 'publication_id'
             );
+
+            $countries = $this->entity_country->get_active();
 
             if (isset($args['activity_id'])) {
                 $user_activity_ar = $this->entity_user_activity->get_by_id_and_user_media(
@@ -75,6 +78,7 @@ class TextSearch extends AbstractModule
             'page_title' => 'Video Text Search',
             'page_name' => 'search',
             'publications' => $publications_active,
+            'countries' => $countries,
             'form' => $form,
             'playlists' => $playlists,
             'movies' => $movies

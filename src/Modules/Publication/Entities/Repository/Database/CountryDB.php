@@ -34,4 +34,31 @@ class CountryDB extends AbstractDatabase
         return $result;
     }
 
+    /**
+     * @param array $iso
+     * @return CountryAR[]
+     */
+    public function get_by_iso(array $iso): array
+    {
+        $result = [];
+
+        $data = $this->db->fetch_all(
+            "
+                SELECT
+                    *
+                FROM country
+                GROUP BY
+                    iso
+                ORDER BY
+                    name_en
+            "
+        );
+
+        foreach($data as $row) {
+            $result[] = new CountryAR($row);
+        }
+
+        return $result;
+    }
+
 }
