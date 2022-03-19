@@ -42,7 +42,6 @@ $( function() {
         });
 
         preview_button.unbind().on('click', function() {
-
             var ze_button = $(this);
             var holder = ze_button.parent().parent().parent('.list-group-item');
             var data = holder.data();
@@ -69,6 +68,7 @@ $( function() {
                         && result.responseJSON.result.texts !== undefined
                     ) {
                         holder.find('.text-preview').html(result.responseJSON.result.texts.join(' '));
+                        holder.find('.text-preview').highlight(data.text.split(' '));
                         ze_button.hide();
                         ze_button.parent().find('.hide-preview').show();
                     }

@@ -46,6 +46,9 @@
                                 </option>
                             {% endfor %}
                         </select>
+                        {% if flash.errors_countries %}
+                            <div class="invalid-feedback">{{ flash.errors_countries }}</div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row form-group">

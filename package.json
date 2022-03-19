@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "gulp-minify": "^3.1.0",
-    "gulp-minify-css": "^1.2.4"
+    "gulp-minify-css": "^1.2.4",
+    "jquitelight": "^2.1.0"
   }
 }
