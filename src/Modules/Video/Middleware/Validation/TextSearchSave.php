@@ -18,8 +18,7 @@ class TextSearchSave extends AbstractModule
             [
                 'start_segment' => v::notEmpty()->stringType(),
                 'end_segment' => v::notEmpty()->stringType(),
-//                'publication' => v::notEmpty()->intVal(),
-                'publications' => v::notEmpty()->arrayVal(),
+                'publication' => v::notEmpty()->intVal(),
             ],
             true
         );
@@ -30,11 +29,17 @@ class TextSearchSave extends AbstractModule
         $route = $request->getAttribute('route');
         $params = $route->getArguments();
 
+        // These required for windows apache, because ":" colon symbol does not allowed in url
+        $params['start_segment'] = str_replace("!", ":", $params['start_segment']);
+        $params['end_segment'] = str_replace("!", ":", $params['end_segment']);
+
         $start_raw_video_file = (new RawVideoFile())->set_locations($params['start_segment']);
         $end_raw_video_file = (new RawVideoFile())->set_locations($params['end_segment']);
 
         $start_date = $start_raw_video_file->build_start_datetime();
         $end_date = $end_raw_video_file->build_start_datetime();
+
+        $date_validation = [];
 
         if ($start_date !== date("Y-m-d H:i:s", strtotime($start_date))) {
             $date_validation['start_date'] = ['unrecognized format'];
@@ -51,7 +56,7 @@ class TextSearchSave extends AbstractModule
         $clone = $request->withParsedBody([
             'start_date' => $start_date,
             'end_date' => $end_date,
-            'publications' => $params['publications'],
+            'publication' => $params['publication'],
         ]);
 
         return $next($clone, $response);

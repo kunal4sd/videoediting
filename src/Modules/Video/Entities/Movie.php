@@ -39,8 +39,8 @@ class Movie extends AbstractModule
                     'names' => []
                 ];
             }
-            $article_to_keywords[$article_id]['ids'][] = $keywords_ar[$keyword_id]->id;
-            $article_to_keywords[$article_id]['names'][] = $keywords_ar[$keyword_id]->name_en;
+            $article_to_keywords[$article_id]['ids'][] = $keywords_ar[$keyword_id]->id ?? 0;
+            $article_to_keywords[$article_id]['names'][] = $keywords_ar[$keyword_id]->name_en ?? '';
         }
 
         foreach ($articles_ar as $article_ar) {

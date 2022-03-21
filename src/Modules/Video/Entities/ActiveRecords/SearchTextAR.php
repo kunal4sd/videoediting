@@ -37,6 +37,11 @@ class SearchTextAR extends AbstractActiveRecord
      */
     public $text;
 
+    /**
+     * @var string
+     */
+    public $country;
+
 
     public function __construct(array $data = [])
     {

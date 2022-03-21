@@ -4,6 +4,7 @@ namespace App\Modules\Publication\Entities\Repository\Database;
 
 use App\Modules\Abstracts\AbstractDatabase;
 use App\Modules\Publication\Entities\ActiveRecords\PublicationAR;
+use PDO;
 
 class PublicationDB extends AbstractDatabase
 {
@@ -12,7 +13,7 @@ class PublicationDB extends AbstractDatabase
      * @param int $id : publication database id
      * @return PublicationAR
      */
-    public function get_by_id($id)
+    public function get_by_id(int $id): PublicationAR
     {
         $data = $this->db->fetch(
             "
@@ -28,6 +29,29 @@ class PublicationDB extends AbstractDatabase
         );
 
         return new PublicationAR($data);
+    }
+
+    /**
+     * @param array $ids
+     * @return array
+     */
+    public function get_by_ids(array $ids): array
+    {
+        $params = [];
+
+        foreach($ids as $id) {
+            $key = "id_{$id}";
+            $params[$key] = [$id, PDO::PARAM_INT];
+        }
+        $ids_str = ":id_" . implode(', :id_', $ids);
+        $sql = sprintf("
+                    SELECT
+                        *
+                    FROM publication
+                    WHERE id IN (%s)
+                ", $ids_str);
+
+        return $this->db->fetch_all($sql, $params);
     }
 
     /**

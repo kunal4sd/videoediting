@@ -18,10 +18,10 @@ class Publication extends AbstractModule
 
     /**
      * @param int $id : publication database id
-     * @throws Exception : if publication with provided $id does not exist
      * @return PublicationAR
+     * @throws Exception : if publication with provided $id does not exist
      */
-    public function get_by_id($id)
+    public function get_by_id(int $id): PublicationAR
     {
         $publication = new PublicationDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
         $publication_ar = $publication->get_by_id($id);
@@ -31,6 +31,17 @@ class Publication extends AbstractModule
         }
 
         return $publication_ar;
+    }
+
+    /**
+     * @param array $ids
+     * @return array
+     */
+    public function get_by_ids(array $ids): array
+    {
+        $publication = new PublicationDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
+
+        return $publication->get_by_ids($ids);
     }
 
     /**
