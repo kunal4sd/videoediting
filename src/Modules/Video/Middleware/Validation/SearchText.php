@@ -16,7 +16,8 @@ class SearchText extends AbstractModule
             'start_date' => v::notEmpty()->stringType(),
             'end_date' => v::notEmpty()->stringType(),
             'publications' => v::notEmpty()->arrayVal(),
-            'countries' => v::oneOf(v::arrayVal(), v::nullType()),
+            'countries' => v::optional(v::arrayVal()),
+//            'countries' => v::oneOf(v::arrayVal(), v::nullType()),
             'text' => v::notEmpty()->stringType(),
             'ajax' => v::trueVal()
         ]);

@@ -7,6 +7,7 @@ use \ReflectionMethod;
 
 abstract class AbstractFile
 {
+    const COLON_REPLACEMENT = "!";
 
     /**
      * @var string
@@ -35,7 +36,8 @@ abstract class AbstractFile
 
     public function set_locations($location)
     {
-        $this->url = path_to_url($location);
+//        $this->url = path_to_url($location);
+        $this->url = str_replace(":", self::COLON_REPLACEMENT, path_to_url($location));
         $this->path = url_to_path($location);
         return $this;
     }
@@ -64,7 +66,7 @@ abstract class AbstractFile
 
     public function get_url()
     {
-        return $this->url;
+        return $this->url = str_replace(self::COLON_REPLACEMENT, ":", $this->url);
     }
 
     public function get_type()

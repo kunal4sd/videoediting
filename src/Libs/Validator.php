@@ -22,7 +22,7 @@ class Validator
 
         foreach($rules as $field => $rule) {
             try {
-                $rule->setName(ucwords($field))->assert($params[$field]);
+                $rule->setName(ucwords($field))->assert($params[$field] ?? '');
             }
             catch(NestedValidationException $e) {
                 $this->errors[$field] = $e->getMessages();

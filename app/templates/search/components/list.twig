@@ -1,0 +1,28 @@
+<div class="col-md-12 my-4">
+    <div class="card">
+        <div class="card-header mx-0 px-0">
+            <div class="col-md-12">
+                Results
+            </div>
+        </div>
+        <div class="card-body">
+            <table id="listing-publication-table" class="table display nowrap dataTable" data-publication-list-url="{{ base_url() }}{{ path_for('video.action.search') }}">
+                <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">URL</th>
+                        <th class="text-center">Country</th>
+                        <th class="text-left">Date</th>
+                        <th class="text-center">Start date</th>
+                        <th class="text-center">End date</th>
+                        <th class="text-center">&nbsp;</th>
+                        <th class="text-center">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody id="listing-list-holder">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,142 @@
 $( function() {
+    let form = $('#listing-get-list');
+    var csrf_name = form.find('input[name="csrf_name"]').val();
+    var csrf_value = form.find('input[name="csrf_value"]').val();
+    var global_templates_holder = $('#global-templates-holder');
+    var global_alert_search_text = global_templates_holder.find('div[name="global_template_alert_search_text"]');
 
-    var form = $('#video-search-text');
+    let tableConfig = {
+        data: [],
+        columns: [
+            {'data': 'pub_id'},
+            {'data': 'pub_name'},
+            {
+                'data': 'publication_url',
+                render: function(data, type, row) {
+                    if (type === 'display') {
+                        return '<a href="' + row.publication_url + '" target="_blank" rel="noopener noreferrer">' + row.publication_url + '</a>';
+                    }
+
+                    return data;
+                }
+            },
+            {'data': 'country_name'},
+            {'data': 'date'},
+            {'data': 'start_date'},
+            {'data': 'end_date'},
+            {
+                'data': 'publication',
+                'orderable': false,
+                render: function(data, type, row) {
+                    if (type === 'display') {
+
+                        return '<button name="desc-btn" type="button" class="btn btn-primary oi oi-info desc-btn" data-toggle="modal" data-target="#listing-modal-edit-article" data-pub-id="'+ row.pub_id +'" data-start-date="'+ row.start_date +'" data-end-date="'+ row.end_date +'" title=""></button>';
+                    }
+
+                    return data;
+                }
+            },
+            {
+                'data': 'publication',
+                'orderable': false,
+                render: function(data, type, row) {
+                    if (type === 'display') {
+                        let new_href = global_alert_search_text.attr('data-get-segment-url')
+                        new_href = new_href.replace('start_segment', encodeURIComponent(row.start_segment_formatted));
+                        new_href = new_href.replace('end_segment', encodeURIComponent(row.end_segment_formatted));
+                        new_href = new_href.replace('publication', encodeURIComponent(row.pub_id));
+
+                        return '<a href="' + new_href + '"><button name="segment-btn" type="button" class="btn btn-secondary oi oi-arrow-right segment-btn" data-toggle="modal" data-target="#listing-modal-edit-article" title="Go to segment"></button></a>';
+                    }
+
+                    return data;
+                }
+            },
+        ],
+        rowCallback: function (row, data) {},
+    };
+
+    let table = $('#listing-publication-table').DataTable(tableConfig);
+
+    $('#search_button').on('click', function() {
+        $.ajax({
+            url: $('#listing-get-list').attr('action'),
+            type: "post",
+            data: global_functions.form_to_json(form)
+
+        }).done(function (result) { // Success
+            table.clear().draw();
+            table.rows.add(result.result.data).draw();
+
+        }).fail(function (jqXHR, textStatus, errorThrown) { // Fail
+            table.clear().draw();
+        });
+    });
+
+    $(document).on('click', '.desc-btn', function () {
+        if (!$(this).attr('title')) {
+            let ele = $(this);
+            let data = {
+                'csrf_name': csrf_name,
+                'csrf_value': csrf_value,
+                'publication': $(this).attr('data-pub-id'),
+                'start_date': $(this).attr('data-start-date'),
+                'end_date': $(this).attr('data-end-date')
+            };
+            $.ajax({
+                url: global_alert_search_text.attr('data-get-text-url'),
+                type: "post",
+                data: data
+
+            }).done(function (result) { // Success
+                $(ele).attr('title', result.result.texts.join(' '));
+
+                $(ele).addClass("on");
+                $(ele).tooltip({
+                    items: '.desc-btn.on',
+                    position: {
+                        my: "left+30 center",
+                        at: "right center",
+                        collision: "flip"
+                    }
+                });
+
+                $(ele).trigger('mouseenter');
+
+            }).fail(function (jqXHR, textStatus, errorThrown) { // Fail
+                table.clear().draw();
+            });
+        } else {
+            $(this).addClass("on");
+            $(this).tooltip({
+                items: '.desc-btn.on',
+                position: {
+                    my: "left+30 center",
+                    at: "right center",
+                    collision: "flip"
+                }
+            });
+        }
+
+        $(this).trigger('mouseenter');
+    });
+    //hide
+    $(document).on('click', '.desc-btn.on', function () {
+        $(this).tooltip('close');
+        $(this).removeClass("on");
+    });
+    //prevent mouseout and other related events from firing their handlers
+    $(".desc-btn").on('mouseout', function (e) {
+        e.stopImmediatePropagation();
+    });
+/*
+    SELECT p.* FROM segments AS s INNER JOIN pub_2707 AS p ON p.segment_id = s.id AND p.pub_id = s.pub_id AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= '2022-03-07 08:57:36' AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= '2022-03-07 08:58:01' WHERE 1 AND s.id IN ( SELECT CONCAT_WS(',', id) FROM segments WHERE 1 AND start_segment_datetime >= DATE_SUB('2022-03-07 08:57:36', INTERVAL 600 second) AND start_segment_datetime <= '2022-03-07 08:58:01' AND pub_id = 2707 ORDER BY id DESC ) AND s.pub_id = 2707 AND s.start_segment_datetime >= DATE_SUB('2022-03-07 08:57:36', INTERVAL 600 second) AND s.start_segment_datetime <= '2022-03-07 08:58:01' GROUP BY p.id ORDER BY s.start_segment_datetime, p.start_time ASC
+
+{"pub_id":"2707","pub_name":"Dubai one TV","date":"2022-03-07 08:26:46","start_segment":"2707.2022_03_07-09:26:46.ts","end_segment":"2707.2022_03_07-09:27:05.ts","text":"Dubai","country":"AE","start_date":"2022-03-07 09:26:46","end_date":"2022-03-07 09:27:05","publication":"2707","country_name":"United Arab Emirates","start_segment_formatted":"2707.2022_03_07-09!26!46.ts","end_segment_formatted":"2707.2022_03_07-09!27!05.ts","publication_url":"http:\/\/www.dmi.ae\/dubaione\/"}
+
+    {"pub_id":"2707","pub_name":"Dubai one TV","date":"2022-03-07 08:26:46","start_segment":"2707.2022_03_07-09:26:46.ts","end_segment":"2707.2022_03_07-09:27:05.ts","text":"Dubai","country":"AE","start_date":"2022-03-07 09:26:46","end_date":"2022-03-07 09:27:05","start_date_url":"2022-03-07 09!26!46","end_date_url":"2022-03-07 09!27!05","publication":"2707","country_name":"United Arab Emirates","publication_url":"http:\/\/www.dmi.ae\/dubaione\/"}
+
+    /*var form = $('#video-search-text');
 
     if (form.length === 0) return false;
 
@@ -125,6 +261,6 @@ $( function() {
         }
     });
 
-    activate_results();
+    activate_results();*/
 
 });

@@ -15,7 +15,7 @@ class Search extends AbstractModule
     {
 
         $result = [
-            'texts' => [],
+            'data' => [],
             'preview' => [],
             'warnings' => [],
             'message' => ''
@@ -23,12 +23,15 @@ class Search extends AbstractModule
         $code = 200;
         try {
             $countries = [];
-            foreach ($request->getParam('countries') as $country) {
-                if ($country) {
-                    $countries[] = $country;
+            if (is_array($request->getParam('countries'))) {
+                foreach ($request->getParam('countries') as $country) {
+                    if ($country) {
+                        $countries[] = $country;
+                    }
                 }
             }
-            $result['texts'] = $this->entity_search_text->get_search_text(
+
+            $result['data'] = $this->entity_search_text->get_search_text(
                 $request->getParam('start_date'),
                 $request->getParam('end_date'),
                 $request->getParam('publications'),
@@ -37,7 +40,7 @@ class Search extends AbstractModule
             );
 
             $country_name = [];
-            if ($result['texts']) {
+            if ($result['data']) {
                 $countries_all = $this->entity_country->get_all();
                 foreach ($countries_all as $countryAR) {
                     $country_name[$countryAR->iso] = $countryAR->name_en;
@@ -46,7 +49,7 @@ class Search extends AbstractModule
 
             $pub_ids = [];
             $raw_video_file = new RawVideoFile();
-            foreach($result['texts'] as &$search_text_ar) {
+            foreach($result['data'] as &$search_text_ar) {
                 $raw_video_file->set_locations($search_text_ar->start_segment);
                 $end_raw_video_file = (new RawVideoFile())->set_locations($search_text_ar->end_segment);
 
@@ -54,12 +57,12 @@ class Search extends AbstractModule
                 $search_text_ar_arr['start_date'] = $raw_video_file->build_start_datetime();
                 $search_text_ar_arr['end_date'] = $end_raw_video_file->build_end_datetime();
 
-                // These required for windows apache, because ":" colon symbol does not allowed in url
-                $search_text_ar_arr['start_date_url'] = str_replace(":", "!", $search_text_ar_arr['start_date']);
-                $search_text_ar_arr['end_date_url'] = str_replace(":", "!", $search_text_ar_arr['end_date']);
-
                 $search_text_ar_arr['publication'] = $search_text_ar->pub_id;
                 $search_text_ar_arr['country_name'] = $country_name[$search_text_ar->country] ?? '';
+
+                // These required for windows apache, because ":" colon symbol does not allowed in url
+                $search_text_ar_arr['start_segment_formatted'] = str_replace(":", "!", $search_text_ar->start_segment);
+                $search_text_ar_arr['end_segment_formatted'] = str_replace(":", "!", $search_text_ar->end_segment);
 
                 $pub_ids[] = $search_text_ar->pub_id;
 
@@ -73,12 +76,12 @@ class Search extends AbstractModule
                     $publication_url[$publication['id']] = $publication['url'];
                 }
 
-                foreach($result['texts'] as &$search_text_ar) {
+                foreach($result['data'] as &$search_text_ar) {
                     $search_text_ar['publication_url'] = $publication_url[$search_text_ar['publication']] ?? '';
                 }
             }
 
-            if (empty($result['texts'])) {
+            if (empty($result['data'])) {
                 $result['message'] = 'Could not find any segments with the provided details';
             }
         }
