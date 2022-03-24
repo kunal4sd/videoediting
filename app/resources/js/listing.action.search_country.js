@@ -9,5 +9,4 @@ $( function() {
     select.on('change', function() {
         input.attr('value', select.val().join(','));
     });
-
 });

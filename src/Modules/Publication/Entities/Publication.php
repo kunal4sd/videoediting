@@ -173,4 +173,14 @@ class Publication extends AbstractModule
         return $result;
     }
 
+    /**
+     * @param array $countries
+     * @return array
+     */
+    public function get_by_countries(array $countries): array
+    {
+        $publication = new PublicationDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
+
+        return $publication->get_by_countries($countries);
+    }
 }

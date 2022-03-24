@@ -129,17 +129,17 @@ class TextDB extends AbstractDatabase
             $key = "iso_{$iso}";
             $params[$key] = [$iso, PDO::PARAM_STR];
         }
-        $publicationStr = ":id_" . implode(', :id_', $publication_ids);
-        $sql = sprintf("
-                    SELECT
+        $sql = "    SELECT
                         *
                     FROM recordings_text
                     WHERE
                         date >= :start_date
                         AND date <= :end_date
-                        AND pub_id IN (%s)
-                ", $publicationStr);
+                ";
 
+        if ($publication_ids) { // If countries exist
+            $sql .= sprintf(" AND pub_id IN (%s)", ":id_" . implode(', :id_', $publication_ids));
+        }
         if ($countries) { // If countries exist
             $sql .= sprintf(" AND country IN (%s)", ":iso_" . implode(", :iso_", $countries));
         }

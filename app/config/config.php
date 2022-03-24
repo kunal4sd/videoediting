@@ -74,7 +74,7 @@ else {
     }
 
     // check for prod env
-    elseif (!in_array(HOST, array('localhost', '192.168.33.4'), true)) {
+    elseif (!in_array(HOST, array('recordings.com', 'localhost', '192.168.33.4'), true)) {
         $config['core']['env'] = 'prod';
     }
 }

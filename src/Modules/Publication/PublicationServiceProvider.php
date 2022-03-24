@@ -2,6 +2,7 @@
 
 namespace App\Modules\Publication;
 
+use App\Modules\Publication\Actions\Ajax\ListByCountries;
 use App\Modules\Publication\Actions\Ajax\RestartFfmpeg;
 use App\Modules\Publication\Actions\Ajax\RestartRsync;
 use App\Modules\Publication\Entities\Issue;
@@ -11,6 +12,7 @@ use App\Modules\Publication\Entities\PublicationDetails;
 use App\Modules\Publication\Views\Index;
 use App\Modules\Publication\Views\Report;
 use App\Modules\Publication\Middleware\Validation\RestartProcess as RestartProcessValidationMiddleware;
+use App\Modules\Publication\Middleware\Validation\ListByCountries as ListByCountriesValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Authorization\SameSessionId as SameSessionIdAuthorizationMiddleware;
 use App\Modules\Core\Middleware\Authorization\KnownUser as KnownUserAuthorizationMiddleware;
@@ -44,6 +46,9 @@ class PublicationServiceProvider implements ServiceProviderInterface
         };
         $container['publication.action.ajax.restart_rsync'] = function ($container) {
             return new RestartRsync($container);
+        };
+        $container['publication.action.ajax.list_by_country'] = function ($container) {
+            return new ListByCountries($container);
         };
     }
 
@@ -83,6 +88,16 @@ class PublicationServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('publication.action.restart_rsync');
+
+        $container->slim->post(
+                            '/publications/actions/list/by_country',
+                            'publication.action.ajax.list_by_country'
+                        )
+                        ->add(new ListByCountriesValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('publication.action.list_by_country');
     }
 
     private function register_entities(Container $container)

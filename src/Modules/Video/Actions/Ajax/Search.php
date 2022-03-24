@@ -30,11 +30,12 @@ class Search extends AbstractModule
                     }
                 }
             }
+            $publications = $request->getParam('publications') ?? [];
 
             $result['data'] = $this->entity_search_text->get_search_text(
                 $request->getParam('start_date'),
                 $request->getParam('end_date'),
-                $request->getParam('publications'),
+                $publications,
                 $countries,
                 $request->getParam('text')
             );

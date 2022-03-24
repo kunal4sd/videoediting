@@ -137,4 +137,33 @@ class PublicationDB extends AbstractDatabase
         return $result;
     }
 
+    /**
+     * @param array $countries
+     * @return array
+     */
+    public function get_by_countries(array $countries): array
+    {
+        $params = [];
+
+        $sql = "
+                    SELECT
+                        *
+                    FROM publication p
+                    INNER JOIN publication_details pd ON p.id = pd.publication_id AND pd.recording247 = 'Y'
+                    WHERE p.active = 1 AND p.is_deleted = 0
+               ";
+
+        if ($countries) {
+            foreach($countries as $iso) {
+                $key = "iso_{$iso}";
+                $params[$key] = [$iso, PDO::PARAM_STR];
+            }
+            $ids_str = ":iso_" . implode(', :iso_', $countries);
+            $sql .= sprintf(" AND country IN (%s)", $ids_str);
+        }
+        $sql .= " GROUP BY p.id
+                  ORDER BY p.name_en";
+
+        return $this->db->fetch_all($sql, $params);
+    }
 }

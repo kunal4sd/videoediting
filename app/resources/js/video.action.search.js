@@ -1,9 +1,39 @@
 $( function() {
     let form = $('#listing-get-list');
-    var csrf_name = form.find('input[name="csrf_name"]').val();
-    var csrf_value = form.find('input[name="csrf_value"]').val();
-    var global_templates_holder = $('#global-templates-holder');
-    var global_alert_search_text = global_templates_holder.find('div[name="global_template_alert_search_text"]');
+    let csrf_name = form.find('input[name="csrf_name"]').val();
+    let csrf_value = form.find('input[name="csrf_value"]').val();
+    let global_templates_holder = $('#global-templates-holder');
+    let global_alert_search_text = global_templates_holder.find('div[name="global_template_alert_search_text"]');
+
+    let publicationSelect = $('#publication-select');
+    let countrySelect = $('#country_select');
+
+    function reloadPublication() {
+        $.ajax({
+            url: global_alert_search_text.attr('data-get-publication-list'),
+            type: "post",
+            data: global_functions.form_to_json(form)
+
+        }).done(function (result) { // Success
+            publicationSelect.val(null).trigger('change');
+            publicationSelect.empty();
+            $.each(result.result.texts, function( index, data ) {
+                let option = new Option(data.name_en, data.id, false, false);
+                publicationSelect.append(option).trigger('change');
+            });
+
+        }).fail(function (jqXHR, textStatus, errorThrown) { // Fail
+            // console.log(textStatus);
+        });
+    }
+
+    publicationSelect.select2();
+    countrySelect.select2();
+    countrySelect.on('change', function() {
+        reloadPublication();
+    });
+
+    reloadPublication();
 
     let tableConfig = {
         data: [],
@@ -129,6 +159,9 @@ $( function() {
     $(".desc-btn").on('mouseout', function (e) {
         e.stopImmediatePropagation();
     });
+
+
+
 /*
     SELECT p.* FROM segments AS s INNER JOIN pub_2707 AS p ON p.segment_id = s.id AND p.pub_id = s.pub_id AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= '2022-03-07 08:57:36' AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= '2022-03-07 08:58:01' WHERE 1 AND s.id IN ( SELECT CONCAT_WS(',', id) FROM segments WHERE 1 AND start_segment_datetime >= DATE_SUB('2022-03-07 08:57:36', INTERVAL 600 second) AND start_segment_datetime <= '2022-03-07 08:58:01' AND pub_id = 2707 ORDER BY id DESC ) AND s.pub_id = 2707 AND s.start_segment_datetime >= DATE_SUB('2022-03-07 08:57:36', INTERVAL 600 second) AND s.start_segment_datetime <= '2022-03-07 08:58:01' GROUP BY p.id ORDER BY s.start_segment_datetime, p.start_time ASC
 

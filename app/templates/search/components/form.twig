@@ -9,26 +9,19 @@
                 <div class="row form-group">
                     <div class="col-xl-3 mb-4">
                         <label for="country">Countries</label>
-                        <input type="hidden" name="country" id="listing-country-input">
-                        <select name="countries[]" id="listing-country-select" multiple="multiple" class="form-control">
+                        <select name="countries[]" id="country_select" multiple="multiple" class="form-control">
                             {% for country in countries %}
                                 <option
-                                        value="{{ country.id }}"
-                                        {% if form.country_id == country.id %} selected {% endif %}
+                                        value="{{ country.iso }}"
+                                        {% if form.country_iso == country.iso %} selected {% endif %}
                                 >{{ country.name_en }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="col-xl-3 mb-4">
                         <label for="publication">Publications</label>
-                        <input type="hidden" name="publication" id="listing-publication-input">
-                        <select name="publications[]" id="listing-publication-select" multiple="multiple" class="form-control">
-                            {% for publication in publications %}
-                                <option
-                                        value="{{ publication.id }}"
-                                        {% if form.publication == publication.id %} selected {% endif %}
-                                >{{ publication.name_en }}</option>
-                            {% endfor %}
+                        <select name="publications[]" id="publication-select" multiple="multiple" class="form-control">
+
                         </select>
                     </div>
                     <div class="col-xl-3 mb-4">
