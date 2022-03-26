@@ -32,13 +32,13 @@ class SaveSearchFilter extends AbstractModule
             $this->entity_user_activity->save_media(new UserActivityAR(
                 [
                     'user_id'           => $this->session_user->get_user()->id,
-                    'publication_id'    => 0,
+                    'publication_id'    => $request->getParam('publication'),
                     'article_id'        => 0,
                     'issue_date'        => date("Y-m-d", strtotime($request->getParam('start_date'))),
-                    'activity_id'       => UserActivity::PLAYLIST,
+                    'activity_id'       => UserActivity::TEXT_SEARCH,
                     'created'           => $this->db[Hosts::LOCAL][Dbs::MAIN]->now(),
                     'description' => json_encode([
-                        'publication_id'    => 0,
+                        'publication_id'    => $request->getParam('publication'),
                         'publications'      => $publications,
                         'countries'         => $countries,
                         'start_date'        => $request->getParam('start_date'),

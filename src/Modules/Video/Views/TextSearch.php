@@ -39,7 +39,7 @@ class TextSearch extends AbstractModule
 
             } else {
                 $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type_media(
-                    1, $this->session_user->get_user()->id, UserActivity::PLAYLIST
+                    1, $this->session_user->get_user()->id, UserActivity::TEXT_SEARCH
                 );
                 $user_activity_ar = array_shift($user_activities_ar);
             }

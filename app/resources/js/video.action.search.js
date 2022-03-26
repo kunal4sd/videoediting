@@ -90,7 +90,7 @@ $( function() {
             return '<div class="btn-toolbar" role="group"> ' +
                 '<div class="btn-group mr-2 mx-auto" role="group">' +
                 '<button name="desc-btn" type="button" class="btn btn-primary oi oi-info desc-btn" data-toggle="modal" data-target="#listing-modal-edit-article" data-pub-id="'+ row.pub_id +'" data-start-date="'+ row.start_date +'" data-end-date="'+ row.end_date +'" title=""></button>' +
-                '<button name="segment-btn" type="button" class="btn btn-secondary oi oi-arrow-right segment-btn" data-toggle="modal" data-redirect-url="' + new_href + '" title="Go to segment" ></button>' +
+                '<button name="segment-btn" type="button" class="btn btn-secondary oi oi-arrow-right segment-btn" data-toggle="modal" data-redirect-url="' + new_href + '" data-pub-id="'+ row.pub_id +'" title="Go to segment" ></button>' +
                 '</div></div>'
                 ;
         }
@@ -173,11 +173,13 @@ $( function() {
     $(document).on('click', '.segment-btn', function () {
         let ele = $(this);
         let url = ele.attr("data-redirect-url");
+        let data = global_functions.form_to_json(form);
+        data['publication'] = $(this).attr('data-pub-id');
 
         $.ajax({
             url: global_alert_search_text.attr('data-save-search-filter-url'),
             type: "post",
-            data: global_functions.form_to_json(form)
+            data: data
 
         }).done(function (result) { // Success
             window.location.replace(url);
