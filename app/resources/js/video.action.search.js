@@ -120,8 +120,11 @@ $( function() {
     let table = $('#listing-publication-table').DataTable(tableConfig);
 
     $('#reset_button').on('click', function() {
-        countrySelect.val(null).trigger('change');
+        global_alert_search_text.attr('data-publications', '');
+        global_alert_search_text.attr('data-countries', '');
+
         publicationSelect.val(null).trigger('change');
+        countrySelect.val(null).trigger('change');
         search_text.val("");
     });
 
