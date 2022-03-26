@@ -16,7 +16,6 @@ class GetTextPreview extends AbstractModule
             'publication' => v::notEmpty()->intVal(),
             'start_date' => v::notEmpty()->stringType(),
             'end_date' => v::notEmpty()->stringType(),
-//            'publication' => v::oneOf(v::stringType(), v::nullType()),
             'ajax' => v::trueVal()
         ]);
         if ($validation->failed()) {

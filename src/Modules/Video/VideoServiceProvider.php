@@ -11,6 +11,7 @@ use App\Modules\Video\Views\TextSearch;
 use App\Modules\Video\Entities\Playlist;
 use App\Modules\Video\Entities\RawVideo;
 use App\Modules\Video\Actions\Ajax\Search;
+use App\Modules\Video\Actions\Ajax\SaveSearchFilter;
 use App\Modules\Video\Entities\RemoteFile;
 use App\Modules\Video\Entities\SearchText;
 use App\Modules\Video\Actions\Ajax\GetText;
@@ -84,6 +85,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['video.action.ajax.search'] = function ($container) {
             return new Search($container);
+        };
+        $container['video.action.ajax.save_search_filter'] = function ($container) {
+            return new SaveSearchFilter($container);
         };
     }
 
@@ -186,6 +190,15 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.get_text_preview');
+
+        $container->slim->post('/search/save-filter', 'video.action.ajax.save_search_filter')
+                        ->add(new DateRangeStandardizationMiddleware($container))
+                        ->add(new SearchTextValidationMiddleware($container))
+                        ->add(new PersistantMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.action.save_search_filter');
     }
 
     private function register_entities(Container $container)

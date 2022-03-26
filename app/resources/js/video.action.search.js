@@ -29,63 +29,15 @@ $( function() {
                 publicationSelect.append(option).trigger('change');
             });
 
+            let publications = global_alert_search_text.attr('data-publications').split(',');
+            publicationSelect.val(publications).change();
+
         }).fail(function (jqXHR, textStatus, errorThrown) { // Fail
             event_emitter.trigger('form.ajax.result.alert', [jqXHR, form]);
         });
     }
 
-    publicationSelect.select2();
-    countrySelect.select2();
-    countrySelect.on('change', function() {
-        reloadPublication();
-    });
-
-    reloadPublication();
-
-    let tableConfig = {
-        data: [],
-        columns: [
-            {'data': 'pub_id'},
-            {'data': 'pub_name'},
-            {'data': 'publication_language'},
-            {'data': 'country_name'},
-            {'data': 'date'},
-            {'data': 'start_date'},
-            {'data': 'end_date'},
-            {
-                'data': 'publication',
-                'orderable': false,
-                render: function(data, type, row) {
-                    if (type === 'display') {
-                        let new_href = global_alert_search_text.attr('data-get-segment-url')
-                        new_href = new_href.replace('start_segment', encodeURIComponent(row.start_segment_formatted));
-                        new_href = new_href.replace('end_segment', encodeURIComponent(row.end_segment_formatted));
-                        new_href = new_href.replace('publication', encodeURIComponent(row.pub_id));
-
-                        return '<div class="btn-toolbar" role="group"> ' +
-                            '<div class="btn-group mr-2 mx-auto" role="group">' +
-                            '<button name="desc-btn" type="button" class="btn btn-primary oi oi-info desc-btn" data-toggle="modal" data-target="#listing-modal-edit-article" data-pub-id="'+ row.pub_id +'" data-start-date="'+ row.start_date +'" data-end-date="'+ row.end_date +'" title=""></button>' +
-                        '<a href="' + new_href + '"><button name="segment-btn" type="button" class="btn btn-secondary oi oi-arrow-right segment-btn" data-toggle="modal" data-target="#listing-modal-edit-article" title="Go to segment"></button></a>' +
-                        '</div></div>'
-                            ;
-                    }
-
-                    return data;
-                }
-            }
-        ],
-        rowCallback: function (row, data) {},
-    };
-
-    let table = $('#listing-publication-table').DataTable(tableConfig);
-
-    $('#reset_button').on('click', function() {
-        countrySelect.val(null).trigger('change');
-        publicationSelect.val(null).trigger('change');
-        search_text.val("");
-    });
-
-    $('#search_button').on('click', function() {
+    function reloadListing() {
         global_alert_search_text.attr('data-text', search_text.val());
 
         $.ajax({
@@ -104,6 +56,77 @@ $( function() {
 
             event_emitter.trigger('form.ajax.result.alert', [result, form]);
         });
+    }
+
+    publicationSelect.select2();
+    countrySelect.select2();
+    countrySelect.on('change', function() {
+        reloadPublication();
+    });
+
+    reloadPublication();
+
+    // Get from user activity
+    function getStoredFilters() {
+        let countries = global_alert_search_text.attr('data-countries').split(','); // Countries
+        countrySelect.val(countries).change();
+
+        if (!search_text.val()) {
+            return false;
+        }
+
+        reloadListing();
+    }
+
+    getStoredFilters();
+
+    function actionsRender(data, type, row) {
+        if (type === 'display') {
+            let new_href = global_alert_search_text.attr('data-get-segment-url')
+            new_href = new_href.replace('start_segment', encodeURIComponent(row.start_segment_formatted));
+            new_href = new_href.replace('end_segment', encodeURIComponent(row.end_segment_formatted));
+            new_href = new_href.replace('publication', encodeURIComponent(row.pub_id));
+
+            return '<div class="btn-toolbar" role="group"> ' +
+                '<div class="btn-group mr-2 mx-auto" role="group">' +
+                '<button name="desc-btn" type="button" class="btn btn-primary oi oi-info desc-btn" data-toggle="modal" data-target="#listing-modal-edit-article" data-pub-id="'+ row.pub_id +'" data-start-date="'+ row.start_date +'" data-end-date="'+ row.end_date +'" title=""></button>' +
+                '<button name="segment-btn" type="button" class="btn btn-secondary oi oi-arrow-right segment-btn" data-toggle="modal" data-redirect-url="' + new_href + '" title="Go to segment" ></button>' +
+                '</div></div>'
+                ;
+        }
+
+        return data;
+    }
+
+    let tableConfig = {
+        data: [],
+        columns: [
+            {'data': 'pub_id'},
+            {'data': 'pub_name'},
+            {'data': 'publication_language'},
+            {'data': 'country_name'},
+            {'data': 'date'},
+            {'data': 'start_date'},
+            {'data': 'end_date'},
+            {
+                'data': 'publication',
+                'orderable': false,
+                render: actionsRender
+            }
+        ],
+        rowCallback: function (row, data) {},
+    };
+
+    let table = $('#listing-publication-table').DataTable(tableConfig);
+
+    $('#reset_button').on('click', function() {
+        countrySelect.val(null).trigger('change');
+        publicationSelect.val(null).trigger('change');
+        search_text.val("");
+    });
+
+    $('#search_button').on('click', function() {
+        reloadListing();
     });
 
     function formatPreview ( description ) {
@@ -145,63 +168,31 @@ $( function() {
             });
 
         }
+    });
 
-        //holder.find('.text-preview').highlight(global_alert_search_text.attr('data-text').split(' '));
+    $(document).on('click', '.segment-btn', function () {
+        let ele = $(this);
+        let url = ele.attr("data-redirect-url");
 
-        /*
-        {"publication_id":"4947","start_date":"2019-09-04 05:00:00","end_date":"2019-09-04 20:00:00","batch_size":"1800"}
+        $.ajax({
+            url: global_alert_search_text.attr('data-save-search-filter-url'),
+            type: "post",
+            data: global_functions.form_to_json(form)
 
-        if (!$(this).attr('title')) {
-            let ele = $(this);
-            let data = {
-                'csrf_name': csrf_name,
-                'csrf_value': csrf_value,
-                'publication': $(this).attr('data-pub-id'),
-                'start_date': $(this).attr('data-start-date'),
-                'end_date': $(this).attr('data-end-date')
-            };
-            $.ajax({
-                url: global_alert_search_text.attr('data-get-text-url'),
-                type: "post",
-                data: data
+        }).done(function (result) { // Success
+            window.location.replace(url);
 
-            }).done(function (result) { // Success
-                $(ele).attr('title', result.result.texts.join(' '));
+        }).fail(function (jqXHR, textStatus, errorThrown) { // Fail
+            event_emitter.trigger('form.ajax.result.alert', [jqXHR, form]);
+        });
 
-                $(ele).addClass("on");
-                $(ele).tooltip({
-                    items: '.desc-btn.on',
-                    position: {
-                        my: "left+30 center",
-                        at: "right center",
-                        collision: "flip"
-                    }
-                });
-
-                $(ele).trigger('mouseenter');
-
-            }).fail(function (jqXHR, textStatus, errorThrown) { // Fail
-                table.clear().draw();
-            });
-        } else {
-            $(this).addClass("on");
-            $(this).tooltip({
-                items: '.desc-btn.on',
-                position: {
-                    my: "left+30 center",
-                    at: "right center",
-                    collision: "flip"
-                }
-            });
-        }
-
-        $(this).trigger('mouseenter');*/
     });
 
 
-
-
 /*
+
+{"publication_id":0,"publications":["2707"],"countries":["QA","AE"],"start_date":"2022-03-01 20:24:42","end_date":"2022-03-06 20:25:12","text":"D","batch_size":600}
+
     SELECT p.* FROM segments AS s INNER JOIN pub_2707 AS p ON p.segment_id = s.id AND p.pub_id = s.pub_id AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= '2022-03-07 08:57:36' AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= '2022-03-07 08:58:01' WHERE 1 AND s.id IN ( SELECT CONCAT_WS(',', id) FROM segments WHERE 1 AND start_segment_datetime >= DATE_SUB('2022-03-07 08:57:36', INTERVAL 600 second) AND start_segment_datetime <= '2022-03-07 08:58:01' AND pub_id = 2707 ORDER BY id DESC ) AND s.pub_id = 2707 AND s.start_segment_datetime >= DATE_SUB('2022-03-07 08:57:36', INTERVAL 600 second) AND s.start_segment_datetime <= '2022-03-07 08:58:01' GROUP BY p.id ORDER BY s.start_segment_datetime, p.start_time ASC
 
 {"pub_id":"2707","pub_name":"Dubai one TV","date":"2022-03-07 08:26:46","start_segment":"2707.2022_03_07-09:26:46.ts","end_segment":"2707.2022_03_07-09:27:05.ts","text":"Dubai","country":"AE","start_date":"2022-03-07 09:26:46","end_date":"2022-03-07 09:27:05","publication":"2707","country_name":"United Arab Emirates","start_segment_formatted":"2707.2022_03_07-09!26!46.ts","end_segment_formatted":"2707.2022_03_07-09!27!05.ts","publication_url":"http:\/\/www.dmi.ae\/dubaione\/"}

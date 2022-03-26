@@ -54,9 +54,10 @@ class TextSearchSave extends AbstractModule
         if (count($date_validation)) return $this->validation_failed($date_validation, $response);
 
         $clone = $request->withParsedBody([
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-            'publication' => $params['publication'],
+            'start_date'    => $start_date,
+            'end_date'      => $end_date,
+            'publication'   => $params['publication'],
+            'redirected'    => true
         ]);
 
         return $next($clone, $response);

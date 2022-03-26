@@ -13,11 +13,11 @@ class TextSearch extends AbstractModule
     public function __invoke(Request $request, Response $response, $args)
     {
 
-        $publications_active = [];
-        $countries = [];
-        $form = [];
-        $playlists = [];
-        $movies = [];
+        $publications_active    = [];
+        $countries              = [];
+        $form                   = [];
+        $playlists              = [];
+        $movies                 = [];
 
         try {
             $publications = $this->entity_publication->get_all_active_tv_and_radio_media();
@@ -36,8 +36,8 @@ class TextSearch extends AbstractModule
                     $args['activity_id'],
                     $this->session_user->get_user()->id
                 );
-            }
-            else {
+
+            } else {
                 $user_activities_ar = $this->entity_user_activity->get_last_x_by_user_and_type_media(
                     1, $this->session_user->get_user()->id, UserActivity::PLAYLIST
                 );
@@ -48,14 +48,17 @@ class TextSearch extends AbstractModule
                 !is_null($user_activity_ar->id)
                 && !is_null( $data = json_decode($user_activity_ar->description, true) )
             ) {
+                $formPublications = $data['publications'] ?? [];
+                $formCountries = $data['countries'] ?? [];
 
                 $form = [
-                    'publication' => $data['publication_id'],
-                    'start_date' => $data['start_date'],
-                    'end_date' => $data['end_date'],
-                    'batch' => $data['batch_size'],
-                    'method' => 'cached',
-                    'country_iso' => '',
+                    'publications'  => implode(",", $formPublications),
+                    'countries'     => implode(",", $formCountries),
+                    'start_date'    => $data['start_date'],
+                    'end_date'      => $data['end_date'],
+                    'text'          => $data['text'] ?? '',
+                    'batch'         => $data['batch_size'],
+                    'method'        => 'cached',
                 ];
                 $playlists = $this->entity_playlist->get_playlists_for_output(
                     $request->withQueryParams($form)
@@ -76,13 +79,13 @@ class TextSearch extends AbstractModule
         }
 
         return $this->view->render($response, 'search/index.twig', [
-            'page_title' => 'Video Text Search',
-            'page_name' => 'search',
-            'publications' => $publications_active,
-            'countries' => $countries,
-            'form' => $form,
-            'playlists' => $playlists,
-            'movies' => $movies
+            'page_title'    => 'Video Text Search',
+            'page_name'     => 'search',
+            'publications'  => $publications_active,
+            'countries'     => $countries,
+            'form'          => $form,
+            'playlists'     => $playlists,
+            'movies'        => $movies
         ]);
     }
 

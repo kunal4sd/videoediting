@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block content %}
+    {% if back %}
+        {% include 'video/components/back.twig' %}
+    {% endif %}
 
 <div class="row">
     <div class="row d-flex col-xl-6 mx-auto p-0">
@@ -22,6 +25,5 @@
 <div class="row">
     {% include 'video/components/edit.twig' %}
 </div>
-
 
 {% endblock %}

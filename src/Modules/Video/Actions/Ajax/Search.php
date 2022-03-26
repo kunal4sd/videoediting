@@ -2,6 +2,10 @@
 
 namespace App\Modules\Video\Actions\Ajax;
 
+use App\Libs\Enums\Dbs;
+use App\Libs\Enums\Hosts;
+use App\Libs\Enums\UserActivity;
+use App\Modules\User\Entities\ActiveRecords\UserActivityAR;
 use \Exception;
 use App\Libs\Json;
 use Slim\Http\Request;
@@ -15,12 +19,14 @@ class Search extends AbstractModule
     {
 
         $result = [
-            'data' => [],
-            'preview' => [],
-            'warnings' => [],
-            'message' => ''
+            'data'      => [],
+            'preview'   => [],
+            'warnings'  => [],
+            'message'   => ''
         ];
         $code = 200;
+        $publications = $request->getParam('publications') ?? [];
+
         try {
             $countries = [];
             if (is_array($request->getParam('countries'))) {
@@ -30,7 +36,7 @@ class Search extends AbstractModule
                     }
                 }
             }
-            $publications = $request->getParam('publications') ?? [];
+
 
             $result['data'] = $this->entity_search_text->get_search_text(
                 $request->getParam('start_date'),

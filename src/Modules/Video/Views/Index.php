@@ -72,12 +72,13 @@ class Index extends AbstractModule
         }
 
         return $this->view->render($response, 'video/index.twig', [
-            'page_title' => 'Video Editing',
-            'page_name' => 'editing',
-            'publications' => $publications_active,
-            'form' => $form,
-            'playlists' => $playlists,
-            'movies' => $movies
+            'page_title'    => 'Video Editing',
+            'page_name'     => 'editing',
+            'publications'  => $publications_active,
+            'form'          => $form,
+            'playlists'     => $playlists,
+            'movies'        => $movies,
+            'back'          => $request->getParam('redirected') ?? false
         ]);
     }
 
