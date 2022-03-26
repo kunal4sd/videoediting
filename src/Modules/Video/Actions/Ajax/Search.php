@@ -74,11 +74,11 @@ class Search extends AbstractModule
                 $publication_url = [];
                 $publication_list = $this->entity_publication->get_by_ids($pub_ids);
                 foreach ($publication_list as $publication) {
-                    $publication_url[$publication['id']] = $publication['url'];
+                    $publication_url[$publication['id']] = $publication['language'];
                 }
 
                 foreach($result['data'] as &$search_text_ar) {
-                    $search_text_ar['publication_url'] = $publication_url[$search_text_ar['publication']] ?? '';
+                    $search_text_ar['publication_language'] = $publication_url[$search_text_ar['publication']] ?? '';
                 }
             }
 

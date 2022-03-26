@@ -1,9 +1,16 @@
 $( function() {
-    let form = $('#listing-get-list');
+    let form = $('#video-search-text');
+    if (form.length === 0) { // Another page loaded
+        return false;
+    }
+
+    let search_text = form.find('input[name="text"]');
     let csrf_name = form.find('input[name="csrf_name"]').val();
     let csrf_value = form.find('input[name="csrf_value"]').val();
     let global_templates_holder = $('#global-templates-holder');
     let global_alert_search_text = global_templates_holder.find('div[name="global_template_alert_search_text"]');
+    var global_alerts_holder = $('#global-alerts-holder');
+    var global_alert_info = global_templates_holder.find('div[name="global_template_alert_info"]');
 
     let publicationSelect = $('#publication-select');
     let countrySelect = $('#country_select');
@@ -23,7 +30,7 @@ $( function() {
             });
 
         }).fail(function (jqXHR, textStatus, errorThrown) { // Fail
-            // console.log(textStatus);
+            event_emitter.trigger('form.ajax.result.alert', [jqXHR, form]);
         });
     }
 
@@ -40,32 +47,11 @@ $( function() {
         columns: [
             {'data': 'pub_id'},
             {'data': 'pub_name'},
-            {
-                'data': 'publication_url',
-                render: function(data, type, row) {
-                    if (type === 'display') {
-                        return '<a href="' + row.publication_url + '" target="_blank" rel="noopener noreferrer">' + row.publication_url + '</a>';
-                    }
-
-                    return data;
-                }
-            },
+            {'data': 'publication_language'},
             {'data': 'country_name'},
             {'data': 'date'},
             {'data': 'start_date'},
             {'data': 'end_date'},
-            {
-                'data': 'publication',
-                'orderable': false,
-                render: function(data, type, row) {
-                    if (type === 'display') {
-
-                        return '<button name="desc-btn" type="button" class="btn btn-primary oi oi-info desc-btn" data-toggle="modal" data-target="#listing-modal-edit-article" data-pub-id="'+ row.pub_id +'" data-start-date="'+ row.start_date +'" data-end-date="'+ row.end_date +'" title=""></button>';
-                    }
-
-                    return data;
-                }
-            },
             {
                 'data': 'publication',
                 'orderable': false,
@@ -76,34 +62,95 @@ $( function() {
                         new_href = new_href.replace('end_segment', encodeURIComponent(row.end_segment_formatted));
                         new_href = new_href.replace('publication', encodeURIComponent(row.pub_id));
 
-                        return '<a href="' + new_href + '"><button name="segment-btn" type="button" class="btn btn-secondary oi oi-arrow-right segment-btn" data-toggle="modal" data-target="#listing-modal-edit-article" title="Go to segment"></button></a>';
+                        return '<div class="btn-toolbar" role="group"> ' +
+                            '<div class="btn-group mr-2 mx-auto" role="group">' +
+                            '<button name="desc-btn" type="button" class="btn btn-primary oi oi-info desc-btn" data-toggle="modal" data-target="#listing-modal-edit-article" data-pub-id="'+ row.pub_id +'" data-start-date="'+ row.start_date +'" data-end-date="'+ row.end_date +'" title=""></button>' +
+                        '<a href="' + new_href + '"><button name="segment-btn" type="button" class="btn btn-secondary oi oi-arrow-right segment-btn" data-toggle="modal" data-target="#listing-modal-edit-article" title="Go to segment"></button></a>' +
+                        '</div></div>'
+                            ;
                     }
 
                     return data;
                 }
-            },
+            }
         ],
         rowCallback: function (row, data) {},
     };
 
     let table = $('#listing-publication-table').DataTable(tableConfig);
 
+    $('#reset_button').on('click', function() {
+        countrySelect.val(null).trigger('change');
+        publicationSelect.val(null).trigger('change');
+        search_text.val("");
+    });
+
     $('#search_button').on('click', function() {
+        global_alert_search_text.attr('data-text', search_text.val());
+
         $.ajax({
-            url: $('#listing-get-list').attr('action'),
+            url: form.attr('action'),
             type: "post",
             data: global_functions.form_to_json(form)
 
         }).done(function (result) { // Success
+            event_emitter.trigger('form.ajax.result.alert', [result, form]);
+
             table.clear().draw();
             table.rows.add(result.result.data).draw();
 
-        }).fail(function (jqXHR, textStatus, errorThrown) { // Fail
+        }).fail(function (result, textStatus, errorThrown) { // Fail
             table.clear().draw();
+
+            event_emitter.trigger('form.ajax.result.alert', [result, form]);
         });
     });
 
+    function formatPreview ( description ) {
+        // `d` is the original data object for the row
+        return $('<div class="text-preview" style="width: 100%; background-color: #bee5eb; padding: 10px; white-space: normal;">' + description + '</div>').highlight(global_alert_search_text.attr('data-text').split(' '));
+    }
+
     $(document).on('click', '.desc-btn', function () {
+        let ele = $(this);
+        let tr = ele.closest('tr');
+        let row = table.row( tr );
+
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            let data = {
+                'csrf_name': csrf_name,
+                'csrf_value': csrf_value,
+                'publication': $(this).attr('data-pub-id'),
+                'start_date': $(this).attr('data-start-date'),
+                'end_date': $(this).attr('data-end-date')
+            };
+            $.ajax({
+                url: global_alert_search_text.attr('data-get-text-url'),
+                type: "post",
+                data: data
+
+            }).done(function (result) { // Success
+                let desc = result.result.texts.join(' ');
+
+                row.child( formatPreview(desc) ).show();
+                tr.addClass('shown');
+
+            }).fail(function (jqXHR, textStatus, errorThrown) { // Fail
+                event_emitter.trigger('form.ajax.result.alert', [jqXHR, form]);
+            });
+
+        }
+
+        //holder.find('.text-preview').highlight(global_alert_search_text.attr('data-text').split(' '));
+
+        /*
+        {"publication_id":"4947","start_date":"2019-09-04 05:00:00","end_date":"2019-09-04 20:00:00","batch_size":"1800"}
+
         if (!$(this).attr('title')) {
             let ele = $(this);
             let data = {
@@ -148,17 +195,9 @@ $( function() {
             });
         }
 
-        $(this).trigger('mouseenter');
+        $(this).trigger('mouseenter');*/
     });
-    //hide
-    $(document).on('click', '.desc-btn.on', function () {
-        $(this).tooltip('close');
-        $(this).removeClass("on");
-    });
-    //prevent mouseout and other related events from firing their handlers
-    $(".desc-btn").on('mouseout', function (e) {
-        e.stopImmediatePropagation();
-    });
+
 
 
 

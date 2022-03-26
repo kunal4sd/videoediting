@@ -1,12 +1,12 @@
 $( function() {
 
-    var select = $('#listing-country-select');
+    var country_select = $('#listing-country-select');
 
-    if (select.length === 0) return false;
+    if (country_select.length === 0) return false;
 
     var input = $('#listing-country-input');
-    select.select2();
-    select.on('change', function() {
-        input.attr('value', select.val().join(','));
+    country_select.select2();
+    country_select.on('change', function() {
+        input.attr('value', country_select.val().join(','));
     });
 });

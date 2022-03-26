@@ -4,7 +4,7 @@
             Search
         </div>
         <div class="card-body flex-fill">
-            <form id="listing-get-list" action="{{ base_url() }}{{ path_for('video.action.search') }}" method="post">
+            <form id="video-search-text" action="{{ base_url() }}{{ path_for('video.action.search') }}" method="post">
                 {{ csrf.fields | raw }}
                 <div class="row form-group">
                     <div class="col-xl-3 mb-4">
@@ -48,8 +48,8 @@
                         >
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-xl-3 mb-2">
+                <div class="row form-group">
+                    <div class="col-xl-12 mb-1">
                         <input
                                 type="text"
                                 name="text"
@@ -60,9 +60,14 @@
                                 required
                         >
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-xl-3 mb-2">
                         <input type="submit" class="d-none">
                         <button type="button" id="search_button" class="btn btn-primary btn-block mb-3" data-loading="0">Search</button>
+                    </div>
+                    <div class="col-xl-3 mb-2">
+                        <button type="button" id="reset_button" class="btn btn-primary btn-block mb-3" data-loading="0">Reset</button>
                     </div>
                 </div>
             </form>
