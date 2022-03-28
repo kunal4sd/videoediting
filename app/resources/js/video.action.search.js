@@ -126,6 +126,9 @@ $( function() {
         publicationSelect.val(null).trigger('change');
         countrySelect.val(null).trigger('change');
         search_text.val("");
+
+        table.rows().clear().draw();
+        table.clear().draw();
     });
 
     $('#search_button').on('click', function() {
