@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark unselectable-text">
+
+    <a class="navbar-brand noselect" href="{{ current_path }}"><img src="/images/mediaobserver.png"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <ul class="navbar-nav mr-auto px-4">
+        {% if user.is_known %}
+            <li class="nav-item px-2">
+                <a class="nav-link{{ current_path == path_for('video.view.index') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('video.view.index') }}">Video Editing</a>
+            </li>
+            <li class="nav-item px-2">
+                <a class="nav-link{{ current_path == path_for('video.view.listing') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('video.view.listing') }}">Video List</a>
+            </li>
+            <li class="nav-item px-2">
+                <a class="nav-link{{ current_path == path_for('video.view.search') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('video.view.search') }}">Text Search</a>
+            </li>
+            <li class="nav-item px-2">
+                <a class="nav-link{{ current_path == path_for('publication.view.report') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('publication.view.report') }}">Publications Report</a>
+            </li>
+            <li class="nav- px-2">
+                <a class="nav-link{{ current_path == '/actions/import/keywords' ? ' active' : '' }}" href="/actions/import/keywords">Import Keywords &amp; Pubs</a>
+            </li>
+        {% endif %}
+        </ul>
+
+        <ul class="navbar-nav p-2">
+
+        {% if not user.is_known %}
+            <li class="nav-item">
+                <a class="nav-link{{ current_path == path_for('user.view.signin') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('user.view.signin') }}">Sign in</a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ base_url() }}{{ path_for('user.action.signout') }}">Sign out</a>
+            </li>
+        {% endif %}
+        </ul>
+  </div>
+</nav>

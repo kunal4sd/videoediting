@@ -1,0 +1,29 @@
+{% extends 'app.twig' %}
+
+{% block stylesheets %}
+    {% include 'video/components/stylesheets.twig' %}
+{% endblock %}
+
+{% block content %}
+    {% if back %}
+        {% include 'video/components/back.twig' %}
+    {% endif %}
+
+<div class="row">
+    <div class="row d-flex col-xl-6 mx-auto p-0">
+        {% include 'video/components/preview.twig' %}
+        {% include 'video/components/episodes.twig' %}
+    </div>
+    <div class="row d-flex col-xl-3 mx-auto p-0">
+        {% include 'video/components/texts.twig' %}
+    </div>
+    <div class="row d-flex col-xl-3 mx-auto p-0">
+        {% include 'video/components/videos.twig' %}
+    </div>
+</div>
+
+<div class="row">
+    {% include 'video/components/edit.twig' %}
+</div>
+
+{% endblock %}

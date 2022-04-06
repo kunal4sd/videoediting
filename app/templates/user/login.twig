@@ -1,0 +1,37 @@
+{% extends 'app.twig' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <form id="authenticate" action="{{ base_url() }}{{ path_for('user.action.authenticate') }}" method="post" novalidate>
+                        {{ csrf.fields | raw }}
+                        <div class="form-group row">
+                            <label for="username" class="col-sm-2 col-form-label">Username:</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="username" id="username" class="form-control{{ flash.errors_username or flash.alerts_errors ? ' is-invalid' : ''}}" value="{{ flash.persistant_username ? flash.persistant_username | first : '' }}" required>
+                                {% if flash.errors_username %}
+                                    <div class="invalid-feedback">{{ flash.errors_username | first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="password" class="col-sm-2 col-form-label">Password:</label>
+                            <div class="col-sm-10">
+                                <input type="password" name="password" id="password" class="form-control{{ flash.errors_password or flash.alerts_errors ? ' is-invalid' : ''}}" required>
+                                {% if flash.errors_password %}
+                                    <div class="invalid-feedback">{{ flash.errors_password | first }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <input type="submit" value="Sign in" class="btn btn-primary btn-block d-none">
+                        <button type="button" class="btn btn-primary btn-block">Sign in</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

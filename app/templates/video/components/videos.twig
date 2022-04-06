@@ -1,0 +1,97 @@
+<div class="col-xl-12 mb-4 d-flex">
+    <div class="card flex-fill">
+        <div class="card-header">
+            Select Range
+        </div>
+        <div class="card-body flex-fill">
+            <form id="video-get-playlist" action="{{ base_url() }}{{ path_for('video.action.get_playlist') }}" method="post" novalidate>
+                {{ csrf.fields | raw }}
+                <div class="row form-group">
+                    <div class="col-sm-6">
+                        <input
+                            type="text"
+                            name="start_date"
+                            class="form-control{{ flash.errors_start_date ? ' is-invalid' : ''}}"
+                            placeholder="From"
+                            value="{{ form.start_date ? form.start_date : '' }}"
+                            autocomplete="off"
+                        >
+                        {% if flash.errors_start_date %}
+                            <div class="invalid-feedback">{{ flash.errors_start_date | first }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                        <input
+                            type="text"
+                            name="end_date"
+                            class="form-control{{ flash.errors_end_date ? ' is-invalid' : ''}}"
+                            placeholder="To"
+                            value="{{ form.end_date ? form.end_date : '' }}"
+                            autocomplete="off"
+                        >
+                        {% if flash.errors_end_date %}
+                            <div class="invalid-feedback">{{ flash.errors_end_date | first }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-8">
+                        <select name="publication" class="form-control{{ flash.errors_publication ? ' is-invalid' : ''}}">
+                            <option value="" disabled selected>Choose publication...</option>
+                            {% for publication in publications %}
+                                <option
+                                    value="{{ publication.id }}"
+                                    {% if form.publication == publication.id %} selected {% endif %}
+                                >
+                                    {{ publication.name_en }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if flash.errors_publication %}
+                            <div class="invalid-feedback">{{ flash.errors_publication }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-4">
+                        <select name="batch" class="form-control{{ flash.errors_batch ? ' is-invalid' : ''}}">
+                            <option value="" disabled selected>Video length...</option>
+                            <option value="600" {% if form.batch == '600' %} selected {% endif %}>10 min</option>
+                            <option value="1200" {% if form.batch == '1200' %} selected {% endif %}>20 min</option>
+                            <option value="1800" {% if form.batch == '1800' %} selected {% endif %}>30 min</option>
+                            <option value="2700" {% if form.batch == '2700' %} selected {% endif %}>45 min</option>
+                            <option value="3600" {% if form.batch == '3600' %} selected {% endif %}>60 min</option>
+                        </select>
+                        {% if flash.errors_batch %}
+                            <div class="invalid-feedback">{{ flash.errors_batch | first }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row form-group ml-0 mt-4 mb-0 unselectable-text">
+                    <div class="col-sm-12 pl-0">
+                        <label>Build playlists from:</label>
+                    </div>
+                </div>
+                <div class="row form-group ml-0 unselectable-text">
+                    <div class="col-sm-12 custom-control custom-radio">
+                        <input type="radio" name="method" value="cached" id="method_cached" class="custom-control-input">
+                        <label class="custom-control-label" for="method_cached">Existing playlists</label>
+                    </div>
+                    <div class="col-sm-12 custom-control custom-radio">
+                        <input type="radio" name="method" value="stream" id="method_stream" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="method_stream">Live stream's playlists</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input type="submit" class="d-none">
+                        <button type="button" class="btn btn-primary btn-block mb-3" data-loading="0">Get Videos</button>
+                    </div>
+                </div>
+            </form>
+            <div id="video-playlists-holder" class="rounded flex-grow-0">
+                {% for playlist in playlists %}
+                    {% include 'components/alerts/playlist.twig' %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

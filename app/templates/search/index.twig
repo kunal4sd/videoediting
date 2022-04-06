@@ -1,0 +1,17 @@
+{% extends 'app.twig' %}
+
+{% block stylesheets %}
+    {% include 'search/components/stylesheets.twig' %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        {% include 'search/components/form.twig' %}
+    </div>
+
+    <div class="row">
+        {% include 'search/components/list.twig' %}
+    </div>
+
+{% endblock %}

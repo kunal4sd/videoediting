@@ -1,2 +1,20 @@
-php_value session.cookie_lifetime 18000
-php_value session.gc_maxlifetime 18000
+#Header set Access-Control-Allow-Origin "*"
+
+# Don't show directory listings for URLs which map to a directory.
+Options -Indexes
+
+# Follow symbolic links in this directory.
+Options +FollowSymLinks
+Options -MultiViews
+
+# 24 hours lifetime of cookies and sessions
+php_value session.cookie_lifetime 86400
+php_value session.gc_maxlifetime 86400
+
+DirectoryIndex index.php
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>

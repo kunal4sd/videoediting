@@ -1,0 +1,15 @@
+<div
+    name="{% if not content %}global_template_alert_search_text{% endif %}"
+    class="list-group-item list-group-item-action list-group-item-info"
+    data-get-text-url="{{ base_url() }}{{ path_for('video.action.get_text_preview') }}"
+    data-get-publication-list="{{ base_url() }}{{ path_for('publication.action.list_by_country') }}"
+    data-get-segment-url="{{ base_url() }}{{ path_for('video.view.index_segment_text', { 'start_segment': 'start_segment', 'end_segment': 'end_segment', 'publication':'publication' }) }}"
+    data-save-search-filter-url="{{ base_url() }}{{ path_for('video.action.save_search_filter') }}"
+    data-publications="{% if form.publications %}{{ form.publications }}{% endif %}"
+    data-countries="{% if form.countries %}{{ form.countries }}{% endif %}"
+    data-start-date="{% if form.start_date %}{{ form.start_date }}{% endif %}"
+    data-end-date="{% if form.end_date %}{{ form.end_date }}{% endif %}"
+    data-text="{% if form.text %}{{ form.text }}{% endif %}"
+>
+
+</div>

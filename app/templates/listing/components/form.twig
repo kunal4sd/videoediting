@@ -1,0 +1,66 @@
+<div class="col-md-12 mb-4 d-flex">
+    <div class="card flex-fill">
+        <div class="card-header">
+            Search
+        </div>
+        <div class="card-body flex-fill">
+            <form id="listing-get-list" action="{{ base_url() }}{{ path_for('video.action.get_list') }}" method="post" novalidate>
+                {{ csrf.fields | raw }}
+                <div class="row form-group">
+                    <div class="col-xl-3 mb-4">
+                        <label for="publication">Publications</label>
+                        <input type="hidden" name="publication" id="listing-publication-input">
+                        <select name="publication_select[]" id="listing-publication-select" multiple="multiple" class="form-control">
+                            {% for publication in publications %}
+                                <option
+                                    value="{{ publication.id }}"
+                                    {% if form.publication == publication.id %} selected {% endif %}
+                                >{{ publication.name_en }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <label for="status">Status</label>
+                        <input type="hidden" name="status" id="listing-status-input">
+                        <select name="status_select[]" id="listing-status-select" multiple="multiple" class="form-control">
+                            {% for status in statuses %}
+                                <option
+                                    value="{{ status.name }}"
+                                    {% if form.status == status.name %} selected {% endif %}
+                                >{{ status.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <label for="start_date">From Date</label>
+                        <input
+                            type="text"
+                            name="start_date"
+                            id="listing-start-date"
+                            class="form-control"
+                            value="{{ form.start_date ? form.start_date : '' }}"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <label for="start_date">To Date</label>
+                        <input
+                            type="text"
+                            name="end_date"
+                            id="listing-end-date"
+                            class="form-control"
+                            value="{{ form.end_date ? form.end_date : '' }}"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input type="submit" class="d-none">
+                        <button type="button" class="btn btn-primary btn-block mb-3" data-loading="0">Get Videos List</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
