@@ -29,9 +29,11 @@ class TextSearchSave extends AbstractModule
         $route = $request->getAttribute('route');
         $params = $route->getArguments();
 
+//        $separator = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? '_' : ':';
+        $separator = ':';
         // These required for windows apache, because ":" colon symbol does not allowed in url
-        $params['start_segment'] = str_replace("!", ":", $params['start_segment']);
-        $params['end_segment'] = str_replace("!", ":", $params['end_segment']);
+        $params['start_segment'] = str_replace("!", $separator, $params['start_segment']);
+        $params['end_segment'] = str_replace("!", $separator, $params['end_segment']);
 
         $start_raw_video_file = (new RawVideoFile())->set_locations($params['start_segment']);
         $end_raw_video_file = (new RawVideoFile())->set_locations($params['end_segment']);

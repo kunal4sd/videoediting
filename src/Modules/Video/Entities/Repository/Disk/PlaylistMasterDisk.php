@@ -72,7 +72,6 @@ class PlaylistMasterDisk extends AbstractModule
                     $date_timestamp = 0;
                     $base_path = false;
                     while (($line = fgets($handle)) !== false) {
-
                         $line = trim($line);
                         if (strpos($line, '#EXTINF:') === 0) {
                             $duration = str_replace(['#EXTINF:', ','], '', $line);
@@ -86,6 +85,10 @@ class PlaylistMasterDisk extends AbstractModule
                                 $sub_path = $date_obj->format('Y/m/d');
                                 $date_timestamp = $date_obj->getTimestamp();
                                 $base_path = get_raw_video_path($id, $date_timestamp);
+                            }
+
+                            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                                $filename = str_replace(":", "_", $filename);
                             }
 
                             $raw_video_file = (new RawVideoFile())
@@ -114,8 +117,10 @@ class PlaylistMasterDisk extends AbstractModule
                                         $files[] = $previous_file;
                                     }
                                     $files[] = $raw_video_file;
+
+                                } else {
+                                     break;
                                 }
-                                else break;
                             }
                             $duration = 0.0;
                         }

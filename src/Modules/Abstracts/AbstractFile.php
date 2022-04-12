@@ -36,8 +36,7 @@ abstract class AbstractFile
 
     public function set_locations($location)
     {
-//        $this->url = path_to_url($location);
-        $this->url = str_replace(":", self::COLON_REPLACEMENT, path_to_url($location));
+        $this->url = path_to_url($location);
         $this->path = url_to_path($location);
         return $this;
     }
