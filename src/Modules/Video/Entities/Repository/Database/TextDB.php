@@ -105,6 +105,67 @@ class TextDB extends AbstractDatabase
     }
 
     /**
+     * @param string $from : start date
+     * @param string $to : end date
+     * @param int $publication_id
+     * @return TextAR[]
+     */
+    public function get_playlist_texts_timeshift(
+        string $from,
+        string $to,
+        int $publication_id
+    )
+    {
+
+        $result = [];
+        $params = [
+            'from' => $from,
+            'to' => $to,
+            'publication_id' => [$publication_id, PDO::PARAM_INT]
+        ];
+
+        $data = $this->db->fetch_all(
+            "
+            SELECT
+                p.*
+            FROM segments AS s
+            INNER JOIN pub_{$publication_id} AS p
+                ON p.segment_id = s.id
+                AND p.pub_id = s.pub_id
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= :from
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= :to
+            WHERE 1
+                AND s.id IN (
+                    SELECT
+                        CONCAT_WS(',', id)
+                    FROM segments
+                    WHERE 1
+                        AND start_segment_datetime >= DATE_SUB(:from, INTERVAL 600 second)
+                        AND start_segment_datetime <= :to
+                        AND pub_id = :publication_id
+                )
+                AND s.pub_id = :publication_id
+                AND s.start_segment_datetime >= DATE_SUB(:from, INTERVAL 600 second)
+                AND s.start_segment_datetime <= :to
+                AND p.start_time > 0
+            GROUP BY
+                p.id
+            ORDER BY
+                s.start_segment_datetime,
+                p.start_time
+                ASC
+            ",
+            $params
+        );
+
+        foreach($data as $row) {
+            $result[] = new TextAR($row);
+        }
+
+        return $result;
+    }
+
+    /**
      * @param string $start_date
      * @param string $end_date
      * @param array $publication_ids

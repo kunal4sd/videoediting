@@ -1,0 +1,8 @@
+{% block content %}
+WEBVTT
+{% for word in words %}
+
+00:00:{{word.start_time}} --> 00:00:{{word.end_time}}
+{{word.word}}
+{% endfor %}
+{% endblock %}

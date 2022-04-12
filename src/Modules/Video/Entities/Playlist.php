@@ -37,8 +37,12 @@ class Playlist extends AbstractModule
             $start_datetime = strtotime($playlist_file->get_first_file()->build_start_datetime());
             $end_datetime = strtotime($playlist_file->get_last_file()->build_end_datetime());
 
+            $pattern = '/.+\/playlist\/(.+)\.m3u8/Uis';
+            preg_match($pattern, $playlist_file->get_url(), $matches);
+            $hash = $matches[1] ? $matches[1] : $playlist_file->get_hash();
+
             $result[] = [
-                'hash' => $playlist_file->get_hash(),
+                'hash' => $hash,
                 'url' => $playlist_file->get_url(),
                 'url_texts' => sprintf('%s/videos/actions/get/text', base_url()),
                 'start_date' => date("Y-m-d H:i:s", $start_datetime),
@@ -145,6 +149,50 @@ class Playlist extends AbstractModule
         }
 
         return [$result, $query];
+    }
+
+    /**
+     * @param int $publicationId
+     * @param string $hash
+     * @return string[]
+     * @throws Exception
+     */
+    public function get_playlist_texts_timeshift(int $publicationId, string $hash): array
+    {
+        $result = [];
+
+//        $hash = "89db2bcad12a0c7a24e3eed5b01f1aec";
+        if (!is_null($hash)) {
+            $playlist_file = $this->get_playlist_with_hash($hash);
+
+            if (!is_null($first_file = $playlist_file->get_first_file())) {
+                $from = $first_file->build_start_datetime();
+                $to = $playlist_file->get_last_file()->build_end_datetime();
+
+                $textDB = new TextDB($this->db[Hosts::LOCAL][Dbs::TEXTS]);
+                $text_ars = $textDB->get_playlist_texts_timeshift($from, $to, $publicationId);
+
+                foreach($text_ars as $text_ar) {
+                    $result[] = [
+                        'start_time'    => $this->format_time_vtt($text_ar->start_time),
+                        'end_time'      => $this->format_time_vtt($text_ar->end_time),
+                        'word'          => $text_ar->word,
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    private function format_time_vtt($inTime)
+    {
+        $parts = explode(".", $inTime);
+        $sec = ($parts[0] < 10 ? "0" . $parts[0] : $parts[0]);
+        $m = substr($parts[1], 0, 3);
+
+        return $sec . "." . $m;
+//        return $inTime;
     }
 
     /**

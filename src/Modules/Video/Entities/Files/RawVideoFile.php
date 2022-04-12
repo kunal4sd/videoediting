@@ -118,9 +118,14 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
     public function build_start_datetime()
     {
         $result = '0000-00-00 00:00:00';
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $pattern = '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2})_(\d{2})_(\d{2})/Uis';
+        } else {
+            $pattern = '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})/Uis';
+        }
         if ($this->get_path()) {
             preg_match(
-                '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})/Uis',
+                $pattern,
                 $this->get_path(),
                 $matches
             );
@@ -143,10 +148,15 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
     public function build_end_datetime()
     {
         $result = '0000-00-00 00:00:00';
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $pattern = '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2})_(\d{2})_(\d{2})/Uis';
+        } else {
+            $pattern = '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})/Uis';
+        }
         if ($this->get_path()) {
 
             preg_match(
-                '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})/Uis',
+                $pattern,
                 $this->get_path(),
                 $matches
             );

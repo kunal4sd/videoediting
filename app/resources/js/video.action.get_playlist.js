@@ -12,6 +12,21 @@ $( function() {
     var csrf_name = form.find('input[name="csrf_name"]').val();
     var csrf_value = form.find('input[name="csrf_value"]').val();
     var is_loading = false;
+    let video = videojs('video-preview');
+
+    let activate_transcript = function() {
+        let transcript = video.transcriptVideoEditing();
+        let transcriptContainer = document.querySelector('#transcript');
+        transcriptContainer.innerHTML = '';
+        transcriptContainer.appendChild(transcript.el());
+    }
+
+    video.ready(function() {
+        $(".vjs-text-track-display").css("display","none");
+
+        activate_transcript();
+    });
+
     var add_playlists = function(playlists) {
 
         $.each(playlists, function(i, playlist) {
@@ -39,9 +54,46 @@ $( function() {
 
             global_functions.set_playlist_to_videojs(data.url);
             global_functions.set_poster_to_videojs(data.poster);
-            load_segment_texts(data.publication, data.hash, data.urlTexts);
+
+            reload_transcript(data.publication, data.hash, data.urlVtt);
+            // load_segment_texts(data.publication, data.hash, data.urlTexts);
         });
     };
+
+    let reload_transcript = function(publication, hash, url) {
+        $(".vjs-text-track-display").css("display","none");
+
+        url = url.replace(/publication/, publication);
+        url = url.replace(/hash/, hash);
+
+        let tracks = video.textTracks();
+
+        let found = false;
+        for (let i = 0; i < tracks.length; i++) {
+            let track = tracks[i];
+            if (track.kind === 'captions' && track.id === hash) {
+                found = true;
+                track.mode = 'showing';
+            } else {
+                track.mode = 'disabled';
+            }
+        }
+
+        if (!found) {
+            let captionOption = {
+                kind: "captions",
+                id: hash,
+                srclang: "en",
+                label: "English",
+                src: url,
+                mode: 'showing'
+            };
+            video.addRemoteTextTrack(captionOption, false);
+        }
+
+        activate_transcript();
+    }
+
     var clear_movies = function() {
         $('#video-movies-holder').html('');
     };

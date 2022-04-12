@@ -10,3 +10,5 @@ public/tmp/**/*.m3u8
 public/tmp/**/*.jpg
 public/tmp/**/*.ts
 public/userfiles/
+/public/rawVideos/**/*.ts
+/public/rawVideos/2707/
