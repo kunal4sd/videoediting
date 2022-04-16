@@ -12,3 +12,4 @@ public/tmp/**/*.ts
 public/userfiles/
 /public/rawVideos/**/*.ts
 /public/rawVideos/2707/
+/app/config/config_dev.php
