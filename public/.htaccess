@@ -17,9 +17,6 @@ DirectoryIndex index.php
 <IfModule mod_rewrite.c>
 	RewriteBase /
     RewriteEngine On
-#	RewriteCond %{QUERY_STRING} ^(.+)$
-#	RewriteRule (\:*) $1_%1? [R=permanent]
-#	RewriteRule ^rawVideos/(.+)([0-9]{2})\;([0-9]{2})\;([0-9]{2})(\.ts$) rawVideos/$1$2_$3_$4$5 [L,R=301]
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ index.php [QSA,L]
