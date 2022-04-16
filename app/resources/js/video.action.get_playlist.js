@@ -62,8 +62,10 @@ $( function() {
 
     let reload_transcript = function(publication, hash, url) {
         $(".vjs-text-track-display").css("display","none");
+        let interval = form.find('select[name="batch"]').val();
 
         url = url.replace(/publication/, publication);
+        url = url.replace(/interval/, interval);
         url = url.replace(/hash/, hash);
 
         let tracks = video.textTracks();

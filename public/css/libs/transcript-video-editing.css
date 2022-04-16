@@ -1,9 +1,11 @@
 #transcript {
-  margin: auto;
+  /*margin: auto;*/
   font-family: Arial, sans-serif;
 }
 
 .transcript-body {
+  height: 700px;
+  overflow-y: scroll;
 }
 
 .transcript-line {

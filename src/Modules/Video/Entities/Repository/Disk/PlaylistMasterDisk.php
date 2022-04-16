@@ -87,10 +87,6 @@ class PlaylistMasterDisk extends AbstractModule
                                 $base_path = get_raw_video_path($id, $date_timestamp);
                             }
 
-                            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                                $filename = str_replace(":", "_", $filename);
-                            }
-
                             $raw_video_file = (new RawVideoFile())
                                 ->set_locations(
                                     sprintf(

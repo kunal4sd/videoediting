@@ -113,21 +113,20 @@ class TextDB extends AbstractDatabase
     public function get_playlist_texts_timeshift(
         string $from,
         string $to,
-        int $publication_id
+        int $publication_id,
+        int $interval
     )
     {
-
-        $result = [];
         $params = [
-            'from' => $from,
-            'to' => $to,
-            'publication_id' => [$publication_id, PDO::PARAM_INT]
+            'from'              => $from,
+            'to'                => $to,
+            'publication_id'    => [$publication_id, PDO::PARAM_INT],
+            'interval'          => [$interval, PDO::PARAM_INT],
         ];
 
-        $data = $this->db->fetch_all(
-            "
+        $sql = "
             SELECT
-                p.*
+                p.*, s.*
             FROM segments AS s
             INNER JOIN pub_{$publication_id} AS p
                 ON p.segment_id = s.id
@@ -137,15 +136,15 @@ class TextDB extends AbstractDatabase
             WHERE 1
                 AND s.id IN (
                     SELECT
-                        CONCAT_WS(',', id)
+                        id
                     FROM segments
                     WHERE 1
-                        AND start_segment_datetime >= DATE_SUB(:from, INTERVAL 600 second)
+                        AND start_segment_datetime >= DATE_SUB(:from, INTERVAL :interval second)
                         AND start_segment_datetime <= :to
                         AND pub_id = :publication_id
                 )
                 AND s.pub_id = :publication_id
-                AND s.start_segment_datetime >= DATE_SUB(:from, INTERVAL 600 second)
+                AND s.start_segment_datetime >= DATE_SUB(:from, INTERVAL :interval second)
                 AND s.start_segment_datetime <= :to
                 AND p.start_time > 0
             GROUP BY
@@ -154,15 +153,9 @@ class TextDB extends AbstractDatabase
                 s.start_segment_datetime,
                 p.start_time
                 ASC
-            ",
-            $params
-        );
+            ";
 
-        foreach($data as $row) {
-            $result[] = new TextAR($row);
-        }
-
-        return $result;
+        return $this->db->fetch_all($sql, $params);
     }
 
     /**

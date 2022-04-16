@@ -21,8 +21,9 @@ class GetVTT extends AbstractModule
         $words = [];
         $code = 200;
         try {
-
-            $words = $this->entity_playlist->get_playlist_texts_timeshift($args['publication'], $args['hash']);
+            $words = $this->entity_playlist->get_playlist_texts_timeshift(
+                $request->withQueryParams($args)
+            );
 
             if (empty($words)) {
                 $result['message'] = 'Could not find any words for the current segment';
@@ -38,7 +39,6 @@ class GetVTT extends AbstractModule
                 $code
             ));
         }
-//        var_dump($words);
 
         $text = $this->view->fetch('vtt/index.twig', [
             "words" => $words

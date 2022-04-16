@@ -2,6 +2,7 @@
 
 namespace App\Modules\Video\Entities;
 
+use DateTime;
 use \Exception;
 use Slim\Http\Request;
 use App\Libs\Enums\Dbs;
@@ -152,16 +153,17 @@ class Playlist extends AbstractModule
     }
 
     /**
-     * @param int $publicationId
-     * @param string $hash
+     * @param Request $request
      * @return string[]
      * @throws Exception
      */
-    public function get_playlist_texts_timeshift(int $publicationId, string $hash): array
+    public function get_playlist_texts_timeshift(Request $request): array
     {
+        $hash = $request->getParam('hash');
+        $publicationId = $request->getParam('publication');
+        $interval = $request->getParam('interval');
         $result = [];
 
-//        $hash = "89db2bcad12a0c7a24e3eed5b01f1aec";
         if (!is_null($hash)) {
             $playlist_file = $this->get_playlist_with_hash($hash);
 
@@ -170,13 +172,40 @@ class Playlist extends AbstractModule
                 $to = $playlist_file->get_last_file()->build_end_datetime();
 
                 $textDB = new TextDB($this->db[Hosts::LOCAL][Dbs::TEXTS]);
-                $text_ars = $textDB->get_playlist_texts_timeshift($from, $to, $publicationId);
+                $data = $textDB->get_playlist_texts_timeshift($from, $to, $publicationId, $interval);
 
-                foreach($text_ars as $text_ar) {
+                $startTime = new DateTime($from);
+                $segmentId = 0;
+                $minus = 0;
+                $shift = 0;
+                $last = 0;
+
+                foreach ($data as $datum) {
+                    if ($segmentId != $datum['segment_id']) {
+                        $segmentId = $datum['segment_id'];
+                        $startSegmentDatetime = new DateTime($datum['start_segment_datetime']);
+
+                        $diff = $this->dateAddFormatted($startSegmentDatetime, $datum['end_time']);
+                        if ($diff >= $startTime) {
+                            $minus = $datum['start_time'];
+                        }
+                        $shift = $last;
+                    }
+                    $stime = ($datum['start_time'] - $minus) + $shift;
+                    $etime = ($datum['end_time'] - $minus) + $shift;
+                    $last = $etime;
+
+                    /*var_dump([
+                        'stime' => $stime,
+                        'etime' => $etime,
+                    ]);*/
+
                     $result[] = [
-                        'start_time'    => $this->format_time_vtt($text_ar->start_time),
-                        'end_time'      => $this->format_time_vtt($text_ar->end_time),
-                        'word'          => $text_ar->word,
+                        'start_time'    => $this->convertToTime($stime),
+                        'end_time'      => $this->convertToTime($etime),
+                        'word'          => $datum['word'],
+                        'stime'         => $stime,
+                        'etime'         => $etime,
                     ];
                 }
             }
@@ -185,14 +214,60 @@ class Playlist extends AbstractModule
         return $result;
     }
 
-    private function format_time_vtt($inTime)
+    private function convertToTime($init): string
     {
-        $parts = explode(".", $inTime);
-        $sec = ($parts[0] < 10 ? "0" . $parts[0] : $parts[0]);
-        $m = substr($parts[1], 0, 3);
+        $init  = number_format($init, 2);
+        $secs  = floor($init);
+        $milli = (int) (($init - $secs) * 1000);
+        $milli = str_pad($milli, 2, '0', STR_PAD_LEFT);
 
-        return $sec . "." . $m;
-//        return $inTime;
+        $hours   = ($secs / 3600);
+        $minutes = (($secs / 60) % 60);
+        $minutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
+        $seconds = $secs % 60;
+        $seconds = str_pad($seconds, 2, '0', STR_PAD_LEFT);
+        if ($hours > 1) {
+            $hours = str_pad($hours, 2, '0', STR_PAD_LEFT);
+        } else {
+            $hours = '00';
+        }
+        $Time = "$hours:$minutes:$seconds.$milli";
+
+        return $Time;
+    }
+
+    private function sec2String($seconds): string
+    {
+        $results = [];
+
+        $numbers = preg_split("/\D/", $seconds);
+        if (!empty($numbers[0])) {
+            $results[] = $numbers[0] . " seconds";
+        }
+        if (!empty($numbers[1])) {
+            $results[] = $numbers[1] . " milliseconds";
+        }
+
+        return implode(" ", $results);
+    }
+
+    private function dateAddFormatted($date, $interval)
+    {
+        return date_add($date, date_interval_create_from_date_string($this->sec2String($interval)));
+    }
+
+    private function segmentDiff($startSegment, $endSegment): array
+    {
+        $sDate = $this->segment2Date($startSegment);
+        $eDate = $this->segment2Date($endSegment);
+        return (array)date_diff($sDate, $eDate);
+    }
+
+    private function segment2Date($str)
+    {
+        preg_match('/.+(\d{4}_\d{2}_\d{2}-\d{2}:\d{2}:\d{2})\.ts/Uis', $str, $matches);
+
+        return date_create_from_format('Y_m_d-H:i:s', $matches[1]);
     }
 
     /**

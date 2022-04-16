@@ -112,7 +112,7 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.index');
 
-        $container->slim->get('/vtt/{publication}/{hash}', 'video.view.vtt')
+        $container->slim->get('/vtt/{publication}/{interval}/{hash}', 'video.view.vtt')
                         ->add(new VTTValidationMiddleware($container))
                         ->add(new SameIpAuthorizationMiddleware($container))
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
