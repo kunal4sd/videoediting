@@ -6,7 +6,7 @@ $config['db'] = [
             'host' => 'localhost',
             'port' => 3307,
             'database' => 'recordings',
-            'username' => 'root',
+            'username' => '',
             'password' => '',
             'driver' => 'mysql',
             'charset' => 'utf8mb4'
@@ -15,11 +15,20 @@ $config['db'] = [
             'host' => 'localhost',
             'port' => 3307,
             'database' => '',
-            'username' => 'root',
-            'password' => 'test1234',
+            'username' => '',
+            'password' => '',
             'driver' => 'mysql',
             'charset' => 'utf8mb4'
-        ]
+        ],
+        'texts' => [
+            'host' => 'office.mediaobserver-me.com',
+            'port' => 33067,
+            'database' => 'recordings_text',
+            'username' => '',
+            'password' => '',
+            'driver' => 'mysql',
+            'charset' => 'utf8mb4'
+        ],
     ],
     'media' => [
         'media_media' => [
