@@ -5,6 +5,7 @@
         </div>
         <div class="card-body flex-fill">
             <form id="video-get-playlist" action="{{ base_url() }}{{ path_for('video.action.get_playlist') }}" method="post" novalidate>
+                <input id="publication_lang" type="hidden" value=""/>
                 {{ csrf.fields | raw }}
                 <div class="row form-group">
                     <div class="col-sm-6">
@@ -36,15 +37,20 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-8">
-                        <select name="publication" class="form-control{{ flash.errors_publication ? ' is-invalid' : ''}}">
+                        <select id="publication" name="publication" class="form-control{{ flash.errors_publication ? ' is-invalid' : ''}}">
                             <option value="" disabled selected>Choose publication...</option>
                             {% for publication in publications %}
                                 <option
                                     value="{{ publication.id }}"
                                     {% if form.publication == publication.id %} selected {% endif %}
-                                >
+                                lang="{{ publication.language }}">
                                     {{ publication.name_en }}
                                 </option>
+                                {% if form.publication == publication.id %}
+                                    <script>
+										document.getElementById('publication_lang').value='{{ publication.language }}';
+                                    </script>
+                                {% endif %}
                             {% endfor %}
                         </select>
                         {% if flash.errors_publication %}

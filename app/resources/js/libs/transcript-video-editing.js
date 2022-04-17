@@ -7,6 +7,7 @@
 	my.settings = {};
 	my.prefix = 'transcript';
 	my.player = this;
+	my.lineClass = '-line';
 
 // Defaults
 	var defaults = {
@@ -285,7 +286,12 @@
 			}
 		};
 		var createLine = function (cue) {
-			var line = utils.createEl('div', '-line');
+			let classSuffix = '-line';
+			if (my.lineClass) {
+				classSuffix = my.lineClass;
+			}
+			// var line = utils.createEl('div', '-line');
+			var line = utils.createEl('div', classSuffix);
 			// var timestamp = utils.createEl('span', '-timestamp');
 			var text = utils.createEl('span', '-text');
 			line.setAttribute('data-begin', cue.startTime);
@@ -374,11 +380,16 @@
 		var el = function () {
 			return my.element;
 		};
+		var setLineClass = function (className) {
+			my.lineClass = className;
+			return my.lineClass;
+		};
 		return {
 			create: create,
 			setTrack: setTrack,
 			setCue: setCue,
 			el : el,
+			setLineClass : setLineClass,
 			on: on,
 			trigger: trigger,
 		};
@@ -411,7 +422,8 @@
 			el: function () {
 				return my.widget.el();
 			},
-			setTrack: my.widget.setTrack
+			setTrack: my.widget.setTrack,
+			setLineClass: my.widget.setLineClass
 		};
 	};
 	videojs.registerPlugin('transcriptVideoEditing', transcript);

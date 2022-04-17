@@ -19,6 +19,13 @@ $( function() {
         let transcriptContainer = document.querySelector('#transcript');
         transcriptContainer.innerHTML = '';
         transcriptContainer.appendChild(transcript.el());
+        if ($("#publication_lang").val() == 'Arabic') {
+            transcript.setLineClass('-line-ar');
+        }
+
+        console.log($("#publication_lang").val());
+
+        $(".transcript-line", transcriptContainer).css("float", "right");
     }
 
     video.ready(function() {
@@ -143,6 +150,8 @@ $( function() {
         global_functions.reset_player();
 
         if (!is_loading) {
+            let lang = $('option:selected', $('#publication')).attr('lang');
+            $("#publication_lang").val(lang);
 
             is_loading = true;
             var form = $(this);
