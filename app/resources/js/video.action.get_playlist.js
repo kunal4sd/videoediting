@@ -20,10 +20,10 @@ $( function() {
         transcriptContainer.innerHTML = '';
         transcriptContainer.appendChild(transcript.el());
         if ($("#publication_lang").val() == 'Arabic') {
-            transcript.setLineClass('-line-ar');
+            transcript.setLineClass('rtl');
+        } else {
+            transcript.setLineClass('ltr');
         }
-
-        console.log($("#publication_lang").val());
 
         $(".transcript-line", transcriptContainer).css("float", "right");
     }

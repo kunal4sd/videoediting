@@ -286,12 +286,10 @@
 			}
 		};
 		var createLine = function (cue) {
-			let classSuffix = '-line';
+			var line = utils.createEl('div', '-line');
 			if (my.lineClass) {
-				classSuffix = my.lineClass;
+				line.classList.add(my.lineClass);
 			}
-			// var line = utils.createEl('div', '-line');
-			var line = utils.createEl('div', classSuffix);
 			// var timestamp = utils.createEl('span', '-timestamp');
 			var text = utils.createEl('span', '-text');
 			line.setAttribute('data-begin', cue.startTime);

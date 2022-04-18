@@ -219,7 +219,7 @@ class Playlist extends AbstractModule
         $init  = number_format($init, 2);
         $secs  = floor($init);
         $milli = (int) (($init - $secs) * 1000);
-        $milli = str_pad($milli, 2, '0', STR_PAD_LEFT);
+        $milli = str_pad($milli, 3, '0', STR_PAD_LEFT);
 
         $hours   = ($secs / 3600);
         $minutes = (($secs / 60) % 60);
