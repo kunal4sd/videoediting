@@ -1,6 +1,8 @@
 $( function() {
-
     var form = $('#video-get-playlist');
+    if (form.length === 0) { // Another page loaded
+        return false;
+    }
 
     if (form.length === 0) return false;
 
