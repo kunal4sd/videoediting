@@ -149,17 +149,24 @@ class Playlist extends AbstractModule
         $files_copy = $files;
         $playlist_disk = new PlaylistDisk($this->container);
         $playlists = [];
+
+        $playlist_file = new PlaylistFile($this->container, ['files' => $files]);
+        $segment_count = $this->get_segment_count($files_copy, $batchSize);
         foreach($this->get_segment_count($files_copy, $batchSize) as $segment_count) {
 
             $chunks = array_splice($files, 0, $segment_count);
-            $playlist_file = $playlist_disk->create_playlist($chunks, true);
+//            $playlist_file = $playlist_disk->create_playlist($chunks, true);
+            $playlist_file = $playlist_disk->create_playlist($chunks, false);
 
             if (!is_null($playlist_file->get_hash())) {
                 $playlists[] = $playlist_file;
             }
         }
 
-        if (!empty($playlists)) {
+        return $playlist_file;
+
+
+        /*if (!empty($playlists)) {
             try {
                 $playlist_master_file
                     ->set_files($playlists)
@@ -171,7 +178,7 @@ class Playlist extends AbstractModule
             }
         }
 
-        return $playlist_master_file;
+        return $playlist_master_file;*/
     }
 
     public static function get_stream_playlist_paths($id, $date)

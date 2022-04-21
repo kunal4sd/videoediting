@@ -4,8 +4,6 @@ $( function() {
         return false;
     }
 
-    if (form.length === 0) return false;
-
     var segment_text = $('#segment_text');
     var playlists_holder = $('#video-playlists-holder');
     var global_templates_holder = $('#global-templates-holder');
@@ -14,7 +12,7 @@ $( function() {
     var csrf_name = form.find('input[name="csrf_name"]').val();
     var csrf_value = form.find('input[name="csrf_value"]').val();
     var is_loading = false;
-    let video = videojs('video-preview');
+    let video = videojs('test-video-preview');
 
     let activate_transcript = function() {
         let transcript = video.transcriptVideoEditing();
@@ -56,13 +54,15 @@ $( function() {
             var playlist = $(this);
             var data = playlist.data();
 
-            global_functions.reset_player();
+            // global_functions.reset_player();
             global_functions.unselect_playlists(playlists);
             playlist.addClass('list-group-item-warning');
             playlist.removeClass('list-group-item-success');
 
             console.log(data.url);
-            global_functions.set_playlist_to_videojs(data.url);
+            video.src(data.url);
+            // global_functions.set_playlist_to_videojs(data.url);
+            // global_functions.set_playlist_to_player(data.url);
             // global_functions.set_poster_to_videojs(data.poster);
 
             reload_transcript(data.publication, data.segmentId, data.hash, data.urlVtt);
@@ -112,29 +112,6 @@ $( function() {
     var clear_segment_text = function() {
         segment_text.val('');
     };
-    var load_segment_texts = function(publication, hash, url) {
-        clear_segment_text();
-        $.ajax({
-            method: 'post',
-            url: url,
-            data: {
-                publication: publication,
-                hash: hash,
-                csrf_name: csrf_name,
-                csrf_value: csrf_value,
-                ajax: true
-            },
-            complete: function (result) {
-                if (
-                    result.responseJSON !== undefined
-                    && result.responseJSON.result !== undefined
-                    && result.responseJSON.result.texts !== undefined
-                ) {
-                    segment_text.val(result.responseJSON.result.texts.join(' '));
-                }
-            }
-        });
-    }
 
     button.on('click', function(e) {
         e.preventDefault();

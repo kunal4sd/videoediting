@@ -4,26 +4,25 @@
             Preview
         </div>
         <div class="card-body m-auto">
-            <video id="video-preview"
-                class="video-js vjs-big-play-centered vjs-default-skin m-auto"
-                controls
-                poster="{{ base_url() }}/images/no_video.png"
-                preload="auto"
-                data-setup='{"inactivityTimeout":0,"width":800,"height":400,"controlBar": {"volumePanel": {"inline": false, "vertical": true}},"playbackRates":[0.5,1,1.25,1.5,2],"plugins":{"hotkeys":{"volumeStep": 0.1,"seekStep": 5,"enableNumbers": false},"cutButtons":{"from": true,"to": true}}}'
-            >
+            <video id="test-video-preview"
+                       class="video-js vjs-default-skin"
+                       height="300"
+                       width="600"
+                       controls>
+
                 <p class="vjs-no-js">
                 To view this video please enable JavaScript, and consider upgrading to a web browser that
                 <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
                 </p>
                 <track id="caption_empty" kind="captions" src="{{ base_url() }}/captions.em.vtt" srclang="em" label="Empty" default>
             </video>
-            <div id="video-video-to-episode" class="card-body mx-auto px-0 mt-5 display-none">
+            {#<div id="video-video-to-episode" class="card-body mx-auto px-0 mt-5 display-none">
                 <button id="video-clear-player" class="btn btn-warning btn-md float-left">Clear Video</button>
                 <form id="video-get-episode" class="float-left mx-1" action="{{ base_url() }}{{ path_for('video.action.get_episode') }}" method="post" novalidate>
                     {{ csrf.fields | raw }}
                     <button type="button" class="btn btn-primary btn-md" data-loading="0">Generate Episode</button>
                 </form>
-            </div>
+            </div>#}
         </div>
     </div>
 </div>
