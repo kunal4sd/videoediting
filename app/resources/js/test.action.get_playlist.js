@@ -122,9 +122,9 @@ $( function() {
 
         e.preventDefault();
         clear_movies();
-        global_functions.clear_episodes();
-        clear_playlists();
-        global_functions.reset_player();
+        // global_functions.clear_episodes();
+        // clear_playlists();
+        // global_functions.reset_player();
 
         if (!is_loading) {
             let lang = $('option:selected', $('#publication')).attr('lang');

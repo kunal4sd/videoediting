@@ -1,5 +1,13 @@
-<div id="video-playlists-holder" class="rounded flex-grow-0">
-    {% for playlist in playlists %}
-        {% include 'components/alerts/test_playlist.twig' %}
-    {% endfor %}
+<div class="col-xl-12 mb-4 d-flex" style="float: left">
+    <div class="card flex-fill">
+        <div class="card-header">
+            List
+        </div>
+        <div id="video-playlists-holder" class="rounded flex-grow-0">
+            {% for playlist in playlists %}
+                {% include 'components/alerts/test_playlist.twig' %}
+            {% endfor %}
+        </div>
+
+    </div>
 </div>
