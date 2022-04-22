@@ -7,7 +7,7 @@ $( function() {
     var segment_text = $('#segment_text');
     var playlists_holder = $('#video-playlists-holder');
     var global_templates_holder = $('#global-templates-holder');
-    var global_alert_playlist = global_templates_holder.find('div[name="global_template_alert_playlist"]');
+    var global_alert_playlist = global_templates_holder.find('div[name="global_template_alert_test_playlist"]');
     var button = form.find('button[type="button"]');
     var csrf_name = form.find('input[name="csrf_name"]').val();
     var csrf_value = form.find('input[name="csrf_value"]').val();
@@ -43,7 +43,7 @@ $( function() {
             );
         });
         activate_playlists();
-        global_functions.refresh_playlist_holder_height();
+        global_functions.refresh_playlist_holder_height(550);
     };
     var activate_playlists = function() {
 
@@ -80,17 +80,7 @@ $( function() {
             url: url,
             complete: function (result) {
                 event_emitter.trigger('form.ajax.result.alert', [result, form]);
-                console.log(result.responseText);
                 $("#vtt-holder").html(result.responseText.replace(/\n/g, "<br />"));
-                /*global_functions.button_is_not_loading(button);
-                is_loading = false;
-                if (
-                    result.responseJSON !== undefined
-                    && result.responseJSON.result !== undefined
-                    && result.responseJSON.result.playlists !== undefined
-                ) {
-                    add_playlists(result.responseJSON.result.playlists);
-                }*/
             }
         });
     }
@@ -149,7 +139,7 @@ $( function() {
         e.preventDefault();
         clear_movies();
         // global_functions.clear_episodes();
-        // clear_playlists();
+        clear_playlists();
         // global_functions.reset_player();
 
         if (!is_loading) {
