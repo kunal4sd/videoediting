@@ -1,15 +1,42 @@
-<div class="col-md-12 mb-4 d-flex">
+<div class="col-xl-12 mb-4 d-flex">
     <div class="card flex-fill">
         <div class="card-header">
-            Search
+            Select Range
         </div>
         <div class="card-body flex-fill">
             <form id="test-get-playlist" action="{{ base_url() }}{{ path_for('test.action.get_playlist') }}" method="post" novalidate>
                 <input id="publication_lang" type="hidden" value=""/>
                 {{ csrf.fields | raw }}
                 <div class="row form-group">
-                    <div class="col-xl-3 mb-4">
-                        <label for="country">Publication</label>
+                    <div class="col-sm-6">
+                        <input
+                                type="text"
+                                name="start_date"
+                                class="form-control{{ flash.errors_start_date ? ' is-invalid' : ''}}"
+                                placeholder="From"
+                                value="{{ form.start_date ? form.start_date : '' }}"
+                                autocomplete="off"
+                        >
+                        {% if flash.errors_start_date %}
+                            <div class="invalid-feedback">{{ flash.errors_start_date | first }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-6">
+                        <input
+                                type="text"
+                                name="end_date"
+                                class="form-control{{ flash.errors_end_date ? ' is-invalid' : ''}}"
+                                placeholder="To"
+                                value="{{ form.end_date ? form.end_date : '' }}"
+                                autocomplete="off"
+                        >
+                        {% if flash.errors_end_date %}
+                            <div class="invalid-feedback">{{ flash.errors_end_date | first }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-8">
                         <select id="publication" name="publication" class="form-control{{ flash.errors_publication ? ' is-invalid' : ''}}">
                             <option value="" disabled selected>Choose publication...</option>
                             {% for publication in publications %}
@@ -27,37 +54,20 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-xl-3 mb-4">
-                        <label for="start_date">From Date</label>
-                        <input
-                                type="text"
-                                name="start_date"
-                                id="listing-start-date"
-                                class="form-control"
-                                value="{{ form.start_date ? form.start_date : '' }}"
-                                autocomplete="off"
-                        >
-                    </div>
-                    <div class="col-xl-3 mb-4">
-                        <label for="start_date">To Date</label>
-                        <input
-                                type="text"
-                                name="end_date"
-                                id="listing-end-date"
-                                class="form-control"
-                                value="{{ form.end_date ? form.end_date : '' }}"
-                                autocomplete="off"
-                                width="100px"
-                        >
-                    </div>
+
                 </div>
-                <div class="row justify-content-center">
-                    <div class="col-xl-3 mb-2">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input type="submit" class="d-none">
                         <button type="button" id="search_button" class="btn btn-primary btn-block mb-3" data-loading="0">Get Videos</button>
                     </div>
                 </div>
             </form>
+            <div id="video-playlists-holder" class="rounded flex-grow-0">
+                {% for playlist in playlists %}
+                    {% include 'components/alerts/test_playlist.twig' %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
-

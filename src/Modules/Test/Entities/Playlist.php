@@ -107,7 +107,7 @@ class Playlist extends AbstractModule
                 'start_hour'    => date("H:i:s", $startDatetime),
                 'end_day'       => date("l, Y-m-d", $endDatetime),
                 'end_hour'      => date("H:i:s", $endDatetime),
-                'poster'        => '',
+                'poster'        => '', // $playlistMasterFile->build_poster(),
                 'publication'   => $publicationId
             ];
         }

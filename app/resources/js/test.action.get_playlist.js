@@ -59,15 +59,41 @@ $( function() {
             playlist.addClass('list-group-item-warning');
             playlist.removeClass('list-group-item-success');
 
-            console.log(data.url);
             video.src(data.url);
             // global_functions.set_playlist_to_videojs(data.url);
             // global_functions.set_playlist_to_player(data.url);
             // global_functions.set_poster_to_videojs(data.poster);
 
             reload_transcript(data.publication, data.segmentId, data.hash, data.urlVtt);
+            load_vtt_text(data.publication, data.segmentId, data.hash, data.urlVtt);
         });
     };
+
+    let load_vtt_text = function(publication, segment_id, hash, url) {
+        $(".vjs-text-track-display").css("display", "none");
+
+        url = url.replace(/publication/, publication);
+        url = url.replace(/segment_id/, segment_id);
+
+        $.ajax({
+            method: 'get',
+            url: url,
+            complete: function (result) {
+                event_emitter.trigger('form.ajax.result.alert', [result, form]);
+                console.log(result.responseText);
+                $("#vtt-holder").html(result.responseText.replace(/\n/g, "<br />"));
+                /*global_functions.button_is_not_loading(button);
+                is_loading = false;
+                if (
+                    result.responseJSON !== undefined
+                    && result.responseJSON.result !== undefined
+                    && result.responseJSON.result.playlists !== undefined
+                ) {
+                    add_playlists(result.responseJSON.result.playlists);
+                }*/
+            }
+        });
+    }
 
     let reload_transcript = function(publication, segment_id, hash, url) {
         $(".vjs-text-track-display").css("display","none");

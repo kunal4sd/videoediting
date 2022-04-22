@@ -6,8 +6,8 @@
         <div class="card-body m-auto">
             <video id="test-video-preview"
                        class="video-js vjs-default-skin"
-                       height="300"
-                       width="600"
+                       height="400"
+                       width="800"
                        controls>
 
                 <p class="vjs-no-js">
@@ -16,13 +16,6 @@
                 </p>
                 <track id="caption_empty" kind="captions" src="{{ base_url() }}/captions.em.vtt" srclang="em" label="Empty" default>
             </video>
-            {#<div id="video-video-to-episode" class="card-body mx-auto px-0 mt-5 display-none">
-                <button id="video-clear-player" class="btn btn-warning btn-md float-left">Clear Video</button>
-                <form id="video-get-episode" class="float-left mx-1" action="{{ base_url() }}{{ path_for('video.action.get_episode') }}" method="post" novalidate>
-                    {{ csrf.fields | raw }}
-                    <button type="button" class="btn btn-primary btn-md" data-loading="0">Generate Episode</button>
-                </form>
-            </div>#}
         </div>
     </div>
 </div>
