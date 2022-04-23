@@ -6,15 +6,15 @@
     data-url="{% if playlist.url %}{{ playlist.url }}{% endif %}"
     data-publication="{% if playlist.publication %}{{ playlist.publication }}{% endif %}"
     data-hash="{% if playlist.hash %}{{ playlist.hash }}{% endif %}"
+    data-segment-list="{% if playlist.segment_list %}{{ playlist.segment_list }}{% endif %}"
     data-url-vtt="{{ base_url() }}{{ path_for('test.view.vtt', { 'publication': 'publication', 'segment_id': 'segment_id' }) }}"
 >
     <div class="d-fill row">
-        <div class="col-sm-3 d-fill m-auto">
-            <div class="text-left" name="segment_id" style="white-space: nowrap">[{% if playlist.segment_id %}{{ playlist.segment_id }}{% endif %}]</div>
+        <div class="col-sm-5 d-fill m-auto row">
+            <div class="text-left" name="segment_id">[{% if playlist.segment_id %}{{ playlist.segment_id }}{% endif %}]</div>
         </div>
-        <div class="col-sm-9 d-fill m-auto row">
+        <div class="col-sm-5 d-fill m-auto">
             <div class="text-left" name="start_hour">{% if playlist.start_hour %}{{ playlist.start_hour }}{% endif %} </div>
-            <div class="text-left">&nbsp;-&nbsp;</div>
             <div class="text-left" name="end_hour"> {% if playlist.end_hour %}{{ playlist.end_hour }}{% endif %}</div>
         </div>
     </div>

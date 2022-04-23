@@ -4,7 +4,9 @@ $( function() {
         return false;
     }
 
-    var segment_text = $('#segment_text');
+    var segment_text = $('#transcript');
+    var vtt_text = $('#vtt-holder');
+    var details_text = $('#playlist_details');
     var playlists_holder = $('#video-playlists-holder');
     var global_templates_holder = $('#global-templates-holder');
     var global_alert_playlist = global_templates_holder.find('div[name="global_template_alert_test_playlist"]');
@@ -51,19 +53,18 @@ $( function() {
         var playlists = playlists_holder.find('.list-group-item');
 
         playlists.unbind().on('click', function() {
+            clear_segment_text();
+            clear_vtt_text();
 
             var playlist = $(this);
             var data = playlist.data();
 
-            // global_functions.reset_player();
             global_functions.unselect_playlists(playlists);
             playlist.addClass('list-group-item-warning');
             playlist.removeClass('list-group-item-success');
 
             video.src(data.url);
-            // global_functions.set_playlist_to_videojs(data.url);
-            // global_functions.set_playlist_to_player(data.url);
-            // global_functions.set_poster_to_videojs(data.poster);
+            $("#playlist_details").html(data.segmentList);
 
             reload_transcript(data.publication, data.segmentId, data.hash, data.urlVtt);
             load_vtt_text(data.publication, data.segmentId, data.hash, data.urlVtt);
@@ -129,6 +130,13 @@ $( function() {
     var clear_segment_text = function() {
         segment_text.val('');
     };
+    var clear_vtt_text = function() {
+        // vtt_text.val('');
+        vtt_text.innerHTML = "";
+    };
+    var clear_details_text = function() {
+        details_text.val('');
+    };
 
     button.on('click', function(e) {
         e.preventDefault();
@@ -136,12 +144,12 @@ $( function() {
     });
 
     form.on("submit", function(e) {
-
         e.preventDefault();
         clear_movies();
-        // global_functions.clear_episodes();
         clear_playlists();
-        // global_functions.reset_player();
+        clear_segment_text();
+        clear_vtt_text();
+        clear_details_text();
 
         if (!is_loading) {
             let lang = $('option:selected', $('#publication')).attr('lang');
