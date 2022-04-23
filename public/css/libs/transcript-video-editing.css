@@ -3,9 +3,17 @@
   font-family: Arial, sans-serif;
 }
 
-.transcript-body {
+.video_editing {
+  height: 850px;
+  overflow-y: scroll;
+}
+.test {
   height: 200px;
   overflow-y: scroll;
+}
+
+.transcript-body {
+  height: 100%;
 }
 
 .transcript-line {
