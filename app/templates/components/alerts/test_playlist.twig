@@ -10,15 +10,7 @@
 >
     <div class="d-fill row">
         <div class="col-sm-3 d-fill m-auto">
-            {% if playlist.poster %}
-                <img name="poster" src="{{ playlist.poster }}" class="rounded img-fluid">
-            {% elseif playlist.url %}
-                <img name="poster" src="" class="rounded img-fluid">
-                <span name="no_poster" class="oi oi-audio"></span>
-            {% else %}
-                <img name="poster" src="" class="rounded img-fluid d-none">
-                <span name="no_poster" class="oi oi-audio d-none"></span>
-            {% endif %}
+            <div class="text-left" name="segment_id" style="white-space: nowrap">[{% if playlist.segment_id %}{{ playlist.segment_id }}{% endif %}]</div>
         </div>
         <div class="col-sm-9 d-fill m-auto row">
             <div class="text-left" name="start_day"> {% if playlist.start_day %}{{ playlist.start_day }}{% endif %}</div>&nbsp;&nbsp;

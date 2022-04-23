@@ -92,6 +92,9 @@ class Playlist extends AbstractModule
             }
 
             $tsFileNames = explode(", ", $segment['segments_list']);
+            if(count($tsFileNames) > 1) {
+                array_pop($tsFileNames);
+            }
             $playlistMasterFile = $this->createPlaylist($tsFileNames, $config[$segment['date']], $publicationId, $segment['start_segment_datetime'], $segment['end_segment_datetime'], $batchSize);
 
             $startDatetime = strtotime($segment['start_segment_datetime']);
@@ -107,7 +110,7 @@ class Playlist extends AbstractModule
                 'start_hour'    => date("H:i:s", $startDatetime),
                 'end_day'       => date("l, Y-m-d", $endDatetime),
                 'end_hour'      => date("H:i:s", $endDatetime),
-                'poster'        => '', // $playlistMasterFile->build_poster(),
+                'poster'        => '', // $playlistMasterFile->get_poster(),
                 'publication'   => $publicationId
             ];
         }

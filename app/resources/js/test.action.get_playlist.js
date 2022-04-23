@@ -37,6 +37,7 @@ $( function() {
     var add_playlists = function(playlists) {
 
         $.each(playlists, function(i, playlist) {
+            playlist.segment_id = '[' + playlist.segment_id + ']';
             global_functions.launch_template(
                 global_functions.build_template(global_alert_playlist, playlist),
                 playlists_holder
