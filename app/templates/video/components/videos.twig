@@ -53,9 +53,6 @@
                                 {% endif %}
                             {% endfor %}
                         </select>
-                        {% if flash.errors_publication %}
-                            <div class="invalid-feedback">{{ flash.errors_publication }}</div>
-                        {% endif %}
                     </div>
                     <div class="col-sm-4">
                         <select name="batch" class="form-control{{ flash.errors_batch ? ' is-invalid' : ''}}">

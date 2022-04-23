@@ -64,22 +64,30 @@ $( function() {
             global_functions.set_playlist_to_videojs(data.url);
             global_functions.set_poster_to_videojs(data.poster);
 
-            reload_transcript(data.publication, data.hash, data.urlVtt);
+            reload_transcript(data.publication, data.hash);
             // load_segment_texts(data.publication, data.hash, data.urlTexts);
         });
     };
 
-    let reload_transcript = function(publication, hash, url) {
-        $(".vjs-text-track-display").css("display","none");
+    let get_vtt_url = function(publication, hash) {
         let interval = form.find('select[name="batch"]').val();
-
+        let data = global_alert_playlist.data();
+        let url = data.urlVtt;
         url = url.replace(/publication/, publication);
         url = url.replace(/interval/, interval);
         url = url.replace(/hash/, hash);
 
-        let tracks = video.textTracks();
+        return url;
+    }
 
+    let reload_transcript = function(publication, hash) {
+        let url = get_vtt_url(publication, hash);
+        let tracks = video.textTracks();
         let found = false;
+
+        $("#vtt_link").attr("href", url);
+        $(".vjs-text-track-display").css("display","none");
+
         for (let i = 0; i < tracks.length; i++) {
             let track = tracks[i];
             if (track.kind === 'captions' && track.id === hash) {
