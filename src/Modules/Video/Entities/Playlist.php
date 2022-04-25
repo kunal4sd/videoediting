@@ -179,21 +179,25 @@ class Playlist extends AbstractModule
                 $minus = 0;
                 $shift = 0;
                 $last = 0;
+                
+                if(count($data) > 0) {
+                    $minus = $data[0]['start_time'];
+                    $segmentId = $data[0]['segment_id'];
+                }
 
                 foreach ($data as $datum) {
                     if ($segmentId != $datum['segment_id']) {
                         $segmentId = $datum['segment_id'];
-                        $startSegmentDatetime = new DateTime($datum['start_segment_datetime']);
-
-                        $diff = $this->dateAddFormatted($startSegmentDatetime, $datum['end_time']);
-                        if ($diff >= $startTime) {
-                            $minus = $datum['start_time'];
-                        }
+                        // file_put_contents('php://stderr', "Seg id: " . $segmentId . "\n");
                         $shift = $last;
+                        $minus = 0;
+                        // file_put_contents('php://stderr', "\tshift: " . $shift . "\n");
                     }
+
                     $stime = ($datum['start_time'] - $minus) + $shift;
                     $etime = ($datum['end_time'] - $minus) + $shift;
                     $last = $etime;
+                    // file_put_contents('php://stderr', "\t\t" . $datum['word'] . ': ' . $stime . ' --> ' . $etime . ', shift: ' . $shift . "\n");
 
                     /*var_dump([
                         'stime' => $stime,
