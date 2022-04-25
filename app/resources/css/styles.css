@@ -210,3 +210,6 @@
     height: 750px;
     overflow: auto;
 }
+.link-list {
+    margin-left: 15px;
+}

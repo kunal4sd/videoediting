@@ -8,7 +8,7 @@
                 <input id="publication_lang" type="hidden" value=""/>
                 {{ csrf.fields | raw }}
                 <div class="row form-group">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <input
                                 type="text"
                                 name="start_date"
@@ -21,7 +21,9 @@
                             <div class="invalid-feedback">{{ flash.errors_start_date | first }}</div>
                         {% endif %}
                     </div>
-                    <div class="col-sm-6">
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-12">
                         <input
                                 type="text"
                                 name="end_date"
@@ -36,7 +38,7 @@
                     </div>
                 </div>
                 <div class="row form-group">
-                    <div class="col-sm-8">
+                    <div class="col-sm-12">
                         <select id="publication" name="publication" class="form-control{{ flash.errors_publication ? ' is-invalid' : ''}}">
                             <option value="" disabled selected>Choose publication...</option>
                             {% for publication in publications %}
