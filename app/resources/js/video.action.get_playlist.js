@@ -114,7 +114,7 @@ $( function() {
                 id: hash,
                 srclang: "en",
                 label: "English",
-                src: url,
+                src: urlVtt,
                 mode: 'showing'
             };
             video.addRemoteTextTrack(captionOption, false);
