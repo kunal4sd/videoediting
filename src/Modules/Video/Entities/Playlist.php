@@ -231,11 +231,21 @@ class Playlist extends AbstractModule
         if (!is_null($hash)) {
             $playlist_file = $this->get_playlist_with_hash($hash);
 
-            foreach ($playlist_file->get_files() as $file) {
+            $path = $playlist_file->get_path();
+
+            $handle = fopen($path, "r");
+            if ($handle) {
+                while (($line = fgets($handle)) !== false) {
+                    $result[] = $line;
+                }
+            }
+
+            // Show files only
+            /*foreach ($playlist_file->get_files() as $file) {
                 preg_match('/.+(\d{4}_\d{2}_\d{2}-\d{2}.{1}\d{2}.{1}\d{2}\.ts)/Uis', $file->get_path(), $matches);
 
                 $result[] = $matches[1];
-            }
+            }*/
         }
 
         return $result;

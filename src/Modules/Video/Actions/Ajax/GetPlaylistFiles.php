@@ -18,14 +18,14 @@ class GetPlaylistFiles extends AbstractModule
             'warnings'  => [],
             'message'   => ''
         ];
-        $files = [];
+        $lines = [];
         $code = 200;
         try {
-            $files = $this->entity_playlist->get_playlist_files(
+            $lines = $this->entity_playlist->get_playlist_files(
                 $request->withQueryParams($args)
             );
 
-            if (empty($words)) {
+            if (empty($lines)) {
                 $result['message'] = 'Could not find any words for the current segment';
             }
 
@@ -41,7 +41,7 @@ class GetPlaylistFiles extends AbstractModule
         }
 
         $text = $this->view->fetch('video/components/file_list.twig', [
-            "files" => $files
+            "lines" => $lines
         ]);
         $body = $response->getBody();
         $body->write($text);
