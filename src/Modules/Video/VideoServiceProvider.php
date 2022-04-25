@@ -2,6 +2,7 @@
 
 namespace App\Modules\Video;
 
+use App\Modules\Video\Actions\Ajax\GetPlaylistFiles;
 use App\Modules\Video\Actions\Ajax\GetVTT;
 use App\Modules\Video\Views\VTT;
 use Pimple\Container;
@@ -93,12 +94,12 @@ class VideoServiceProvider implements ServiceProviderInterface
             return new SaveSearchFilter($container);
         };
 
-        /*$container['video.view.vtt'] = function ($container) {
-            return new VTT($container);
-        };*/
-
         $container['video.view.vtt'] = function ($container) {
             return new GetVTT($container);
+        };
+
+        $container['video.view.files'] = function ($container) {
+            return new GetPlaylistFiles($container);
         };
     }
 
@@ -118,6 +119,13 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.vtt');
+
+        $container->slim->get('/files/{hash}', 'video.view.files')
+                        ->add(new VTTValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.view.files');
 
         $container->slim->get('/{start_segment}/{end_segment}/{publication}', 'video.view.index')
                         ->add(new TextSearchSaveMiddleware($container))

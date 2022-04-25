@@ -80,12 +80,22 @@ $( function() {
         return url;
     }
 
+    let get_files_url = function(hash) {
+        let interval = form.find('select[name="batch"]').val();
+        let data = global_alert_playlist.data();
+        let url = data.urlFiles;
+
+        return url.replace(/hash/, hash);
+    }
+
     let reload_transcript = function(publication, hash) {
-        let url = get_vtt_url(publication, hash);
+        let urlVtt = get_vtt_url(publication, hash);
+        let urlFiles = get_files_url(hash);
         let tracks = video.textTracks();
         let found = false;
 
-        $("#vtt_link").attr("href", url);
+        $("#vtt_link").attr("href", urlVtt);
+        $("#files_link").attr("href", urlFiles);
         $(".vjs-text-track-display").css("display","none");
 
         for (let i = 0; i < tracks.length; i++) {

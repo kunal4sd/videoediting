@@ -179,7 +179,7 @@ class Playlist extends AbstractModule
                 $minus = 0;
                 $shift = 0;
                 $last = 0;
-                
+
                 if(count($data) > 0) {
                     $minus = $data[0]['start_time'];
                     $segmentId = $data[0]['segment_id'];
@@ -212,6 +212,29 @@ class Playlist extends AbstractModule
                         'etime'         => $etime,
                     ];
                 }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Request $request
+     * @return string[]
+     * @throws Exception
+     */
+    public function get_playlist_files(Request $request): array
+    {
+        $hash = $request->getParam('hash');
+        $result = [];
+
+        if (!is_null($hash)) {
+            $playlist_file = $this->get_playlist_with_hash($hash);
+
+            foreach ($playlist_file->get_files() as $file) {
+                preg_match('/.+(\d{4}_\d{2}_\d{2}-\d{2}.{1}\d{2}.{1}\d{2}\.ts)/Uis', $file->get_path(), $matches);
+
+                $result[] = $matches[1];
             }
         }
 

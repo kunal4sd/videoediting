@@ -7,6 +7,7 @@
     data-hash="{% if playlist.hash %}{{ playlist.hash }}{% endif %}"
     data-url-texts="{% if playlist.url_texts %}{{ playlist.url_texts }}{% endif %}"
     data-url-vtt="{{ base_url() }}{{ path_for('video.view.vtt', { 'publication': 'publication', 'interval': 'interval', 'hash': 'hash' }) }}"
+    data-url-files="{{ base_url() }}{{ path_for('video.view.files', { 'hash': 'hash' }) }}"
 >
     <div class="d-fill row">
         <div class="col-sm-3 d-fill m-auto">
