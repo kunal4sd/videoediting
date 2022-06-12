@@ -2,6 +2,9 @@
 
 namespace App\Modules\Video;
 
+use App\Modules\Video\Actions\Ajax\GetPlaylistFiles;
+use App\Modules\Video\Actions\Ajax\GetVTT;
+use App\Modules\Video\Views\VTT;
 use Pimple\Container;
 use App\Modules\Video\Views\Index;
 use App\Modules\Video\Views\Listing;
@@ -23,6 +26,7 @@ use App\Modules\Video\Actions\Ajax\GetMovieList;
 use App\Modules\Video\Actions\Ajax\GetVideoList;
 use App\Modules\Core\Middleware\Persistant as PersistantMiddleware;
 use App\Modules\Video\Middleware\TextSearchSave as TextSearchSaveMiddleware;
+use App\Modules\Video\Middleware\Validation\VTT as VTTValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetText as GetTextValidationMiddleware;
 use App\Modules\Video\Middleware\Validation\GetMovie as GetMovieValidationMiddleware;
 use App\Modules\Core\Middleware\Authorization\SameIp as SameIpAuthorizationMiddleware;
@@ -89,6 +93,14 @@ class VideoServiceProvider implements ServiceProviderInterface
         $container['video.action.ajax.save_search_filter'] = function ($container) {
             return new SaveSearchFilter($container);
         };
+
+        $container['video.view.vtt'] = function ($container) {
+            return new GetVTT($container);
+        };
+
+        $container['video.view.files'] = function ($container) {
+            return new GetPlaylistFiles($container);
+        };
     }
 
     private function register_routes(Container $container)
@@ -100,6 +112,20 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.view.index');
+
+        $container->slim->get('/vtt/{publication}/{interval}/{hash}', 'video.view.vtt')
+                        ->add(new VTTValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.view.vtt');
+
+        $container->slim->get('/files/{hash}', 'video.view.files')
+                        ->add(new VTTValidationMiddleware($container))
+                        ->add(new SameIpAuthorizationMiddleware($container))
+                        ->add(new SameSessionIdAuthorizationMiddleware($container))
+                        ->add(new KnownUserAuthorizationMiddleware($container))
+                        ->setName('video.view.files');
 
         $container->slim->get('/{start_segment}/{end_segment}/{publication}', 'video.view.index')
                         ->add(new TextSearchSaveMiddleware($container))

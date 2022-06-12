@@ -13,6 +13,9 @@
                 <a class="nav-link{{ current_path == path_for('video.view.index') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('video.view.index') }}">Video Editing</a>
             </li>
             <li class="nav-item px-2">
+                <a class="nav-link{{ current_path == path_for('test.view.transcript') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('test.view.transcript') }}">Transcript Testing</a>
+            </li>
+            <li class="nav-item px-2">
                 <a class="nav-link{{ current_path == path_for('video.view.listing') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('video.view.listing') }}">Video List</a>
             </li>
             <li class="nav-item px-2">

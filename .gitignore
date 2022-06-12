@@ -10,6 +10,3 @@ public/tmp/**/*.m3u8
 public/tmp/**/*.jpg
 public/tmp/**/*.ts
 public/userfiles/
-node_modules/
-vendor/
-app/

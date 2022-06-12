@@ -5,6 +5,7 @@ namespace App;
 use App\Libs\Json;
 use App\Libs\Config;
 use App\Modules\Core\CoreServiceProvider;
+use App\Modules\Test\TestServiceProvider;
 use App\Modules\User\UserServiceProvider;
 use App\Modules\Video\VideoServiceProvider;
 use App\Modules\Article\ArticleServiceProvider;
@@ -70,6 +71,7 @@ class App
         try {
             $container->register(new CoreServiceProvider());
             $container->register(new VideoServiceProvider());
+            $container->register(new TestServiceProvider());
             $container->register(new ArticleServiceProvider());
             $container->register(new PublicationServiceProvider());
             $container->register(new UserServiceProvider());

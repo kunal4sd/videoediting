@@ -37,7 +37,9 @@ class GetPlaylist extends AbstractModule
             $date_validation['start_date'] = ['start date must be before End date'];
         }
 
-        if (count($date_validation)) return $this->validation_failed($date_validation, $response);
+        if (count($date_validation)) {
+            return $this->validation_failed($date_validation, $response);
+        }
 
         return $next($request, $response);
     }

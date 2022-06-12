@@ -1,0 +1,8 @@
+{% block content %}
+WEBVTT
+{% for word in words %}
+
+{{word.start_time}} --> {{word.end_time}}
+{{word.word}}
+{% endfor %}
+{% endblock %}

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Video\Entities;
 
+use DateTime;
 use \Exception;
 use Slim\Http\Request;
 use App\Libs\Enums\Dbs;
@@ -37,8 +38,12 @@ class Playlist extends AbstractModule
             $start_datetime = strtotime($playlist_file->get_first_file()->build_start_datetime());
             $end_datetime = strtotime($playlist_file->get_last_file()->build_end_datetime());
 
+            $pattern = '/.+\/playlist\/(.+)\.m3u8/Uis';
+            preg_match($pattern, $playlist_file->get_url(), $matches);
+            $hash = $matches[1] ? $matches[1] : $playlist_file->get_hash();
+
             $result[] = [
-                'hash' => $playlist_file->get_hash(),
+                'hash' => $hash,
                 'url' => $playlist_file->get_url(),
                 'url_texts' => sprintf('%s/videos/actions/get/text', base_url()),
                 'start_date' => date("Y-m-d H:i:s", $start_datetime),
@@ -145,6 +150,161 @@ class Playlist extends AbstractModule
         }
 
         return [$result, $query];
+    }
+
+    /**
+     * @param Request $request
+     * @return string[]
+     * @throws Exception
+     */
+    public function get_playlist_texts_timeshift(Request $request): array
+    {
+        $hash = $request->getParam('hash');
+        $publicationId = $request->getParam('publication');
+        $interval = $request->getParam('interval');
+        $result = [];
+
+        if (!is_null($hash)) {
+            $playlist_file = $this->get_playlist_with_hash($hash);
+
+            if (!is_null($first_file = $playlist_file->get_first_file())) {
+                $from = $first_file->build_start_datetime();
+                $to = $playlist_file->get_last_file()->build_end_datetime();
+
+                $textDB = new TextDB($this->db[Hosts::LOCAL][Dbs::TEXTS]);
+                $data = $textDB->get_playlist_texts_timeshift($from, $to, $publicationId, $interval);
+
+                $startTime = new DateTime($from);
+                $segmentId = 0;
+                $minus = 0;
+                $shift = 0;
+                $last = 0;
+
+                if(count($data) > 0) {
+                    $minus = $data[0]['start_time'];
+                    $segmentId = $data[0]['segment_id'];
+                }
+
+                foreach ($data as $datum) {
+                    if ($segmentId != $datum['segment_id']) {
+                        $segmentId = $datum['segment_id'];
+                        // file_put_contents('php://stderr', "Seg id: " . $segmentId . "\n");
+                        $shift = $last;
+                        $minus = 0;
+                        // file_put_contents('php://stderr', "\tshift: " . $shift . "\n");
+                    }
+
+                    $stime = ($datum['start_time'] - $minus) + $shift;
+                    $etime = ($datum['end_time'] - $minus) + $shift;
+                    $last = $etime;
+                    // file_put_contents('php://stderr', "\t\t" . $datum['word'] . ': ' . $stime . ' --> ' . $etime . ', shift: ' . $shift . "\n");
+
+                    /*var_dump([
+                        'stime' => $stime,
+                        'etime' => $etime,
+                    ]);*/
+
+                    $result[] = [
+                        'start_time'    => $this->convertToTime($stime),
+                        'end_time'      => $this->convertToTime($etime),
+                        'word'          => $datum['word'],
+                        'stime'         => $stime,
+                        'etime'         => $etime,
+                    ];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param Request $request
+     * @return string[]
+     * @throws Exception
+     */
+    public function get_playlist_files(Request $request): array
+    {
+        $hash = $request->getParam('hash');
+        $result = [];
+
+        if (!is_null($hash)) {
+            $playlist_file = $this->get_playlist_with_hash($hash);
+
+            $path = $playlist_file->get_path();
+
+            $handle = fopen($path, "r");
+            if ($handle) {
+                while (($line = fgets($handle)) !== false) {
+                    $result[] = $line;
+                }
+            }
+
+            // Show files only
+            /*foreach ($playlist_file->get_files() as $file) {
+                preg_match('/.+(\d{4}_\d{2}_\d{2}-\d{2}.{1}\d{2}.{1}\d{2}\.ts)/Uis', $file->get_path(), $matches);
+
+                $result[] = $matches[1];
+            }*/
+        }
+
+        return $result;
+    }
+
+    private function convertToTime($init): string
+    {
+        $init  = number_format($init, 2);
+        $secs  = floor($init);
+        $milli = (int) (($init - $secs) * 1000);
+        $milli = str_pad($milli, 3, '0', STR_PAD_LEFT);
+
+        $hours   = ($secs / 3600);
+        $minutes = (($secs / 60) % 60);
+        $minutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
+        $seconds = $secs % 60;
+        $seconds = str_pad($seconds, 2, '0', STR_PAD_LEFT);
+        if ($hours > 1) {
+            $hours = str_pad($hours, 2, '0', STR_PAD_LEFT);
+        } else {
+            $hours = '00';
+        }
+        $Time = "$hours:$minutes:$seconds.$milli";
+
+        return $Time;
+    }
+
+    private function sec2String($seconds): string
+    {
+        $results = [];
+
+        $numbers = preg_split("/\D/", $seconds);
+        if (!empty($numbers[0])) {
+            $results[] = $numbers[0] . " seconds";
+        }
+        if (!empty($numbers[1])) {
+            $results[] = $numbers[1] . " milliseconds";
+        }
+
+        return implode(" ", $results);
+    }
+
+    private function dateAddFormatted($date, $interval)
+    {
+        return date_add($date, date_interval_create_from_date_string($this->sec2String($interval)));
+    }
+
+    private function segmentDiff($startSegment, $endSegment): array
+    {
+        $sDate = $this->segment2Date($startSegment);
+        $eDate = $this->segment2Date($endSegment);
+        return (array)date_diff($sDate, $eDate);
+    }
+
+    private function segment2Date($str)
+    {
+        preg_match('/.+(\d{4}_\d{2}_\d{2}-\d{2}:\d{2}:\d{2})\.ts/Uis', $str, $matches);
+
+        return date_create_from_format('Y_m_d-H:i:s', $matches[1]);
     }
 
     /**

@@ -42,6 +42,9 @@ function css(cb) {
     src(['app/resources/css/*'])
         .pipe(dest('public/css'))
         ;
+	src(['app/resources/css/libs/*'])
+        .pipe(dest('public/css/libs'))
+        ;
 
     cb();
 }

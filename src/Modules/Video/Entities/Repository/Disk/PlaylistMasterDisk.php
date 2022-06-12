@@ -72,7 +72,6 @@ class PlaylistMasterDisk extends AbstractModule
                     $date_timestamp = 0;
                     $base_path = false;
                     while (($line = fgets($handle)) !== false) {
-
                         $line = trim($line);
                         if (strpos($line, '#EXTINF:') === 0) {
                             $duration = str_replace(['#EXTINF:', ','], '', $line);
@@ -114,8 +113,10 @@ class PlaylistMasterDisk extends AbstractModule
                                         $files[] = $previous_file;
                                     }
                                     $files[] = $raw_video_file;
+
+                                } else {
+                                     break;
                                 }
-                                else break;
                             }
                             $duration = 0.0;
                         }

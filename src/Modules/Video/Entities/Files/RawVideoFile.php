@@ -119,11 +119,7 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
     {
         $result = '0000-00-00 00:00:00';
         if ($this->get_path()) {
-            preg_match(
-                '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})/Uis',
-                $this->get_path(),
-                $matches
-            );
+            $matches = $this->parseFilename();
             array_shift($matches);
 
             $result = sprintf(
@@ -140,16 +136,29 @@ class RawVideoFile extends AbstractFile implements LengthInterface, Discontinuit
         return $result;
     }
 
+    private function parseFilename(string $inPattern = '', bool $last = false)
+    {
+        $pattern = empty($inPattern) ? '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})/Uis' : $inPattern;
+
+        preg_match(
+            $pattern,
+            $this->get_path(),
+            $matches
+        );
+
+        if (!$matches && !$last) {
+            $pattern = '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2})_(\d{2})_(\d{2})/Uis';
+            $matches = $this->parseFilename($pattern, true);
+        }
+
+        return $matches;
+    }
+
     public function build_end_datetime()
     {
         $result = '0000-00-00 00:00:00';
         if ($this->get_path()) {
-
-            preg_match(
-                '/.+(\d{4})_(\d{2})_(\d{2})\-(\d{2}):(\d{2}):(\d{2})/Uis',
-                $this->get_path(),
-                $matches
-            );
+            $matches = $this->parseFilename();
             array_shift($matches);
 
             $length = $this->get_length();

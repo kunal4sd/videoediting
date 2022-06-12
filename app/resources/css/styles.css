@@ -206,3 +206,10 @@
     background-color: #FFFF88;
 }
 
+#vtt-holder {
+    height: 750px;
+    overflow: auto;
+}
+.link-list {
+    margin-left: 15px;
+}

@@ -105,6 +105,60 @@ class TextDB extends AbstractDatabase
     }
 
     /**
+     * @param string $from : start date
+     * @param string $to : end date
+     * @param int $publication_id
+     * @return TextAR[]
+     */
+    public function get_playlist_texts_timeshift(
+        string $from,
+        string $to,
+        int $publication_id,
+        int $interval
+    )
+    {
+        $params = [
+            'from'              => $from,
+            'to'                => $to,
+            'publication_id'    => [$publication_id, PDO::PARAM_INT],
+            'interval'          => [$interval, PDO::PARAM_INT],
+        ];
+
+        $sql = "
+            SELECT
+                p.*, s.*
+            FROM segments AS s
+            INNER JOIN pub_{$publication_id} AS p
+                ON p.segment_id = s.id
+                AND p.pub_id = s.pub_id
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.end_time second) >= :from
+                AND DATE_ADD(s.start_segment_datetime, INTERVAL p.start_time second) <= :to
+            WHERE 1
+                AND s.id IN (
+                    SELECT
+                        id
+                    FROM segments
+                    WHERE 1
+                        AND start_segment_datetime >= DATE_SUB(:from, INTERVAL :interval second)
+                        AND start_segment_datetime <= :to
+                        AND pub_id = :publication_id
+                )
+                AND s.pub_id = :publication_id
+                AND s.start_segment_datetime >= DATE_SUB(:from, INTERVAL :interval second)
+                AND s.start_segment_datetime <= :to
+                AND p.start_time > 0
+            GROUP BY
+                p.id
+            ORDER BY
+                s.start_segment_datetime,
+                p.start_time
+                ASC
+            ";
+
+        return $this->db->fetch_all($sql, $params);
+    }
+
+    /**
      * @param string $start_date
      * @param string $end_date
      * @param array $publication_ids

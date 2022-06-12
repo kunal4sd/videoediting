@@ -1,0 +1,75 @@
+<div class="col-xl-12 mb-4 d-flex">
+    <div class="card flex-fill">
+        <div class="card-header">
+            Select Range
+        </div>
+        <div class="card-body flex-fill">
+            <form id="test-get-playlist" action="{{ base_url() }}{{ path_for('test.action.get_playlist') }}" method="post" novalidate>
+                <input id="publication_lang" type="hidden" value=""/>
+                {{ csrf.fields | raw }}
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        <input
+                                type="text"
+                                name="start_date"
+                                class="form-control{{ flash.errors_start_date ? ' is-invalid' : ''}}"
+                                placeholder="From"
+                                value="{{ form.start_date ? form.start_date : '' }}"
+                                autocomplete="off"
+                        >
+                        {% if flash.errors_start_date %}
+                            <div class="invalid-feedback">{{ flash.errors_start_date | first }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        <input
+                                type="text"
+                                name="end_date"
+                                class="form-control{{ flash.errors_end_date ? ' is-invalid' : ''}}"
+                                placeholder="To"
+                                value="{{ form.end_date ? form.end_date : '' }}"
+                                autocomplete="off"
+                        >
+                        {% if flash.errors_end_date %}
+                            <div class="invalid-feedback">{{ flash.errors_end_date | first }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-12">
+                        <select id="publication" name="publication" class="form-control{{ flash.errors_publication ? ' is-invalid' : ''}}">
+                            <option value="" disabled selected>Choose publication...</option>
+                            {% for publication in publications %}
+                                <option
+                                        value="{{ publication.id }}"
+                                        {% if form.publication == publication.id %} selected {% endif %}
+                                        lang="{{ publication.language }}">
+                                    {{ publication.name_en }}
+                                </option>
+                                {% if form.publication == publication.id %}
+                                <script>
+									document.getElementById('publication_lang').value='{{ publication.language }}';
+                                </script>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input type="submit" class="d-none">
+                        <button type="button" id="search_button" class="btn btn-primary btn-block mb-3" data-loading="0">Get Videos</button>
+                    </div>
+                </div>
+            </form>
+            <div id="video-playlists-holder" class="rounded flex-grow-0" style="height: 550px">
+                {% for playlist in playlists %}
+                    {% include 'components/alerts/test_playlist.twig' %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
