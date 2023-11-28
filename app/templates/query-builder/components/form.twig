@@ -1,0 +1,78 @@
+<div class="col-md-12 mb-4 d-flex">
+    <div class="card flex-fill">
+        <div class="card-header">
+            Search
+        </div>
+        <div class="card-body flex-fill">
+            <form id="video-search-text" action="{{ base_url() }}{{ path_for('video.action.search') }}" method="post">
+                {{ csrf.fields | raw }}
+                <div class="row form-group">
+                    <div class="col-xl-3 mb-4">
+                        <label for="country">Countries</label>
+                        <select name="countries[]" id="country_select" multiple="multiple" class="form-control">
+                            {% for country in countries %}
+                                <option
+                                        value="{{ country.iso }}"
+                                        {% if form.country_iso == country.iso %} selected {% endif %}
+                                >{{ country.name_en }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <label for="publication">Publications</label>
+                        <select name="publications[]" id="publication-select" multiple="multiple" class="form-control">
+
+                        </select>
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <label for="start_date">From Date</label>
+                        <input
+                                type="text"
+                                name="start_date"
+                                id="listing-start-date"
+                                class="form-control"
+                                value="{{ form.start_date ? form.start_date : '' }}"
+                                autocomplete="off"
+                        >
+                    </div>
+                    <div class="col-xl-3 mb-4">
+                        <label for="start_date">To Date</label>
+                        <input
+                                type="text"
+                                name="end_date"
+                                id="listing-end-date"
+                                class="form-control"
+                                value="{{ form.end_date ? form.end_date : '' }}"
+                                autocomplete="off"
+                                width="100px"
+                        >
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-xl-12 mb-1">
+                        <input
+                                type="text"
+                                name="text"
+                                class="form-control"
+                                placeholder="Search term"
+                                value="{{ form.text ? form.text : '' }}"
+                                autocomplete="off"
+                                required
+                        >
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-xl-3 mb-2">
+                        <button type="button" id="search_button" class="btn btn-primary btn-block mb-3" data-loading="0">Search</button>
+                    </div>
+                    <div class="col-xl-3 mb-2">
+                        <button type="button" id="reset_button" class="btn btn-primary btn-block mb-3" data-loading="0">Reset</button>
+                    </div>
+                    <div class="col-xl-3 mb-2">
+                        <button type="button" id="save_button" class="btn btn-warning btn-block mb-3" data-loading="0" data-toggle="modal" data-target="#query-modal-save">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

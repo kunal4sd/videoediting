@@ -4,6 +4,9 @@ namespace App\Modules\Video;
 
 use App\Modules\Video\Actions\Ajax\GetPlaylistFiles;
 use App\Modules\Video\Actions\Ajax\GetVTT;
+use App\Modules\Video\Actions\Ajax\SaveQuery;
+use App\Modules\Video\Entities\SearchQuery;
+use App\Modules\Video\Views\QueryBuilder;
 use App\Modules\Video\Views\VTT;
 use Pimple\Container;
 use App\Modules\Video\Views\Index;
@@ -62,6 +65,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         $container['video.view.search'] = function ($container) {
             return new TextSearch($container);
         };
+        $container['video.view.search.query_builder'] = function ($container) {
+            return new QueryBuilder($container);
+        };
     }
 
     private function register_actions(Container $container)
@@ -100,6 +106,9 @@ class VideoServiceProvider implements ServiceProviderInterface
 
         $container['video.view.files'] = function ($container) {
             return new GetPlaylistFiles($container);
+        };
+        $container['video.action.ajax.save_query_builder'] = function ($container) {
+            return new SaveQuery($container);
         };
     }
 
@@ -225,6 +234,22 @@ class VideoServiceProvider implements ServiceProviderInterface
                         ->add(new SameSessionIdAuthorizationMiddleware($container))
                         ->add(new KnownUserAuthorizationMiddleware($container))
                         ->setName('video.action.save_search_filter');
+
+        //Search query builder
+        // text search
+        $container->slim->get('/search/query-builder', 'video.view.search.query_builder')
+            ->add(new SameIpAuthorizationMiddleware($container))
+            ->add(new SameSessionIdAuthorizationMiddleware($container))
+            ->add(new KnownUserAuthorizationMiddleware($container))
+            ->setName('video.view.search.query_builder');
+
+        $container->slim->post('/videos/actions/save-query-builder', 'video.action.ajax.save_query_builder')
+            ->add(new DateRangeStandardizationMiddleware($container))
+            ->add(new PersistantMiddleware($container))
+            ->add(new SameIpAuthorizationMiddleware($container))
+            ->add(new SameSessionIdAuthorizationMiddleware($container))
+            ->add(new KnownUserAuthorizationMiddleware($container))
+            ->setName('video.action.save_query_builder');
     }
 
     private function register_entities(Container $container)
@@ -243,6 +268,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['entity_search_text'] = function ($container) {
             return new SearchText($container);
+        };
+        $container['entity_search_query'] = function ($container) {
+            return new SearchQuery($container);
         };
     }
 }

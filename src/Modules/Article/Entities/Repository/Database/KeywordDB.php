@@ -139,4 +139,22 @@ class KeywordDB extends AbstractDatabase
         return $result;
     }
 
+    /**
+     * @return KeywordAR[]
+     */
+    public function get_all_keywords (){
+        $result = [];
+        $data = $this->db->fetch_all(
+            "
+                SELECT
+                    *
+                FROM keyword
+                WHERE active = 1
+            "
+        );
+        foreach($data as $row) {
+            $result[] = new KeywordAR($row);
+        }
+        return $result;
+    }
 }

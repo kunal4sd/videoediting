@@ -19,6 +19,7 @@ class UserDB extends AbstractDatabase
                     username,
                     {$with_password}
                     type_id,
+                    group_id,
                     fname,
                     lname,
                     start_date,
@@ -51,6 +52,7 @@ class UserDB extends AbstractDatabase
                     username,
                     {$with_password}
                     type_id,
+                    group_id,
                     fname,
                     lname,
                     start_date,
@@ -72,6 +74,30 @@ class UserDB extends AbstractDatabase
         );
 
         return new UserAR($result);
+    }
+
+    /**
+     * @return UserAR []
+     */
+    public function get_all_users (){
+        $result = [];
+        $data = $this->db->fetch_all(
+            "  SELECT  
+                id,
+                username,
+                fname,
+                lname,
+                start_date,
+                expiry_date,
+                created,
+                modified,
+                created_by
+                FROM user 
+            ");
+        foreach ($data as $row){
+            $result[] = new UserAR($row);
+        }
+        return $result;
     }
 
 }

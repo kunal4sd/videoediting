@@ -21,6 +21,11 @@
             <li class="nav-item px-2">
                 <a class="nav-link{{ current_path == path_for('video.view.search') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('video.view.search') }}">Text Search</a>
             </li>
+            {% if user.is_admin %}
+                <li class="nav-item px-2">
+                    <a class="nav-link{{ current_path == path_for('video.view.search.query_builder') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('video.view.search.query_builder') }}">Query Builder</a>
+                </li>
+            {% endif %}
             <li class="nav-item px-2">
                 <a class="nav-link{{ current_path == path_for('publication.view.report') ? ' active' : '' }}" href="{{ base_url() }}{{ path_for('publication.view.report') }}">Publications Report</a>
             </li>

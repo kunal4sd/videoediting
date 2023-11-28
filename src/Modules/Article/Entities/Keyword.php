@@ -65,4 +65,12 @@ class Keyword extends AbstractModule
         return (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_id($id);
     }
 
+    /**
+     * @return KeywordAR[]
+     */
+    public function get_all_keywords (): array
+    {
+        return (new KeywordDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_all_keywords();
+    }
+
 }

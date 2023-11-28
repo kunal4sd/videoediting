@@ -1,0 +1,42 @@
+<div class="modal fade" id="query-modal-save" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <form id="query-save" action="{{ base_url() }}{{ path_for('video.action.save_query_builder') }}" method="post">
+                {{ csrf.fields | raw }}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="query_title_input">Title:</label>
+                        <input type="text" name="title" class="form-control" id="query_title_input" placeholder="query title" required  >
+                    </div>
+                    <div class="form-group">
+                        <label for="query_content_input">Query:</label>
+                        <textarea class="form-control" name="query" id="query_content_input" rows="3" placeholder="query content" required ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="query_keywords_select">Keywords:</label>
+                        <select name="keywords[]" id="query_keywords_select" multiple="multiple" class="form-control"  >
+                            {% for keyword in keywords %}
+                                <option
+                                        value="{{ keyword.id }}"
+                                >{{ keyword.name_en }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="query_users_select">Users:</label>
+                        <select name="users[]" id="query_users_select" multiple="multiple" class="form-control" required >
+                            {% for user in users %}
+                                <option
+                                        value="{{ user.id }}"
+                                >{{ user.fname ~" "~ user.lname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

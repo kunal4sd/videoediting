@@ -29,6 +29,11 @@ class UserAR extends AbstractActiveRecord
     public $type_id;
 
     /**
+     * @var int
+     */
+    public $group_id;
+
+    /**
      * @var string|null
      */
     public $fname;

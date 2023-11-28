@@ -1,0 +1,20 @@
+<div class="card">
+    <div class="card-header mx-0 px-0">
+        <div class="col-md-12">
+            Queries List
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="listing-queries-table" class="table display nowrap dataTable" data-publication-list-url="{{ base_url() }}{{ path_for('video.action.search') }}">
+            <thead>
+                <tr>
+                    <th class="text-center">Title</th>
+                    <th class="text-center">Query</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="listing-list-holder">
+            </tbody>
+        </table>
+    </div>
+</div>

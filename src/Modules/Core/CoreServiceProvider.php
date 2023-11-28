@@ -116,7 +116,8 @@ class CoreServiceProvider implements ServiceProviderInterface
                 $view->getEnvironment()->addGlobal('flash', $container->flash->getMessages());
                 $view->getEnvironment()->addGlobal('user', [
                     'is_known' => $container->session_user->is_known(),
-                    'details' => $container->session_user->get_user()
+                    'details' => $container->session_user->get_user(),
+                    'is_admin' => $container->session_user->get_user() && $container->entity_user->is_admin($container->session_user->get_user())
                 ]);
             }
             catch(Exception $e) {

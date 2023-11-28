@@ -88,7 +88,15 @@ class User extends AbstractModule
      */
     public function is_admin(UserAR $user_ar): bool
     {
-        return (int) $user_ar->type_id === 0;
+        return (int) $user_ar->group_id === 7;
+    }
+
+    /**
+     * @return UserAR[]
+     */
+    public function get_all_users (){
+        $userDB = new UserDB($this->db[Hosts::LOCAL][Dbs::MAIN]);
+        return $userDB->get_all_users();
     }
 
 }

@@ -1,0 +1,26 @@
+{% extends 'app.twig' %}
+
+{% block stylesheets %}
+    {% include 'query-builder/components/stylesheets.twig' %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-6">
+            {% include 'query-builder/components/form.twig' %}
+        </div>
+        <div class="col-md-6">
+            {% include 'query-builder/components/queries-list.twig' %}
+        </div>
+    </div>
+
+    <div class="row">
+        {% include 'query-builder/components/list.twig' %}
+    </div>
+
+    <div class="row">
+        {% include 'query-builder/components/save-query-modal.twig' %}
+    </div>
+
+{% endblock %}
