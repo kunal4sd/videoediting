@@ -5,16 +5,19 @@
         </div>
     </div>
     <div class="card-body">
-        <table id="listing-queries-table" class="table display nowrap dataTable" data-publication-list-url="{{ base_url() }}{{ path_for('video.action.search') }}">
-            <thead>
+        <form>
+            <table id="listing-queries-table" class="table display nowrap dataTable" data-query-list-url="{{ base_url() }}{{ path_for('video.action.get_query_list') }}">
+                {{ csrf.fields | raw }}
+                <thead>
                 <tr>
                     <th class="text-center">Title</th>
                     <th class="text-center">Query</th>
                     <th class="text-center">Actions</th>
                 </tr>
-            </thead>
-            <tbody id="listing-list-holder">
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="listing-list-holder">
+                </tbody>
+            </table>
+        </form>
     </div>
 </div>

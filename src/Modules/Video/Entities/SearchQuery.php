@@ -15,4 +15,11 @@ class SearchQuery extends AbstractModule
         return (new SearchQueryDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->saveSearchQuery($searchQueryAR);
     }
 
+    /**
+     * @return SearchQueryAR[]
+     */
+    public function getSearchQueries (){
+        return (new SearchQueryDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->getSearchQueries();
+    }
+
 }

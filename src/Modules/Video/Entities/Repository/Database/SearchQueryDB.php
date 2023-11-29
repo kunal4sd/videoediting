@@ -8,6 +8,11 @@ use App\Modules\Abstracts\AbstractDatabase;
 
 class SearchQueryDB extends AbstractDatabase
 {
+    /**
+     * adds to the search_query,search_query_user, and search_query_keyword tables
+     * @param SearchQueryAR $searchQueryAR
+     * @return mixed - query insert id
+     */
     public function saveSearchQuery (SearchQueryAR $searchQueryAR){
         $user_ids = $searchQueryAR->user_ids;
         $keyword_ids = $searchQueryAR->keyword_ids;
@@ -137,4 +142,20 @@ class SearchQueryDB extends AbstractDatabase
         return $insert_id;
     }
 
+    /**
+     * @return SearchQueryAR[]
+     */
+    public function getSearchQueries (){
+        $result = [];
+        $data = $this->db->fetch_all(
+            "  SELECT  
+                *
+                FROM search_query 
+            ");
+        //todo - fetch user_ids and keyword_ids
+        foreach ($data as $row){
+            $result[] = new SearchQueryAR($row);
+        }
+        return $result;
+    }
 }
