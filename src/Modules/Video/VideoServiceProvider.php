@@ -5,6 +5,7 @@ namespace App\Modules\Video;
 use App\Modules\Video\Actions\Ajax\GetPlaylistFiles;
 use App\Modules\Video\Actions\Ajax\GetVTT;
 use App\Modules\Video\Actions\Ajax\SaveQuery;
+use App\Modules\Video\Actions\Ajax\SearchKeyword;
 use App\Modules\Video\Entities\SearchQuery;
 use App\Modules\Video\Views\QueryBuilder;
 use App\Modules\Video\Views\VTT;
@@ -109,6 +110,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['video.action.ajax.save_query_builder'] = function ($container) {
             return new SaveQuery($container);
+        };
+        $container['video.action.ajax.search_keyword'] = function ($container) {
+            return new SearchKeyword($container);
         };
     }
 
@@ -250,6 +254,10 @@ class VideoServiceProvider implements ServiceProviderInterface
             ->add(new SameSessionIdAuthorizationMiddleware($container))
             ->add(new KnownUserAuthorizationMiddleware($container))
             ->setName('video.action.save_query_builder');
+        $container->slim->post('/videos/actions/search/keyword', 'video.action.ajax.search_keyword')
+            ->add(new SameIpAuthorizationMiddleware($container))
+            ->add(new KnownUserAuthorizationMiddleware($container))
+            ->setName('video.action.search_keyword');
     }
 
     private function register_entities(Container $container)

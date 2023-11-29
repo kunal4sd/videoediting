@@ -22,7 +22,7 @@ class SaveQuery extends AbstractModule
         $title = $request->getParam('title') ?? '';
         $query = $request->getParam('query') ?? '';
         $users = $request->getParam('users') ?? [];
-        $keywords = $request->getParam('keywords') ?? [];
+        $keywords = explode(',',$request->getParam('keywords'));
 
         try {
             $insert_id = $this->entity_search_query->saveSearchQuery(new SearchQueryAR(

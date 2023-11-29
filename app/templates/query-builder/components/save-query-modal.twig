@@ -14,14 +14,10 @@
                     </div>
                     <div class="form-group">
                         <label for="query_keywords_select">Keywords:</label>
-                        <select name="keywords[]" id="query_keywords_select" multiple="multiple" class="form-control"  >
-                            {% for keyword in keywords %}
-                                <option
-                                        value="{{ keyword.id }}"
-                                >{{ keyword.name_en }}</option>
-                            {% endfor %}
-                        </select>
+                        <input type="hidden" name="keywords" value="">
+                        <select id="query_keywords_select" data-action="{{ base_url() }}{{ path_for('video.action.search_keyword') }}"></select>
                     </div>
+
                     <div class="form-group">
                         <label for="query_users_select">Users:</label>
                         <select name="users[]" id="query_users_select" multiple="multiple" class="form-control" required >
