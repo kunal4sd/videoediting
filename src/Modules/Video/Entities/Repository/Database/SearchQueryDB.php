@@ -152,10 +152,86 @@ class SearchQueryDB extends AbstractDatabase
                 *
                 FROM search_query 
             ");
-        //todo - fetch user_ids and keyword_ids
         foreach ($data as $row){
+            $userIds =  [];
+            $userIdsResult = $this->db->fetch_all(
+                "  SELECT  
+                    user_id
+                FROM search_query_user
+                WHERE query_id = :query_id
+                ",
+                ['query_id' => [$row['id'],PDO::PARAM_INT]]
+            );
+            foreach ($userIdsResult as $userIdResult){
+                $userIds[] = $userIdResult['user_id'];
+            }
+            $keywordIds = [];
+            $keywordIdsResult = $this->db->fetch_all(
+                "  SELECT  
+                    keyword_id
+                FROM search_query_keyword
+                WHERE query_id = :query_id
+                ",
+                ['query_id' => [$row['id'],PDO::PARAM_INT]]
+            );
+            foreach ($keywordIdsResult as $keywordIdResult){
+                $keywordIds[] = $keywordIdResult['keyword_id'];
+            }
+            $row['user_ids'] = $userIds;
+            $row['keyword_ids'] = $keywordIds;
             $result[] = new SearchQueryAR($row);
+
         }
         return $result;
+    }
+
+    /**
+     * @param int $id
+     * @return SearchQueryAR
+     */
+    public function get_by_id(int $id)
+    {
+        $data = $this->db->fetch(
+            "
+                SELECT
+                    *
+                FROM search_query
+                WHERE 1
+                    AND id = :id
+            ",
+            [
+                'id' => $id
+            ]
+        );
+        if(!empty($data)){
+            $userIds =  [];
+            $userIdsResult = $this->db->fetch_all(
+                "  SELECT  
+                    user_id
+                FROM search_query_user
+                WHERE query_id = :query_id
+                ",
+                ['query_id' => [$data['id'],PDO::PARAM_INT]]
+            );
+            foreach ($userIdsResult as $userIdResult){
+                $userIds[] = $userIdResult['user_id'];
+            }
+            $keywordIds = [];
+            $keywordIdsResult = $this->db->fetch_all(
+                "  SELECT  
+                    keyword_id
+                FROM search_query_keyword
+                WHERE query_id = :query_id
+                ",
+                ['query_id' => [$data['id'],PDO::PARAM_INT]]
+            );
+            foreach ($keywordIdsResult as $keywordIdResult){
+                $keywordIds[] = $keywordIdResult['keyword_id'];
+            }
+            $data['user_ids'] = $userIds;
+            $data['keyword_ids'] = $keywordIds;
+        }
+
+        return new SearchQueryAR($data);
     }
 }

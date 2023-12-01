@@ -4,7 +4,7 @@ $( function() {
         return false;
     }
 
-    let search_text = form.find('input[name="text"]');
+    let search_text = form.find('[name="text"]');
     let csrf_name = form.find('input[name="csrf_name"]').val();
     let csrf_value = form.find('input[name="csrf_value"]').val();
     let global_templates_holder = $('#global-templates-holder');

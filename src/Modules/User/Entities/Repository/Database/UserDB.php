@@ -100,4 +100,43 @@ class UserDB extends AbstractDatabase
         return $result;
     }
 
+    /**
+     * @param array $ids
+     * @return UserAR []
+     */
+    public function get_by_ids(array $ids): array
+    {
+        $result = [];
+        if (empty($ids)) return $result;
+
+        $params = array_map(function($id) { return sprintf('id_%s', $id); }, $ids);
+        $data = $this->db->fetch_all(
+            sprintf(
+                "
+                    SELECT
+                        id,
+                        username,
+                        fname,
+                        lname,
+                        start_date,
+                        expiry_date,
+                        created,
+                        modified,
+                        created_by
+                    FROM user
+                    WHERE 1
+                        AND id IN (:%s)
+                ",
+                implode(',:', $params)
+            ),
+            array_combine($params, $ids)
+        );
+
+        foreach($data as $row) {
+            $result[$row['id']] = new UserAR($row);
+        }
+
+        return $result;
+    }
+
 }

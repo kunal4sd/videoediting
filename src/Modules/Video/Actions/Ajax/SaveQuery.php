@@ -19,6 +19,7 @@ class SaveQuery extends AbstractModule
 
         $result = [];
         $code = 200;
+        $id = $request->getParam('id') ?? '';
         $title = $request->getParam('title') ?? '';
         $query = $request->getParam('query') ?? '';
         $users = $request->getParam('users') ?? [];
@@ -27,6 +28,7 @@ class SaveQuery extends AbstractModule
         try {
             $insert_id = $this->entity_search_query->saveSearchQuery(new SearchQueryAR(
                 [
+                    'id' => $id,
                     'title' => $title,
                     'query' => $query,
                     'user_ids' => $users,

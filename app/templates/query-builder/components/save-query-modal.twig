@@ -1,8 +1,9 @@
 <div class="modal fade" id="query-modal-save" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
-            <form id="query-save" action="{{ base_url() }}{{ path_for('video.action.save_query_builder') }}" method="post">
+            <form id="query-save" action="{{ base_url() }}{{ path_for('video.action.save_query_builder') }}" method="post" data-initial-action="{{ base_url() }}{{ path_for('video.action.get_query') }}">
                 {{ csrf.fields | raw }}
+                <input type="text" name="id" hidden>
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="query_title_input">Title:</label>
@@ -30,7 +31,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" id="save-update-query" class="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>

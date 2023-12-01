@@ -6,6 +6,7 @@
         <div class="card-body flex-fill">
             <form id="video-search-text" action="{{ base_url() }}{{ path_for('video.action.search') }}" method="post">
                 {{ csrf.fields | raw }}
+                <input type="text" name="query_id" hidden>
                 <div class="row form-group">
                     <div class="col-xl-3 mb-4">
                         <label for="country">Countries</label>
@@ -50,15 +51,7 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-xl-12 mb-1">
-                        <input
-                                type="text"
-                                name="text"
-                                class="form-control"
-                                placeholder="Search term"
-                                value="{{ form.text ? form.text : '' }}"
-                                autocomplete="off"
-                                required
-                        >
+                        <textarea class="form-control" name="text"  rows="4" placeholder="Search term" required ></textarea>
                     </div>
                 </div>
                 <div class="row justify-content-center">

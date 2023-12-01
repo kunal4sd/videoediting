@@ -3,6 +3,7 @@
 namespace App\Modules\Video;
 
 use App\Modules\Video\Actions\Ajax\GetPlaylistFiles;
+use App\Modules\Video\Actions\Ajax\GetSearchQuery;
 use App\Modules\Video\Actions\Ajax\GetSearchQueryList;
 use App\Modules\Video\Actions\Ajax\GetVTT;
 use App\Modules\Video\Actions\Ajax\SaveQuery;
@@ -117,6 +118,9 @@ class VideoServiceProvider implements ServiceProviderInterface
         };
         $container['video.action.ajax.get_query_list'] = function ($container) {
             return new GetSearchQueryList($container);
+        };
+        $container['video.action.ajax.get_query'] = function ($container) {
+            return new GetSearchQuery($container);
         };
     }
 
@@ -268,6 +272,12 @@ class VideoServiceProvider implements ServiceProviderInterface
             ->add(new SameSessionIdAuthorizationMiddleware($container))
             ->add(new KnownUserAuthorizationMiddleware($container))
             ->setName('video.action.get_query_list');
+        $container->slim->post('/videos/actions/get/search-query', 'video.action.ajax.get_query')
+            ->add(new DateRangeStandardizationMiddleware($container))
+            ->add(new SameIpAuthorizationMiddleware($container))
+            ->add(new SameSessionIdAuthorizationMiddleware($container))
+            ->add(new KnownUserAuthorizationMiddleware($container))
+            ->setName('video.action.get_query');
 
     }
 

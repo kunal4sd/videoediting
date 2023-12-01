@@ -99,4 +99,13 @@ class User extends AbstractModule
         return $userDB->get_all_users();
     }
 
+    /**
+     * @param array $ids
+     * @return UserAR[]
+     */
+    public function get_by_ids (array $ids)
+    {
+        return (new UserDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->get_by_ids($ids);
+    }
+
 }
