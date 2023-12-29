@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Modules\Video\Entities\Repository\Database;
+namespace App\Modules\QueryBuilder\Entities\Repository\Database;
 
-use App\Modules\Video\Entities\ActiveRecords\SearchQueryAR;
+use App\Modules\QueryBuilder\Entities\ActiveRecords\SearchQueryAR;
 use \PDO;
 use App\Modules\Abstracts\AbstractDatabase;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\Video\Actions\Ajax;
+namespace App\Modules\QueryBuilder\Actions\Ajax;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
-use App\Modules\Video\Entities\ActiveRecords\SearchQueryAR;
+use App\Modules\QueryBuilder\Entities\ActiveRecords\SearchQueryAR;
 use \Exception;
 use App\Libs\Json;
 use Slim\Http\Request;

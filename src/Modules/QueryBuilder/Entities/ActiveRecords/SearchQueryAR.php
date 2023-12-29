@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Video\Entities\ActiveRecords;
+namespace App\Modules\QueryBuilder\Entities\ActiveRecords;
 
 use App\Modules\Abstracts\AbstractActiveRecord;
 

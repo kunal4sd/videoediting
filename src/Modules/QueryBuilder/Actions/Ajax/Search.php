@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Video\Actions\Ajax;
+namespace App\Modules\QueryBuilder\Actions\Ajax;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Video\Views;
+namespace App\Modules\QueryBuilder\Views;
 
 use App\Modules\Abstracts\AbstractModule;
 use App\Libs\Enums\UserActivity;
@@ -37,7 +37,7 @@ class QueryBuilder extends AbstractModule
             );
 
             $countries = $this->entity_country->get_active();
-
+            
             if (isset($args['activity_id'])) {
                 $user_activity_ar = $this->entity_user_activity->get_by_id_and_user_media(
                     $args['activity_id'],

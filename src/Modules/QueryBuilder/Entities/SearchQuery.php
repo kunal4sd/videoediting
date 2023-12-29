@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Modules\Video\Entities;
+namespace App\Modules\QueryBuilder\Entities;
 
 use App\Libs\Enums\Dbs;
 use App\Libs\Enums\Hosts;
 use App\Modules\Abstracts\AbstractModule;
-use App\Modules\Video\Entities\ActiveRecords\SearchQueryAR;
-use App\Modules\Video\Entities\Repository\Database\SearchQueryDB;
+use App\Modules\QueryBuilder\Entities\ActiveRecords\SearchQueryAR;
+use App\Modules\QueryBuilder\Entities\Repository\Database\SearchQueryDB;
 
 class SearchQuery extends AbstractModule
 {
