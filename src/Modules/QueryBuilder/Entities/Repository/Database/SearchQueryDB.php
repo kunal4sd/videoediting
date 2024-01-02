@@ -14,38 +14,43 @@ class SearchQueryDB extends AbstractDatabase
      * @return mixed - query insert id
      */
     public function saveSearchQuery (SearchQueryAR $searchQueryAR){
-        $user_ids = $searchQueryAR->user_ids;
-        $keyword_ids = $searchQueryAR->keyword_ids;
+        $user_ids = array_filter($searchQueryAR->user_ids);
+        $keyword_ids = array_filter($searchQueryAR->keyword_ids);
+
         //insert search_query
+
         $search_query_array = array_filter($searchQueryAR->build_to_array(), function($val) {
             return !is_null($val);
         });
+
         unset($search_query_array['user_ids']);
         unset($search_query_array['keyword_ids']);
         $search_query_fields = array_keys($search_query_array);
+        $query = sprintf(
+            "
+                INSERT INTO search_query
+                (
+                    %s
+                )
+                VALUES
+                (
+                    %s
+                )
+                ON DUPLICATE KEY UPDATE
+                    %s
+            ",
+            implode(',', $search_query_fields),
+            implode(',', array_map( function($val) { return ":{$val}"; }, $search_query_fields )),
+            implode(',', array_map(
+                function($val) { return sprintf('%1$s=VALUES(%1$s)', $val); },
+                $search_query_fields
+            ))
+            );
         $insert_id =  $this->db->insert_id(
-            sprintf(
-                "
-                    INSERT INTO search_query
-                    (
-                        %s
-                    )
-                    VALUES
-                    (
-                        %s
-                    )
-                    ON DUPLICATE KEY UPDATE
-                        %s
-                ",
-                implode(',', $search_query_fields),
-                implode(',', array_map( function($val) { return ":{$val}"; }, $search_query_fields )),
-                implode(',', array_map(
-                    function($val) { return sprintf('%1$s=VALUES(%1$s)', $val); },
-                    $search_query_fields
-                ))
-            ),
+            $query,
             $search_query_array
         );
+
         //insert users and keywords
         if($insert_id){
             //insert users
@@ -56,43 +61,53 @@ class SearchQueryDB extends AbstractDatabase
                 $values = [];
                 $rows = [];
                 foreach($user_ids as $user_id) {
-
+                    
                     $search_query_user_array = [
                         'query_id' => $insert_id,
                         'user_id' => $user_id
                     ];
-
+                    
                     foreach($search_query_user_array as $field => $value) {
                         $values["{$field}_{$counter}"] = $value;
                         $rows[$rows_counter][] = ":{$field}_{$counter}";
                         $counter++;
                     }
+                    
                     $rows_counter++;
                 }
-                $users_count =  $this->db->row_count(
-                    sprintf(
-                        "
-                    INSERT INTO search_query_user
-                    (
-                        %s
-                    )
-                    VALUES
-                    (
-                        %s
-                    )
-                    ON DUPLICATE KEY UPDATE
-                        %s
-                ",
+
+                $this->db->row_count("DELETE FROM search_query_user WHERE query_id='$insert_id' AND user_id NOT IN (".implode(',', $user_ids).")");
+                $qry = sprintf(
+                    "
+                        INSERT INTO search_query_user
+                        (
+                            %s
+                        )
+                        VALUES
+                        (
+                            %s
+                        )
+                        ON DUPLICATE KEY UPDATE
+                            %s
+                    ",
                         implode(',', $search_query_user_fields),
                         implode('), (', array_map( function($row) { return implode(',', $row); }, $rows )),
                         implode(',', array_map(
                             function($val) { return sprintf('%1$s=VALUES(%1$s)', $val); },
                             $search_query_user_fields
                         ))
-                    ),
+                );
+                    
+                $users_count =  $this->db->row_count(
+                    $qry,
                     $values
                 );
+
+            } else {
+                //delete already assigned users here
+                $this->db->row_count("DELETE FROM search_query_user WHERE query_id='$insert_id'");
             }
+
             //insert keywords
             if(count($keyword_ids) > 0){
                 $counter = 0;
@@ -112,30 +127,39 @@ class SearchQueryDB extends AbstractDatabase
                         $counter++;
                     }
                     $rows_counter++;
-                }
-                $keywords_count =  $this->db->row_count(
-                    sprintf(
+                }                
+                $searchkeyword = "DELETE FROM search_query_keyword WHERE query_id=$insert_id AND keyword_id NOT IN (".implode(',', $keyword_ids).")";             
+                $this->db->row_count($searchkeyword);
+                $sqlKeywords = sprintf(
                         "
-                    INSERT INTO search_query_keyword
-                    (
-                        %s
-                    )
-                    VALUES
-                    (
-                        %s
-                    )
-                    ON DUPLICATE KEY UPDATE
-                        %s
-                ",
+                            INSERT INTO search_query_keyword
+                            (
+                                %s
+                            )
+                            VALUES
+                            (
+                                %s
+                            )
+                            ON DUPLICATE KEY UPDATE
+                                %s
+                        ",
                         implode(',', $search_query_keyword_fields),
                         implode('), (', array_map( function($row) { return implode(',', $row); }, $rows )),
                         implode(',', array_map(
                             function($val) { return sprintf('%1$s=VALUES(%1$s)', $val); },
                             $search_query_keyword_fields
                         ))
-                    ),
+                    );
+
+                    $keywords_count =  $this->db->row_count(
+                    $sqlKeywords,
                     $values
                 );
+            } else {
+                // delete already assigned keywords here
+               $deltekeyword = "DELETE FROM search_query_keyword WHERE query_id=$insert_id";
+               $this->db->row_count($deltekeyword);
+                
             }
         }
 
@@ -167,7 +191,7 @@ class SearchQueryDB extends AbstractDatabase
             }
             $keywordIds = [];
             $keywordIdsResult = $this->db->fetch_all(
-                "  SELECT  
+                "  SELECT
                     keyword_id
                 FROM search_query_keyword
                 WHERE query_id = :query_id
@@ -218,7 +242,7 @@ class SearchQueryDB extends AbstractDatabase
             }
             $keywordIds = [];
             $keywordIdsResult = $this->db->fetch_all(
-                "  SELECT  
+                "  SELECT
                     keyword_id
                 FROM search_query_keyword
                 WHERE query_id = :query_id
