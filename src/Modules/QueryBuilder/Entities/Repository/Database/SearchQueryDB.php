@@ -167,6 +167,15 @@ class SearchQueryDB extends AbstractDatabase
     }
 
     /**
+     * Get search Queries based on active user
+     */
+    public function getUserSearchQueries($user_id){
+       $sql = "SELECT * FROM search_query INNER JOIN search_query_user ON search_query.id = search_query_user.query_id WHERE  search_query_user.user_id = '".$user_id."'";              
+       $data = $this->db->fetch_all($sql);
+       return $data;
+    }
+
+    /**
      * @return SearchQueryAR[]
      */
     public function getSearchQueries (){

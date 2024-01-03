@@ -3,7 +3,7 @@
         <div class="card-header">
             Search
         </div>
-        <div class="card-body flex-fill">
+        <div class="card-body flex-fill ar">
             <form id="video-search-text" action="{{ base_url() }}{{ path_for('video.action.search') }}" method="post">
                 {{ csrf.fields | raw }}
                 <div class="row form-group">
@@ -48,11 +48,30 @@
                         >
                     </div>
                 </div>
+
+                <div class="row form-group ">
+                    <div class="col-xl-12 mb-1">
+                           <select name="querysearch" id="query-select"  class="form-control">
+                            {% if search_queries is empty %}
+                                <option value="">No Queries Available</option>
+                            {% else %}
+                            <option value="">Choose Query</option>
+                            {% for  search_query in search_queries %}
+                                <option value="{{ search_query.query }}"
+                                >{{ search_query.title }}</option>
+                            {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+
+
                 <div class="row form-group">
                     <div class="col-xl-12 mb-1">
                         <input
                                 type="text"
                                 name="text"
+                                id="query-select-term"
                                 class="form-control"
                                 placeholder="Search term"
                                 value="{{ form.text ? form.text : '' }}"
@@ -73,3 +92,11 @@
         </div>
     </div>
 </div>
+
+<script>
+function selectTerm() {
+    const updatedValue = document.getElementById("query-select").value;
+    document.getElementById("query-select-term").value = updatedValue;
+}
+	document.getElementById("query-select").addEventListener("change",selectTerm);
+</script>

@@ -23,6 +23,13 @@ class SearchQuery extends AbstractModule
     }
 
     /**
+     * @return SearchQueryAR[]
+     */
+    public function getUserSearchQueries($user_id){
+        return (new SearchQueryDB($this->db[Hosts::LOCAL][Dbs::MAIN]))->getUserSearchQueries($user_id);
+    }
+
+    /**
      * @param int $id
      * @return SearchQueryAR
      */

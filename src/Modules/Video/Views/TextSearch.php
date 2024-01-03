@@ -19,6 +19,7 @@ class TextSearch extends AbstractModule
         $playlists              = [];
         $movies                 = [];
 
+        
         try {
             $publications = $this->entity_publication->get_all_active_tv_and_radio_media();
             $publications_details = $this->entity_publication_details->get_all_recording247();
@@ -77,7 +78,11 @@ class TextSearch extends AbstractModule
         catch(Exception $e) {
             $this->logger->write($e);
         }
+        $user_id = $this->session_user->get_user()->id;
 
+        // print_r($this->session_user->get_user());
+
+        $searchQueriesListBasedOnLoggedinUser = $this->entity_search_query->getUserSearchQueries($user_id);
         return $this->view->render($response, 'search/index.twig', [
             'page_title'    => 'Video Text Search',
             'page_name'     => 'search',
@@ -85,7 +90,8 @@ class TextSearch extends AbstractModule
             'countries'     => $countries,
             'form'          => $form,
             'playlists'     => $playlists,
-            'movies'        => $movies
+            'movies'        => $movies,
+            'search_queries' => $searchQueriesListBasedOnLoggedinUser
         ]);
     }
 
