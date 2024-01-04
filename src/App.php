@@ -8,13 +8,14 @@ use App\Modules\Core\CoreServiceProvider;
 use App\Modules\Test\TestServiceProvider;
 use App\Modules\User\UserServiceProvider;
 use App\Modules\Video\VideoServiceProvider;
+use App\Modules\QueryBuilder\QueryBuilderServiceProvider;
 use App\Modules\Article\ArticleServiceProvider;
 use App\Modules\Publication\PublicationServiceProvider;
 use \Exception;
 use Pimple\Container;
 use Slim\App as Slim;
 
-class App
+    class App
 {
 
     /**
@@ -71,6 +72,7 @@ class App
         try {
             $container->register(new CoreServiceProvider());
             $container->register(new VideoServiceProvider());
+            $container->register(new QueryBuilderServiceProvider());
             $container->register(new TestServiceProvider());
             $container->register(new ArticleServiceProvider());
             $container->register(new PublicationServiceProvider());
