@@ -24,18 +24,20 @@ class SaveQuery extends AbstractModule
         $query = $request->getParam('query') ?? '';
         $users = $request->getParam('users') ?? [];
         $keywords = explode(',',$request->getParam('keywords'));
-
-        try {
+         try {
+            $dataToBeInsertedUpdated = [
+                'title' => $title,
+                'query' => $query,
+                'user_ids' => $users,
+                'keyword_ids' => $keywords,
+                'created' => $this->db[Hosts::LOCAL][Dbs::MAIN]->now(),
+                'modified' => $this->db[Hosts::LOCAL][Dbs::MAIN]->now(),
+            ];
+            if( $id > 0){
+                    $dataToBeInsertedUpdated['id'] = $id;
+            }
             $insert_id = $this->entity_search_query->saveSearchQuery(new SearchQueryAR(
-                [
-                    'id' => $id,
-                    'title' => $title,
-                    'query' => $query,
-                    'user_ids' => $users,
-                    'keyword_ids' => $keywords,
-                    'created' => $this->db[Hosts::LOCAL][Dbs::MAIN]->now(),
-                    'modified' => $this->db[Hosts::LOCAL][Dbs::MAIN]->now(),
-                ]
+                $dataToBeInsertedUpdated
             ));
             $result['insert_id'] =  $insert_id;
             $result['message'] = 'Search query saved successfully';
